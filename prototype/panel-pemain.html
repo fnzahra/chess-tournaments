@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kelola pemain · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696723">
+<link rel="stylesheet" href="assets/style.css?v=1794696869">
 </head>
 <body data-page="panel-pemain" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696723"></script>
+<script src="assets/app.js?v=1794696869"></script>
 <script>
 const {T,icon,kelas,link}=KSL;
 let ed=null;
@@ -21,7 +21,7 @@ KSL.page(()=>{
     <div class="pad row between"><div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div><span class="sm mute">${c.desc}</span></div>
     <div class="pad bt">
       <div class="grid addrow">
-        <div><label>Nama pemain</label><input id="pn" placeholder="Nama lengkap"></div>
+        <div><label>Nama pemain${KSL.tip("Pemain dari klub mana pun bisa dipilih dari database. Ketik namanya, profil dan ratingnya ikut terbawa. Kalau belum ada, pemain baru dibuat.")}</label><input id="pn" list="semua" placeholder="Ketik nama atau ID pemain"><datalist id="semua">${["Ahmad Fauzan · Komunitas Catur Galis · 1488","Siti Aminah · Ruang Catur · 1302","Hasbullah · Komunitas Catur Galis · 1555","Fathullah · Ruang Catur · 1410"].map(x=>`<option value="${x.split(" · ")[0]}">${x}</option>`).join("")}</datalist></div>
         <div><label>Rating</label><input id="pr" inputmode="numeric" placeholder="0"></div>
         <div><label>Klub / kota</label><input id="pk" placeholder="Pamekasan"></div>
         <button class="btn" data-act="add">${icon("plus")}Tambah</button>

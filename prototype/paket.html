@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Paket · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696723">
+<link rel="stylesheet" href="assets/style.css?v=1794696869">
 </head>
 <body data-page="paket" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696723"></script>
+<script src="assets/app.js?v=1794696869"></script>
 <script>
 const {icon,qp}=KSL;
 // prices are proposals for client discussion, payment is simulated
-const FREE=["Turnamen & peserta tanpa batas","Liga, Swiss, gugur","Pairing, klasemen, tie-break otomatis","Halaman publik + QR","Rating Elo klub","Pendaftaran peserta + impor CSV"];
-const PRO=["Kategori juara (U-12, putri, senior)","Kirim pairing ke WA peserta","Sertifikat juara (PDF)","Ekspor PDF, Excel, TRF","Logo & warna klub sendiri","Beberapa admin / wasit"];
+const FREE=["Turnamen & peserta tanpa batas","Liga, Swiss, gugur","Pairing, klasemen, tie-break otomatis","Halaman publik + QR","Rating Elo klub","Pendaftaran peserta + impor CSV","Ekspor Excel, bagikan link/WA"];
+const PRO=["Kategori juara (U-12, putri, senior)","Kirim pairing ke WA peserta","Sertifikat juara (PDF)","PDF bermerek klub + ekspor TRF","Logo & warna klub sendiri","Beberapa admin / wasit"];
 let pay=null; // selected plan while paying
 KSL.page(()=>{
   const f=qp("f"),cur=KSL.plan(),li=(x,ok=1)=>`<li>${icon(ok?"check":"x")}${x}</li>`;
