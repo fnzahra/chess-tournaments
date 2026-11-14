@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Klasemen · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=1794695628">
 </head>
 <body data-page="klasemen" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js"></script>
+<script src="assets/app.js?v=1794695628"></script>
 <script>
 const {T,icon,standings,doneRounds,fmt,link,kelas,qp,hit,pLink}=KSL;
 KSL.page(()=>{
@@ -25,7 +25,9 @@ KSL.page(()=>{
       ${s.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n"><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span></td><td>${pLink(p.id,p.name,1)}</td><td class="n b">${fmt(p.pts)}</td><td class="n">${p.sb.toFixed(2)}</td><td class="n">${p.w}</td><td class="n">${p.d}</td><td class="n">${p.l}</td><td class="dsk mute">${p.club}</td></tr>`).join("")}
     </table></div>
   </div>
-  <div class="sm mute mt">Urutan: poin, lalu Sonneborn-Berger (SB), lalu jumlah menang. M = menang, S = seri, K = kalah.</div>`;
+  <details class="more card pad mt"><summary>Arti istilah di tabel</summary>
+    <div class="gl mt">${[["Poin","Menang 1, seri ½, kalah 0."],["SB","Sonneborn-Berger. "+KSL.TERMS["Sonneborn-Berger"]],["M / S / K","Jumlah menang, seri, kalah."],["Urutan","Poin, lalu pertemuan langsung, jumlah menang, lalu SB."]].map(([k,v])=>`<div><b>${k}</b><span>${v}</span></div>`).join("")}</div>
+  </details>`;
 });
 </script>
 </body>

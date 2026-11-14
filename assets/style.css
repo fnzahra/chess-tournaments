@@ -197,6 +197,14 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
 .more{margin-top:8px;font-size:13px}
 .more summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:12px}
 
+/* tie-break slots & glossary */
+.tbl{display:grid;gap:8px}
+.tbrow{display:flex;gap:8px;align-items:flex-start}
+.tbn{width:22px;height:22px;flex:none;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--mute);margin-top:6px}
+.gl{display:grid;gap:6px;font-size:12px}
+.gl div{display:grid;grid-template-columns:90px 1fr;gap:8px}
+.gl span{color:var(--mute)}
+
 /* stats */
 .stat{padding:9px 12px}
 .stat b{display:block;font-size:18px;line-height:1.2;letter-spacing:-.01em}
