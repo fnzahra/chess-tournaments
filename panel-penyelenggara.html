@@ -20,9 +20,9 @@ const pillOf=s=>s==="owner"?'<span class="pill acc">Pemilik</span>':s==="aktif"?
 KSL.page(()=>KSL.panelShell("panel-penyelenggara",`
   <div class="mb"><h1>Penyelenggara</h1><div class="sm mute">Hanya admin KSL. Penyelenggara hanya bisa mengubah turnamennya sendiri.</div></div>
   <div class="card tscroll"><table>
-    <tr><th>Klub / komunitas</th><th class="dsk">Penanggung jawab</th><th class="n">Turnamen</th><th>Status</th><th class="r">Aksi</th></tr>
-    ${orgs.map((o,i)=>`<tr><td><span class="who">${KSL.av(o.name)}<span><b>${o.name}</b><div class="sm mute">${o.city}</div></span></span></td><td class="dsk">${o.pic}</td><td class="n">${o.n}</td><td>${pillOf(o.st)}</td><td class="r">${
-      o.st==="tunggu"?`<div class="row nowrap" style="justify-content:flex-end"><button class="btn sm" data-act="ok" data-i="${i}">${icon("check")}Setujui</button><button class="btn alt sm" data-act="no" data-i="${i}">Tolak</button></div>`
+    <tr><th>Klub / komunitas</th><th class="dsk">Penanggung jawab</th><th class="n dsk">Turnamen</th><th class="dsk">Status</th><th class="r">Aksi</th></tr>
+    ${orgs.map((o,i)=>`<tr><td><span class="who">${KSL.av(o.name)}<span><b>${o.name}</b><div class="sm mute">${o.city}</div><div class="mob mt2">${pillOf(o.st)}</div></span></span></td><td class="dsk">${o.pic}</td><td class="n dsk">${o.n}</td><td class="dsk">${pillOf(o.st)}</td><td class="r">${
+      o.st==="tunggu"?`<div class="row acts" style="justify-content:flex-end"><button class="btn sm" data-act="ok" data-i="${i}">${icon("check")}Setujui</button><button class="btn alt sm" data-act="no" data-i="${i}">Tolak</button></div>`
       :o.st==="aktif"?`<button class="btn alt sm" data-act="off" data-i="${i}">Nonaktifkan</button>`:o.st==="off"?`<button class="btn alt sm" data-act="ok" data-i="${i}">Aktifkan</button>`:""}</td></tr>`).join("")}
   </table></div>`),{
   ok:el=>{orgs[+el.dataset.i].st="aktif";KSL.toast("Penyelenggara disetujui")},

@@ -149,7 +149,7 @@ function toast(t,ic="check"){const e=document.getElementById("toast");e.innerHTM
 // ---------- shared blocks ----------
 function tourHead(active){
   const k=kelas();
-  const tabs=[["turnamen","info","Ringkasan"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],["tabel-silang","grid","Tabel silang"]];
+  const tabs=[["turnamen","info","Ringkasan"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],["tabel-silang","grid","Tabel silang","Silang"]];
   return `<a class="back" href="index.html">${icon("left")}Semua turnamen</a>
   <div class="card mb">
     <div class="pad">
@@ -160,7 +160,7 @@ function tourHead(active){
         <div class="input-ic" style="flex:1;max-width:240px;min-width:150px">${icon("search")}<input id="cari" placeholder="Cari nama saya" value="${Q.get("cari")||""}"></div>
       </div>
     </div>
-    <nav class="tabs bt">${tabs.map(([p,i,l])=>`<a class="${p===active?"on":""}" href="${link(file(p))}">${icon(i)}${l}</a>`).join("")}</nav>
+    <nav class="tabs bt">${tabs.map(([p,i,l,s])=>`<a class="${p===active?"on":""}" href="${link(file(p))}">${icon(i)}<span class="dsk">${l}</span><span class="mob">${s||l}</span></a>`).join("")}</nav>
   </div>`;
 }
 const hit=p=>{const q=(Q.get("cari")||"").toLowerCase();return q&&p.name.toLowerCase().includes(q)};
