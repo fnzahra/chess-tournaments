@@ -193,6 +193,10 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
 .ticks li{display:flex;gap:6px;align-items:center}
 .ticks .ic{width:14px;height:14px;color:var(--brand)}
 
+/* collapsible optional fields */
+.more{margin-top:8px;font-size:13px}
+.more summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:12px}
+
 /* stats */
 .stat{padding:9px 12px}
 .stat b{display:block;font-size:18px;line-height:1.2;letter-spacing:-.01em}
