@@ -49,7 +49,7 @@ function rr(n){const a=[...Array(n).keys()],R=[];for(let r=0;r<n-1;r++){const g=
 let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
 function play(c,n){c.rounds.forEach((g,ri)=>{if(ri>=n)return;g.forEach(x=>{const d=c.players[x.w].rtg-c.players[x.b].rtg+30,v=rnd()+d/400;x.res=v>.62?"1-0":v<.38?"0-1":"½-½"})})}
 const TOURS=[
- {id:"ksl",name:"Turnamen Penggalangan Dana KSL",org:"KSL",place:"Rumah Raihan, Pamekasan",date:"Ahad, 12 Jul 2026",time:"07.00 - 09.00 WIB",status:"live",sys:"Liga satu putaran",fee:"Rp 5.000",tb:"Sonneborn-Berger, jumlah menang",
+ {id:"ksl",name:"Turnamen Penggalangan Dana KSL",org:"KSL",place:"Rumah Raihan, Pamekasan",date:"Ahad, 12 Jul 2026",time:"07.00 - 09.00 WIB",status:"live",sys:"Liga satu putaran",fee:"Rp 5.000",tb:"Pertemuan langsung, Jumlah menang, Sonneborn-Berger, Koya",
   classes:[{name:"Kelas A",desc:"Kemampuan tinggi",players:mk(A),rounds:rr(8),pub:5},{name:"Kelas B",desc:"Menengah / pemula",players:mk(B),rounds:rr(8),pub:5}]},
  {id:"pahlawan",name:"Turnamen Catur Hari Pahlawan 2026",org:"KSL",place:"Pamekasan",date:"10 Nov 2026",status:"done",sys:"Swiss 7 babak",n:80},
  {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Galis",date:"29 Nov 2026",status:"soon",sys:"Swiss 5 babak",n:32},
@@ -63,13 +63,34 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>
 function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,extra:c.players.slice(8),res:c.rounds.map(g=>g.map(x=>x.res))}))))}catch(e){}}
 function reset(){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
 
+// ---------- glossary & tie-break presets ----------
+const TERMS={
+ "Pertemuan langsung":"Siapa yang menang saat dua pemain dengan poin sama saling bertemu.",
+ "Jumlah menang":"Pemain dengan kemenangan lebih banyak diunggulkan.",
+ "Sonneborn-Berger":"Poin lawan yang dikalahkan + setengah poin lawan yang seri. Menang dari lawan kuat bernilai lebih.",
+ "Koya":"Poin yang diraih melawan pemain yang mendapat minimal setengah poin maksimal.",
+ "Buchholz":"Jumlah poin semua lawan. Makin berat lawan yang dihadapi, makin tinggi.",
+ "Buchholz Cut-1":"Buchholz tanpa lawan dengan poin terendah, supaya satu lawan lemah tidak merugikan.",
+ "Rata-rata rating lawan":"Rata-rata rating semua lawan yang dihadapi.",
+ "Menang dengan hitam":"Jumlah kemenangan saat bermain dengan buah hitam.",
+ "Bye":"Tidak dapat lawan di babak itu karena jumlah pemain ganjil. Biasanya dapat 1 poin.",
+ "WO":"Menang karena lawan tidak hadir. Tidak dihitung untuk rating."
+};
+const TB={
+ rr:["Pertemuan langsung","Jumlah menang","Sonneborn-Berger","Koya","Menang dengan hitam"],
+ swiss:["Buchholz Cut-1","Buchholz","Pertemuan langsung","Jumlah menang","Sonneborn-Berger","Rata-rata rating lawan","Menang dengan hitam"],
+ ko:[]
+};
+
 // ---------- chess helpers ----------
 const score=r=>r==="1-0"?[1,0]:r==="0-1"?[0,1]:r==="½-½"?[.5,.5]:null;
 function standings(c){
   const s=c.players.map(p=>({...p,pts:0,w:0,d:0,l:0,g:0,opp:[]}));
   c.rounds.forEach(g=>g.forEach(x=>{const p=score(x.res);if(!p)return;[[x.w,x.b,p[0]],[x.b,x.w,p[1]]].forEach(([me,op,v])=>{const m=s[me];m.pts+=v;m.g++;v===1?m.w++:v===0?m.l++:m.d++;m.opp.push([op,v])})}));
   s.forEach(p=>p.sb=p.opp.reduce((a,[o,v])=>a+v*s[o].pts,0));
-  return s.slice().sort((a,b)=>b.pts-a.pts||b.sb-a.sb||b.w-a.w||b.rtg-a.rtg);
+  // round-robin order: points, direct encounter, wins, Sonneborn-Berger, rating
+  const h2h=(a,b)=>{const m=a.opp.find(([o])=>o===b.id);return m?(m[1]===1?-1:m[1]===0?1:0):0};
+  return s.slice().sort((a,b)=>b.pts-a.pts||h2h(a,b)||b.w-a.w||b.sb-a.sb||b.rtg-a.rtg);
 }
 const curRound=c=>{const i=c.rounds.findIndex(g=>g.some(x=>!x.res));return i<0?c.rounds.length:i+1};
 const doneRounds=c=>c.rounds.filter(g=>g.every(x=>x.res)).length;
@@ -189,6 +210,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();
