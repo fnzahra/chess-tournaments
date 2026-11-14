@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ringkasan · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="turnamen" data-area="publik">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {T,icon,standings,curRound,doneRounds,fmt,link,pLink}=KSL;
+KSL.page(()=>{
+  const info=[["cal","Tanggal",T.date],["clock","Waktu",T.time],["pin","Tempat",T.place],["list","Sistem",T.sys],["trophy","Tie-break",T.tb],["user","Wasit","Mukhlish"]];
+  return KSL.tourHead("turnamen")+`
+  <div class="grid g2">
+    <div>
+      <h3>Kelas</h3>
+      <div class="grid g2e mb">${T.classes.map((c,i)=>{const s=standings(c),d=doneRounds(c),n=c.rounds.length;return `
+        <div class="card">
+          <div class="pad row between"><div><b>${c.name}</b><div class="sm mute">${c.desc} · ${c.players.length} pemain</div></div><span class="pill live">Babak ${curRound(c)}</span></div>
+          <div class="pad bt"><div class="row between sm mute mb"><span>Babak selesai</span><span>${d} / ${n}</span></div><div class="bar"><i style="width:${d/n*100}%"></i></div></div>
+          <table class="bt">${s.slice(0,3).map((p,j)=>`<tr><td class="n"><span class="rank r${j+1}">${j+1}</span></td><td>${pLink(p.id,p.name)}</td><td class="r b">${fmt(p.pts)}</td></tr>`).join("")}</table>
+          <div class="pad bt row"><a class="btn sm" href="${link("pairing.html",{kelas:i})}">${icon("swap")}Pairing</a><a class="btn alt sm" href="${link("klasemen.html",{kelas:i})}">${icon("trophy")}Klasemen</a></div>
+        </div>`}).join("")}</div>
+      <h3>Informasi</h3>
+      <div class="card"><table>${info.map(([i,k,v])=>`<tr><td class="mute" style="width:1%">${icon(i)}</td><td class="mute">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table></div>
+    </div>
+    <div>
+      <h3>Bagikan</h3>
+      <div class="card pad mb">
+        <div class="row nowrap" style="align-items:flex-start"><div class="qr"></div><div class="sm"><b>Tempel QR di lokasi</b><div class="mute mt2">Peserta scan untuk melihat pairing dan klasemen.</div></div></div>
+        <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><button class="btn alt sm" data-act="wa">${icon("msg")}Kirim ke WA</button></div>
+      </div>
+      <h3>Hadiah</h3>
+      <div class="card"><table>
+        <tr><th>Peringkat</th><th class="r">Kelas A</th><th class="r">Kelas B</th></tr>
+        <tr><td>Juara 1</td><td class="r">Rp 15.000</td><td class="r">Rp 8.000</td></tr>
+        <tr><td>Juara 2</td><td class="r">Rp 12.000</td><td class="r">Rp 7.000</td></tr>
+        <tr><td>Juara 3</td><td class="r">Rp 10.000</td><td class="r">Rp 6.000</td></tr>
+      </table><div class="pad bt sm mute">Cinderamata untuk semua peserta. Pendaftaran ${T.fee}.</div></div>
+    </div>
+  </div>
+  <div class="sm mute mt">Terakhir diperbarui 08.12 WIB oleh Mukhlish</div>`;
+},{copy:()=>KSL.toast("Link disalin"),wa:()=>KSL.toast("Membuka WhatsApp","msg")});
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buat turnamen · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="panel-buat" data-area="panel">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {icon}=KSL;
+const st={step:0,fmt:"rr",classes:["Kelas A","Kelas B"]};
+const SYS={rr:["Liga satu putaran","Semua pemain saling bertemu sekali. Cocok untuk 10 pemain atau kurang."],swiss:["Swiss","Pemain dengan poin sama dipertemukan. Cocok untuk peserta banyak."],ko:["Gugur","Kalah langsung tersingkir. Cepat selesai."]};
+KSL.page(()=>{
+  const S=["Info","Kelas dan sistem","Terbitkan"];
+  let f="";
+  if(st.step===0)f=`
+    <div class="field"><label>Nama turnamen</label><input value="Turnamen Bulanan KSL Desember"></div>
+    <div class="grid g2e"><div class="field"><label>Tanggal</label><input type="date" value="2026-12-20"></div><div class="field"><label>Jam</label><input value="07.00 - 09.00 WIB"></div></div>
+    <div class="field"><label>Tempat</label><input value="Jl. Basar 99 Bugih, Pamekasan"></div>
+    <div class="grid g2e"><div class="field"><label>Wasit</label><input value="Mukhlish"></div><div class="field"><label>Biaya pendaftaran</label><input value="Rp 5.000"></div></div>`;
+  if(st.step===1)f=`
+    <div class="field"><label>Kelas / grup</label><div class="chips">${st.classes.map((k,i)=>`<span class="chip on">${k}<button data-act="rm" data-i="${i}" aria-label="Hapus ${k}">${icon("x")}</button></span>`).join("")}<button class="chip" data-act="addk">${icon("plus")}Tambah kelas</button></div><div class="hint">Contoh: Kelas A untuk pemain kuat, Kelas B untuk pemula.</div></div>
+    <div class="field"><label>Sistem pertandingan</label><div class="grid g3">${Object.entries(SYS).map(([k,[n,d]])=>`<button class="opt ${st.fmt===k?"on":""}" data-act="fmt" data-k="${k}"><b>${n}</b><span class="sm mute">${d}</span></button>`).join("")}</div></div>
+    <div class="grid g2e"><div class="field"><label>Jumlah babak</label><input value="${st.fmt==="swiss"?5:st.fmt==="ko"?"otomatis":7}" ${st.fmt==="swiss"?"":"disabled"}><div class="hint">${st.fmt==="rr"?"Otomatis: jumlah pemain dikurangi 1.":st.fmt==="ko"?"Otomatis dari jumlah pemain.":"Disarankan 5 sampai 7."}</div></div>
+    <div class="field"><label>Tie-break</label><select><option>Sonneborn-Berger, jumlah menang</option><option>Buchholz, Buchholz Cut-1</option><option>Head-to-head</option></select></div></div>`;
+  if(st.step===2)f=`
+    <table class="mb"><tr><td class="mute">Nama</td><td><b>Turnamen Bulanan KSL Desember</b></td></tr><tr><td class="mute">Tanggal</td><td>20 Des 2026, 07.00 - 09.00 WIB</td></tr><tr><td class="mute">Kelas</td><td>${st.classes.join(", ")}</td></tr><tr><td class="mute">Sistem</td><td>${SYS[st.fmt][0]}</td></tr></table>
+    <div class="row nowrap" style="align-items:flex-start"><div class="qr"></div><div class="sm"><b>Link turnamen</b><div class="mute mt2">turnamencatur-ksl.id/t/bulanan-des</div><div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin</button><button class="btn alt sm" data-act="wa">${icon("msg")}Kirim ke WA</button></div></div></div>
+    <div class="hint mt">Setelah terbit, tambahkan pemain lalu buat pairing babak 1.</div>`;
+  return KSL.panelShell("panel-buat",`
+  <h1 class="mb">Buat turnamen</h1>
+  <div class="card pad">
+    <div class="steps">${S.map((x,i)=>`<span class="${i===st.step?"on":i<st.step?"done":""}">${i+1}. ${x}</span>`).join("")}</div>
+    ${f}
+    <div class="row between mt bt" style="padding-top:12px"><button class="btn alt" data-act="prev" ${st.step?"":"disabled"}>${icon("left")}Kembali</button><button class="btn ${st.step===2?"acc":""}" data-act="next">${st.step===2?icon("check")+"Terbitkan":"Lanjut"+icon("right")}</button></div>
+  </div>`)},{
+  prev:()=>st.step=Math.max(0,st.step-1),
+  next:()=>{if(st.step===2){KSL.toast("Turnamen diterbitkan");setTimeout(()=>location.href="panel.html",900)}else st.step++},
+  fmt:el=>st.fmt=el.dataset.k,
+  addk:()=>st.classes.push("Kelas "+String.fromCharCode(65+st.classes.length)),
+  rm:el=>st.classes.splice(+el.dataset.i,1),
+  copy:()=>KSL.toast("Link disalin"),wa:()=>KSL.toast("Membuka WhatsApp","msg")
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klasemen · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="klasemen" data-area="publik">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {T,icon,standings,doneRounds,fmt,link,kelas,qp,hit,pLink}=KSL;
+KSL.page(()=>{
+  const c=T.classes[kelas()],d=doneRounds(c),r=Math.min(+qp("setelah",d)||d,d);
+  const s=standings({players:c.players,rounds:c.rounds.slice(0,r)});
+  return KSL.tourHead("klasemen")+`
+  <div class="card">
+    <div class="pad row between">
+      <div class="row"><span class="sm mute">Setelah babak</span><div class="seg">${c.rounds.map((_,i)=>`<a class="${i+1===r?"on":""} ${i+1>d?"off":""}" href="${link("klasemen.html",{setelah:i+1})}">${i+1}</a>`).join("")}</div></div>
+      <span class="sm mute">${r===c.rounds.length?"Klasemen akhir":"Sementara"}</span>
+    </div>
+    <div class="tscroll bt"><table>
+      <tr><th class="n">#</th><th>Nama</th><th class="n">Poin</th><th class="n">SB</th><th class="n">M</th><th class="n">S</th><th class="n">K</th><th class="dsk">Klub</th></tr>
+      ${s.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n"><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span></td><td>${pLink(p.id,p.name)}</td><td class="n b">${fmt(p.pts)}</td><td class="n">${p.sb.toFixed(2)}</td><td class="n">${p.w}</td><td class="n">${p.d}</td><td class="n">${p.l}</td><td class="dsk mute">${p.club}</td></tr>`).join("")}
+    </table></div>
+  </div>
+  <div class="sm mute mt">Urutan: poin, lalu Sonneborn-Berger (SB), lalu jumlah menang. M = menang, S = seri, K = kalah.</div>`;
+});
+</script>
+</body>
+</html>

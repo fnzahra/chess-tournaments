@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detail pemain · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="pemain" data-area="publik">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {T,icon,standings,fmt,link,kelas,qp,score,pLink}=KSL;
+KSL.page(()=>{
+  const c=T.classes[kelas()],id=Math.min(+qp("id",0)||0,c.players.length-1),p=c.players[id];
+  const s=standings(c),rank=s.findIndex(x=>x.id===id)+1,me=s[rank-1];
+  let cum=0;
+  const rows=c.rounds.slice(0,c.pub).map((g,ri)=>{
+    const bi=g.findIndex(x=>x.w===id||x.b===id);if(bi<0)return `<tr><td class="n">${ri+1}</td><td colspan="5" class="mute">Bye</td></tr>`;
+    const x=g[bi],white=x.w===id,op=c.players[white?x.b:x.w],sc=score(x.res),v=sc?sc[white?0:1]:null;
+    if(v!=null)cum+=v;
+    return `<tr><td class="n">${ri+1}</td><td class="n">${bi+1}</td><td class="n"><i class="sq ${white?"w":"k"}" title="${white?"Putih":"Hitam"}"></i></td><td>${pLink(op.id,op.name)} <span class="mute sm">${op.rtg}</span></td><td class="n ${v===1?"res-w":v===0?"res-l":"res-d"}">${v==null?'<span class="mute">main</span>':fmt(v)}</td><td class="n b">${v==null?"":fmt(cum)}</td></tr>`}).join("");
+  return `<a class="back" href="${link("klasemen.html",{id:null})}">${icon("left")}Klasemen ${c.name}</a>
+  <div class="card pad mb">
+    <div class="row between nowrap">
+      <div class="row nowrap"><span class="logo"><span class="mark" style="width:40px;height:40px;background:var(--soft);color:var(--brand)">${icon("user","lg")}</span></span>
+      <div><h1>${p.name}</h1><div class="meta"><span>${icon("pin")}${p.club}</span><span>Rating ${p.rtg}</span><span>${c.name}</span></div></div></div>
+      <span class="rank ${rank<4?"r"+rank:""}" style="width:34px;height:34px;font-size:14px" title="Peringkat">${rank}</span>
+    </div>
+    <div class="grid g4 mt">
+      <div class="card stat"><b>${fmt(me.pts)}</b><span>poin</span></div>
+      <div class="card stat"><b>${rank}</b><span>peringkat</span></div>
+      <div class="card stat"><b>${me.w} / ${me.d} / ${me.l}</b><span>menang / seri / kalah</span></div>
+      <div class="card stat"><b>${me.sb.toFixed(2)}</b><span>Sonneborn-Berger</span></div>
+    </div>
+  </div>
+  <h3>Riwayat per babak</h3>
+  <div class="card tscroll"><table>
+    <tr><th class="n">Babak</th><th class="n">Meja</th><th class="n">Warna</th><th>Lawan</th><th class="n">Hasil</th><th class="n">Total</th></tr>${rows}
+  </table></div>`;
+});
+</script>
+</body>
+</html>

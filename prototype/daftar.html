@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daftar penyelenggara · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="daftar" data-area="publik">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {icon}=KSL;
+let sent=false;
+KSL.page(()=>sent?`
+  <div class="card pad" style="max-width:440px;margin:24px auto;text-align:center">
+    <span class="logo" style="justify-content:center"><span class="mark" style="width:44px;height:44px;background:var(--ok-soft);color:var(--ok)">${icon("check","lg")}</span></span>
+    <h1 class="mt">Pendaftaran terkirim</h1>
+    <div class="sm mute mt2">Admin KSL akan meninjau akun Anda. Kabar dikirim lewat WhatsApp.</div>
+    <a class="btn alt mt" href="index.html">Kembali ke beranda</a>
+  </div>`:`
+  <div class="card" style="max-width:520px;margin:24px auto">
+    <div class="pad"><h1>Daftar penyelenggara</h1><div class="sm mute mt2">Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri di Turnamen Catur KSL.</div></div>
+    <div class="pad bt">
+      <h3>Klub / komunitas</h3>
+      <div class="field"><label>Nama klub atau komunitas</label><input placeholder="contoh: Komunitas Catur Galis"></div>
+      <div class="grid g2e"><div class="field"><label>Kota / kabupaten</label><input placeholder="Pamekasan"></div><div class="field"><label>Jenis</label><select><option>Klub catur</option><option>Sekolah</option><option>Komunitas</option><option>Instansi</option></select></div></div>
+      <h3 class="mt">Penanggung jawab</h3>
+      <div class="grid g2e"><div class="field"><label>Nama</label><input></div><div class="field"><label>Nomor WhatsApp</label><input inputmode="tel" placeholder="08xx"></div></div>
+      <div class="field"><label>Kata sandi</label><input type="password"><div class="hint">Minimal 8 karakter.</div></div>
+      <button class="btn block" data-act="kirim">Kirim pendaftaran</button>
+    </div>
+    <div class="pad bt sm mute" style="text-align:center">Sudah punya akun? <a class="lnk" href="masuk.html">Masuk</a></div>
+  </div>`,{kirim:()=>{sent=true}});
+</script>
+</body>
+</html>
