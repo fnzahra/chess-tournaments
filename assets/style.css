@@ -152,10 +152,14 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
 .field{margin-bottom:12px}
 .hint{font-size:12px;color:var(--mute);margin-top:4px}
 .input-ic{position:relative}.input-ic .ic{position:absolute;left:12px;top:11px;color:var(--mute)}.input-ic input{padding-left:34px;border-radius:999px}
-.steps{display:flex;gap:6px;margin-bottom:14px}
-.steps span{flex:1;font-size:12px;padding:7px;border-radius:999px;background:var(--soft);color:var(--mute);text-align:center;font-weight:600}
-.steps span.on{background:var(--dark);color:#fff}
-.steps span.done{background:var(--brand-soft);color:var(--brand)}
+/* form progress: one continuous bar, labels underneath (no step numbers) */
+.prog{margin-bottom:16px}
+.track{height:6px;border-radius:3px;background:var(--soft);margin:10px 0 6px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:3px;background:var(--brand);transition:width .25s}
+.labels{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
+.labels span{display:inline-flex;gap:3px;align-items:center}
+.labels span.on{color:var(--ink);font-weight:600}
+.labels span.done{color:var(--brand)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{height:30px;padding:0 12px;border:1px solid #e4e4e7;border-radius:999px;background:#fff;font-size:12px;display:inline-flex;gap:5px;align-items:center}
 .chip.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:600}
