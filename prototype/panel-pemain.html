@@ -24,6 +24,16 @@ KSL.page(()=>{
         <div><label>Klub / kota</label><input id="pk" placeholder="Pamekasan"></div>
         <button class="btn" data-act="add">${icon("plus")}Tambah</button>
       </div>
+      <details class="more"><summary>Detail lainnya (opsional)</summary>
+        <div class="grid g4 mt">
+          <div><label>Tanggal lahir</label><input type="date"></div>
+          <div><label>Jenis kelamin</label><select><option>-</option><option>Laki-laki</option><option>Perempuan</option></select></div>
+          <div><label>FIDE ID</label><input inputmode="numeric" placeholder="Jika ada"></div>
+          <div><label>No. HP</label><input inputmode="tel" placeholder="Tidak tampil publik"></div>
+        </div>
+        <div class="hint">Dipakai untuk kategori hadiah (usia, putri). Tidak pernah ditampilkan di halaman publik.</div>
+      </details>
+      <div class="hint">Pemain yang pernah ikut cukup diketik namanya, rating klubnya terisi otomatis.</div>
     </div>
     <div class="tscroll bt"><table>
       <tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th class="dsk">Klub / Kota</th><th class="r">Aksi</th></tr>
