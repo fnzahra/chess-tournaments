@@ -38,6 +38,7 @@ const P={
 };
 const AVC=["#e7efeb","#f6efe2","#e8eef6","#f3e8ee","#ececee","#eef3e2"];
 const av=(n,c="")=>{const h=[...n].reduce((a,ch)=>a+ch.charCodeAt(0),0);return `<span class="av ${c}" style="background:${AVC[h%AVC.length]}">${n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase()}</span>`};
+const tip=t=>`<span class="tip" role="button" tabindex="0" data-act="tip" data-t="${t.replace(/"/g,"&quot;")}" aria-label="Penjelasan">?</span>`;
 const icon=(n,c="")=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 
 // ---------- sample data ----------
@@ -180,7 +181,7 @@ function renderGuide(){
   document.getElementById("gCount").textContent=n+"/"+tot;
   document.getElementById("gBar").style.width=(n/tot*100)+"%";
 }
-function toast(t,ic="check"){const e=document.getElementById("toast");e.innerHTML=icon(ic)+t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),1900)}
+function toast(t,ic="check",ms=1900){const e=document.getElementById("toast");e.innerHTML=icon(ic)+"<span>"+t+"</span>";e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),ms)}
 
 // ---------- shared blocks ----------
 function tourHead(active){
@@ -216,6 +217,7 @@ document.addEventListener("click",e=>{
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
   else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelector("header").remove();document.querySelector(".rail").remove();document.querySelector(".bnav").remove();document.getElementById("guide").remove();document.getElementById("shade").remove();document.getElementById("toast").remove();shell()}
   else if(a==="reset")reset();
+  else if(a==="tip"){e.preventDefault();toast(el.dataset.t,"info",Math.max(2500,el.dataset.t.length*60))}
   else if(acts[a]){e.preventDefault();acts[a](el);render()}
 });
 document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e.target.selectionStart;setParam("cari",e.target.value);render();const f=document.getElementById("cari");f.focus();f.setSelectionRange(pos,pos)});
@@ -223,6 +225,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

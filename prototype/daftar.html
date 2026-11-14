@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daftar penyelenggara · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696400">
+<link rel="stylesheet" href="assets/style.css?v=1794696596">
 </head>
 <body data-page="daftar" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696400"></script>
+<script src="assets/app.js?v=1794696596"></script>
 <script>
 const {icon}=KSL;
 let sent=false;
@@ -20,14 +20,14 @@ KSL.page(()=>sent?`
     <a class="btn alt mt" href="index.html">Kembali ke beranda</a>
   </div>`:`
   <div class="card" style="max-width:520px;margin:24px auto">
-    <div class="pad"><h1>Daftar penyelenggara</h1><div class="sm mute mt2">Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri di Turnamen Catur KSL.</div></div>
+    <div class="pad"><h1>Daftar penyelenggara${KSL.tip("Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri.")}</h1></div>
     <div class="pad bt">
       <h3>Klub / komunitas</h3>
       <div class="field"><label>Nama klub atau komunitas</label><input placeholder="contoh: Komunitas Catur Galis"></div>
       <div class="grid g2e"><div class="field"><label>Kota / kabupaten</label><input placeholder="Pamekasan"></div><div class="field"><label>Jenis</label><select><option>Klub catur</option><option>Sekolah</option><option>Komunitas</option><option>Instansi</option></select></div></div>
       <h3 class="mt">Penanggung jawab</h3>
-      <div class="grid g2e"><div class="field"><label>Nama</label><input></div><div class="field"><label>Nomor WhatsApp</label><input inputmode="tel" placeholder="08xx"><div class="hint">Kode verifikasi dikirim ke nomor ini.</div></div></div>
-      <div class="field"><label>Kata sandi</label><input type="password"><div class="hint">Minimal 8 karakter.</div></div>
+      <div class="grid g2e"><div class="field"><label>Nama</label><input></div><div class="field"><label>Nomor WhatsApp${KSL.tip("Kode verifikasi dikirim ke nomor ini.")}</label><input inputmode="tel" placeholder="08xx"></div></div>
+      <div class="field"><label>Kata sandi</label><input type="password" placeholder="Minimal 8 karakter"></div>
       <button class="btn block" data-act="kirim">Kirim pendaftaran</button>
     </div>
     <div class="pad bt sm mute" style="text-align:center">Sudah punya akun? <a class="lnk" href="masuk.html">Masuk</a></div>

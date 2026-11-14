@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daftar jadi peserta · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696400">
+<link rel="stylesheet" href="assets/style.css?v=1794696596">
 </head>
 <body data-page="daftar-peserta" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696400"></script>
+<script src="assets/app.js?v=1794696596"></script>
 <script>
 const {T,icon,kelas,link}=KSL;
 let done=null;
@@ -25,8 +25,8 @@ KSL.page(()=>done?`
     <form class="pad bt" id="f">
       <div class="field"><label>Kelas</label><div class="grid g2e">${T.classes.map((c,i)=>`<label class="opt ${i===kelas()?"on":""}" style="margin:0"><input type="radio" name="k" value="${i}" ${i===kelas()?"checked":""} style="display:none"><b>${c.name}</b><span class="sm mute">${c.desc}</span></label>`).join("")}</div></div>
       <div class="field"><label>Nama lengkap</label><input name="name" required placeholder="Sesuai yang ingin ditampilkan"></div>
-      <div class="grid g2e"><div class="field"><label>Klub / kota</label><input name="club" placeholder="Pamekasan"></div><div class="field"><label>Nomor WhatsApp</label><input name="hp" inputmode="tel" required placeholder="08xx"><div class="hint">Tidak tampil di publik.</div></div></div>
-      <div class="field"><label>Tanggal lahir (opsional)</label><input name="dob" type="date"><div class="hint">Untuk kategori usia. Tidak tampil di publik.</div></div>
+      <div class="grid g2e"><div class="field"><label>Klub / kota</label><input name="club" placeholder="Pamekasan"></div><div class="field"><label>Nomor WhatsApp${KSL.tip("Untuk konfirmasi panitia. Tidak tampil di publik.")}</label><input name="hp" inputmode="tel" required placeholder="08xx"></div></div>
+      <div class="field"><label>Tanggal lahir (opsional)${KSL.tip("Untuk kategori usia. Tidak tampil di publik.")}</label><input name="dob" type="date"></div>
       <label class="row nowrap sm" style="color:var(--ink);font-weight:500;align-items:flex-start"><input type="checkbox" required style="width:auto;height:auto;margin-top:2px"> Saya (atau orang tua/wali untuk peserta di bawah 17 tahun) setuju data ini dipakai untuk turnamen ini.</label>
       <button class="btn block mt" type="submit">Kirim pendaftaran</button>
     </form>
