@@ -110,12 +110,13 @@ let done={};try{done=JSON.parse(localStorage.getItem("ksl-guide")||"{}")}catch(e
 function shell(){
   const app=document.getElementById("app");
   const isPanel=area==="panel", ph=document.body.classList.contains("phone");
+  document.body.classList.toggle("area-panel",isPanel);
+  const brand=`<a href="index.html" class="logo"><span class="mark">${icon("crown")}</span><span class="wm"><b>Turnamen Catur</b><span>KSL · King Sang Long</span></span></a>`;
   const head=`<header><div class="hbar">
-    <a href="index.html" class="logo"><span class="mark">${icon("crown")}</span><span>Turnamen Catur<small>KSL</small></span></a>
+    ${brand}
     <span class="sp"></span>
     <div class="toolbar">
-      ${isPanel?`<span class="who-pill dsk">${av("Mukhlish")}<span><b>Mukhlish</b> <span class="mute">Admin KSL</span></span></span><span class="div dsk"></span>`:""}
-      <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
+            <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
       <span class="div"></span>
       <button class="tb" data-act="guide">${icon("guide")}Guide <span class="count" id="gCount"></span></button>
     </div>
@@ -123,7 +124,10 @@ function shell(){
   const railItems=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"],0,["index","home","Halaman publik"],["masuk","out","Keluar"]]
     :[["index","home","Beranda"],["turnamen","info","Ringkasan turnamen"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],0,["panel","lock","Panel panitia"]];
-  const rail=`<nav class="rail"><a href="index.html" class="mark" data-tip="Turnamen Catur KSL" style="width:40px;height:40px;color:#fff">${icon("crown","lg")}</a>${railItems.map(x=>x?`<a href="${["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]))}" class="${page===x[0]?"on":""}" data-tip="${x[2]}">${icon(x[1],"lg")}</a>`:"<hr>").join("")}</nav>`;
+  const href=x=>["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]));
+  const rail=isPanel
+    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL</span></div></div></nav>`
+    :`<nav class="rail">${railItems.map(x=>x?`<a href="${href(x)}" class="${page===x[0]?"on":""}" data-tip="${x[2]}">${icon(x[1],"lg")}</a>`:"<hr>").join("")}</nav>`;
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
     :[["index","home","Beranda"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["masuk","lock","Panitia"]];
