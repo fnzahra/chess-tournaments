@@ -35,7 +35,8 @@ body.phone #stage{display:flex;justify-content:center;padding:16px;background:#e
 .rail.wide .me{margin-top:auto;display:flex;gap:8px;align-items:center;padding:8px 6px;border-top:1px solid var(--line);font-size:12px}
 .rail.wide .me b{display:block;font-size:13px}
 body.area-panel header .logo{display:none}
-body.phone #app{width:390px;min-height:780px;height:calc(100vh - 32px);overflow:auto;overflow-x:hidden;border-radius:32px;border:8px solid #18181b;box-shadow:0 12px 40px #0003}
+body.phone #app::-webkit-scrollbar{display:none}
+body.phone #app{scrollbar-width:none;width:390px;min-height:780px;height:calc(100vh - 32px);overflow:auto;overflow-x:hidden;border-radius:32px;border:8px solid #18181b;box-shadow:0 12px 40px #0003}
 
 /* icon rail (laptop) */
 .rail{grid-row:1/4;grid-column:1;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 0;background:var(--card);border-right:1px solid var(--line)}
@@ -220,7 +221,8 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
   .g2,.g2e,.g3{grid-template-columns:1fr}
   .g4{grid-template-columns:1fr 1fr}
   .keep3{grid-template-columns:repeat(3,1fr)!important}
-  main{padding:2px 12px 16px}
+  main{padding:2px 12px 12px}
+  .bnav a{min-width:0;height:44px;justify-content:center}
   td{white-space:normal} td.n,td.r{white-space:nowrap}
   th,td{padding:8px 10px}
   h1{font-size:18px}
@@ -231,7 +233,7 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
   .xt td:nth-child(2){max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .acts{flex-direction:column;align-items:stretch;gap:4px}
   .addrow{grid-template-columns:1fr 1fr} .addrow>:first-child{grid-column:1/-1}
-  .bnav{grid-column:1/-1;display:flex;position:sticky;bottom:0;margin:0 10px 10px;padding:4px;background:var(--card);border-radius:999px;box-shadow:0 4px 20px #0000001f;z-index:20}
+  .bnav{grid-column:1/-1;display:flex;position:sticky;bottom:10px;margin:0 10px 10px;padding:4px;background:var(--card);border-radius:999px;box-shadow:0 4px 20px #0000001f;z-index:20}
   .bnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0 5px;border-radius:999px;font-size:10px;color:var(--mute)}
   .bnav a.on{background:var(--dark);color:#fff}
 }
