@@ -56,7 +56,9 @@ header{grid-column:2;position:sticky;top:0;z-index:20;background:#f3f4f3e6;backd
 /* brand wordmark: mark + two-line name, one weight/colour family */
 .logo{display:flex;align-items:center;gap:8px;white-space:nowrap}
 .logo .mark{width:30px;height:30px;border-radius:8px}
-.wm{font-size:14px;font-weight:600}
+.wm{font-size:15px;font-weight:700}
+/* KSL emblem cropped from assets/ksl-logo.jpg (drawing only, without the caption) */
+.mark.ksl{background:#fff url(ksl-logo.jpg) 50% 24%/107.4% auto no-repeat;box-shadow:0 0 0 1px var(--line)}
 .sp{flex:1}
 /* floating pill toolbar */
 .toolbar{display:flex;align-items:center;gap:2px;padding:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;box-shadow:var(--sh)}
