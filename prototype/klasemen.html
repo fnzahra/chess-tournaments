@@ -22,7 +22,7 @@ KSL.page(()=>{
     </div>
     <div class="tscroll bt"><table>
       <tr><th class="n">#</th><th>Nama</th><th class="n">Poin</th><th class="n">SB</th><th class="n">M</th><th class="n">S</th><th class="n">K</th><th class="dsk">Klub</th></tr>
-      ${s.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n"><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span></td><td>${pLink(p.id,p.name)}</td><td class="n b">${fmt(p.pts)}</td><td class="n">${p.sb.toFixed(2)}</td><td class="n">${p.w}</td><td class="n">${p.d}</td><td class="n">${p.l}</td><td class="dsk mute">${p.club}</td></tr>`).join("")}
+      ${s.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n"><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span></td><td>${pLink(p.id,p.name,1)}</td><td class="n b">${fmt(p.pts)}</td><td class="n">${p.sb.toFixed(2)}</td><td class="n">${p.w}</td><td class="n">${p.d}</td><td class="n">${p.l}</td><td class="dsk mute">${p.club}</td></tr>`).join("")}
     </table></div>
   </div>
   <div class="sm mute mt">Urutan: poin, lalu Sonneborn-Berger (SB), lalu jumlah menang. M = menang, S = seri, K = kalah.</div>`;

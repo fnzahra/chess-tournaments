@@ -28,9 +28,9 @@ KSL.page(()=>{
     <div>
       <h3>Sedang berlangsung</h3>
       <div class="card list mb">${live.map(row).join("")}</div>
-      <div class="card pad mb row between" style="background:var(--brand);color:#fff;border:0">
-        <div><div class="sm" style="color:#c4d6cc">Babak berjalan</div><b>${t.name}</b><div class="sm" style="color:#c4d6cc">${t.classes.map(c=>c.name+": babak "+curRound(c)).join(" · ")}</div></div>
-        <a class="btn acc" href="pairing.html?kelas=0">${icon("swap")}Lihat pairing</a>
+      <div class="card pad mb row between" style="background:var(--brand);color:#fff">
+        <div><div class="sm" style="color:#bcd3c7">Babak berjalan</div><b>${t.name}</b><div class="sm" style="color:#bcd3c7">${t.classes.map(c=>c.name+": babak "+curRound(c)).join(" · ")}</div></div>
+        <a class="btn alt" href="pairing.html?kelas=0">${icon("swap")}Lihat pairing</a>
       </div>
       <h3>Akan datang</h3>
       <div class="card list mb">${soon.map(row).join("")}</div>
