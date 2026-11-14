@@ -4,34 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daftar penyelenggara · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794695628">
+<link rel="stylesheet" href="assets/style.css?v=1794697563">
 </head>
 <body data-page="daftar" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794695628"></script>
+<script src="assets/app.js?v=1794697563"></script>
 <script>
 const {icon}=KSL;
-let sent=false;
-KSL.page(()=>sent?`
-  <div class="card pad" style="max-width:440px;margin:24px auto;text-align:center">
-    <span class="logo" style="justify-content:center"><span class="mark" style="width:44px;height:44px;background:var(--ok-soft);color:var(--ok)">${icon("check","lg")}</span></span>
-    <h1 class="mt">Pendaftaran terkirim</h1>
-    <div class="sm mute mt2">Admin KSL akan meninjau akun Anda. Kabar dikirim lewat WhatsApp.</div>
-    <a class="btn alt mt" href="index.html">Kembali ke beranda</a>
-  </div>`:`
-  <div class="card" style="max-width:520px;margin:24px auto">
-    <div class="pad"><h1>Daftar penyelenggara</h1><div class="sm mute mt2">Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri di Turnamen Catur KSL.</div></div>
-    <div class="pad bt">
-      <h3>Klub / komunitas</h3>
-      <div class="field"><label>Nama klub atau komunitas</label><input placeholder="contoh: Komunitas Catur Galis"></div>
-      <div class="grid g2e"><div class="field"><label>Kota / kabupaten</label><input placeholder="Pamekasan"></div><div class="field"><label>Jenis</label><select><option>Klub catur</option><option>Sekolah</option><option>Komunitas</option><option>Instansi</option></select></div></div>
-      <h3 class="mt">Penanggung jawab</h3>
-      <div class="grid g2e"><div class="field"><label>Nama</label><input></div><div class="field"><label>Nomor WhatsApp</label><input inputmode="tel" placeholder="08xx"><div class="hint">Kode verifikasi dikirim ke nomor ini.</div></div></div>
-      <div class="field"><label>Kata sandi</label><input type="password"><div class="hint">Minimal 8 karakter.</div></div>
-      <button class="btn block" data-act="kirim">Kirim pendaftaran</button>
-    </div>
-    <div class="pad bt sm mute" style="text-align:center">Sudah punya akun? <a class="lnk" href="masuk.html">Masuk</a></div>
-  </div>`,{kirim:()=>{sent=true}});
+// sign-up flow: 0 form -> 1 WhatsApp code -> 2 account ready
+const st={step:0,club:"",wa:""};
+const S=["Data klub","Verifikasi","Selesai"];
+const head=()=>`<div class="prog"><div class="track"><i style="width:${(st.step+1)/3*100}%"></i></div>
+  <div class="labels">${S.map((x,i)=>`<span class="${i===st.step?"on":i<st.step?"done":""}">${i<st.step?icon("check"):""}${x}</span>`).join("")}</div></div>`;
+KSL.page(()=>`
+  <div class="card" style="max-width:480px;margin:16px auto">
+    <div class="pad"><h1 class="mb">Daftar penyelenggara${KSL.tip("Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri. Gratis.","Daftar penyelenggara")}</h1>${head()}</div>
+    ${st.step===0?`
+    <form class="pad bt" id="f">
+      <div class="field"><label>Nama klub / komunitas</label><input name="club" required placeholder="Komunitas Catur Galis"></div>
+      <div class="grid g2e"><div class="field"><label>Kota</label><input required placeholder="Pamekasan"></div><div class="field"><label>Jenis</label><select><option>Klub catur</option><option>Sekolah</option><option>Komunitas</option></select></div></div>
+      <div class="grid g2e"><div class="field"><label>Nama Anda</label><input required></div><div class="field"><label>WhatsApp${KSL.tip("Kode verifikasi dikirim ke nomor ini.","Nomor WhatsApp")}</label><input name="wa" required inputmode="tel" placeholder="08xx"></div></div>
+      <div class="field"><label>Kata sandi</label><input type="password" required minlength="8" placeholder="Minimal 8 karakter"></div>
+      <label class="row nowrap sm" style="color:var(--ink);font-weight:500;align-items:flex-start"><input type="checkbox" required style="width:auto;height:auto;margin-top:2px"> Saya setuju dengan <a class="lnk" href="#" data-act="sk">Syarat &amp; Ketentuan</a> dan <a class="lnk" href="#" data-act="sk">Kebijakan Privasi</a>.</label>
+      <button class="btn block mt" type="submit">Kirim kode</button>
+    </form>`:st.step===1?`
+    <form class="pad bt" id="otp">
+      <div class="sm">Kode 4 angka dikirim ke <b>${st.wa}</b>.</div>
+      <div class="otp mt">${[0,1,2,3].map(i=>`<input inputmode="numeric" maxlength="1" required data-otp="${i}">`).join("")}</div>
+      <button class="btn block mt" type="submit">Verifikasi</button>
+      <div class="row between mt sm"><a class="lnk" href="#" data-act="back">Ganti nomor</a><a class="lnk" href="#" data-act="resend">Kirim ulang</a></div>
+    </form>`:`
+    <div class="pad bt" style="text-align:center">
+      <span class="av lg" style="background:var(--ok-soft);color:var(--ok)">${icon("check","lg")}</span>
+      <h2 class="mt">${st.club} siap</h2>
+      <div class="sm mute mt2">Turnamen pertama: semua fitur Premium terbuka gratis.</div>
+      <div class="row mt" style="justify-content:center"><a class="btn" href="panel-buat.html">${icon("plus")}Buat turnamen</a><a class="btn alt" href="paket.html">Lihat paket</a></div>
+    </div>`}
+    ${st.step===0?`<div class="pad bt sm mute" style="text-align:center">Sudah punya akun? <a class="lnk" href="masuk.html">Masuk</a></div>`:""}
+  </div>`,{
+  back:()=>{st.step=0},
+  resend:()=>KSL.toast("Kode baru dikirim","msg"),
+  sk:()=>KSL.toast("Halaman S&K dan Kebijakan Privasi disiapkan saat produksi.","info",3000)
+});
+document.addEventListener("submit",e=>{e.preventDefault();
+  if(e.target.id==="f"){const f=new FormData(e.target);st.club=f.get("club");st.wa=f.get("wa");st.step=1;KSL.render();document.querySelector("[data-otp]").focus()}
+  if(e.target.id==="otp"){st.step=2;KSL.render()}
+});
+// move to next box after typing a digit
+document.addEventListener("input",e=>{const i=e.target.dataset.otp;if(i==null||!e.target.value)return;const n=document.querySelector(`[data-otp="${+i+1}"]`);if(n)n.focus()});
 </script>
 </body>
 </html>

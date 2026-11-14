@@ -34,10 +34,13 @@ const P={
  msg:'<path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/>',
  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
  dash:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><path d="M3 16h7v5H3z"/>'
 };
 const AVC=["#e7efeb","#f6efe2","#e8eef6","#f3e8ee","#ececee","#eef3e2"];
 const av=(n,c="")=>{const h=[...n].reduce((a,ch)=>a+ch.charCodeAt(0),0);return `<span class="av ${c}" style="background:${AVC[h%AVC.length]}">${n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase()}</span>`};
+const esc=t=>String(t).replace(/"/g,"&quot;");
+const tip=(t,h="")=>`<span class="tip" role="button" tabindex="0" data-act="tip" data-h="${esc(h)}" data-t="${esc(t)}" aria-label="Penjelasan">?</span>`;
 const icon=(n,c="")=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 
 // ---------- sample data ----------
@@ -52,16 +55,18 @@ const TOURS=[
  {id:"ksl",name:"Turnamen Penggalangan Dana KSL",org:"KSL",place:"Rumah Raihan, Pamekasan",date:"Ahad, 12 Jul 2026",time:"07.00 - 09.00 WIB",status:"live",sys:"Liga satu putaran",fee:"Rp 5.000",tb:"Pertemuan langsung, Jumlah menang, Sonneborn-Berger, Koya",
   classes:[{name:"Kelas A",desc:"Kemampuan tinggi",players:mk(A),rounds:rr(8),pub:5},{name:"Kelas B",desc:"Menengah / pemula",players:mk(B),rounds:rr(8),pub:5}]},
  {id:"pahlawan",name:"Turnamen Catur Hari Pahlawan 2026",org:"KSL",place:"Pamekasan",date:"10 Nov 2026",status:"done",sys:"Swiss 7 babak",n:80},
- {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Galis",date:"29 Nov 2026",status:"soon",sys:"Swiss 5 babak",n:32},
- {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",status:"soon",sys:"Gugur",n:16}
+ {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Balai Desa Galis",date:"29 Nov 2026",time:"08.00 WIB",status:"soon",sys:"Swiss 5 babak",n:32,fee:"Rp 10.000",until:"27 Nov 2026",open:"Semua klub",
+  reg:[["Hasbullah","Komunitas Catur Galis"],["Raihan","KSL"],["Siti Aminah","Ruang Catur"],["Ahmad Fauzan","Komunitas Catur Galis"],["Yoga","KSL"],["Dimas","Sumenep"]]},
+ {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",time:"07.30 WIB",status:"soon",sys:"Gugur",n:16,fee:"Gratis",until:"4 Des 2026",open:"Pelajar SD–SMA",
+  reg:[["Alvin","KSL"],["Nabila","SMPN 2 Pamekasan"],["Fikri","KSL"]]}
 ];
 const T=TOURS[0];
 T.classes.forEach(c=>play(c,4));
 // restore edits saved in this browser
 const KEY="ksl-proto-v2";
-try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>c.rounds[ri][bi].res=r))})}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,extra:c.players.slice(8),res:c.rounds.map(g=>g.map(x=>x.res))}))))}catch(e){}}
-function reset(){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;if(k.players)c.players=k.players;else(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri][bi];if(Array.isArray(r)){x.w=r[0];x.b=r[1];x.res=r[2]}else x.res=r}))})}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}))))}catch(e){}}
+function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending");localStorage.removeItem("ksl-plan");localStorage.removeItem("ksl-orgs")}catch(e){}location.reload()}
 
 // ---------- glossary & tie-break presets ----------
 const TERMS={
@@ -74,7 +79,7 @@ const TERMS={
  "Rata-rata rating lawan":"Rata-rata rating semua lawan yang dihadapi.",
  "Menang dengan hitam":"Jumlah kemenangan saat bermain dengan buah hitam.",
  "Bye":"Tidak dapat lawan di babak itu karena jumlah pemain ganjil. Biasanya dapat 1 poin.",
- "WO":"Menang karena lawan tidak hadir. Tidak dihitung untuk rating."
+ "WO":"Menang karena lawan tidak hadir (ditulis +/−). Dapat 1 poin, tapi tidak dihitung untuk rating."
 };
 const TB={
  rr:["Pertemuan langsung","Jumlah menang","Sonneborn-Berger","Koya","Menang dengan hitam"],
@@ -83,19 +88,48 @@ const TB={
 };
 
 // ---------- chess helpers ----------
-const score=r=>r==="1-0"?[1,0]:r==="0-1"?[0,1]:r==="½-½"?[.5,.5]:null;
+const score=r=>r==="1-0"||r==="+/-"?[1,0]:r==="0-1"||r==="-/+"?[0,1]:r==="½-½"?[.5,.5]:null;
+const forfeit=r=>r==="+/-"||r==="-/+";
 function standings(c){
   const s=c.players.map(p=>({...p,pts:0,w:0,d:0,l:0,g:0,opp:[]}));
   c.rounds.forEach(g=>g.forEach(x=>{const p=score(x.res);if(!p)return;[[x.w,x.b,p[0]],[x.b,x.w,p[1]]].forEach(([me,op,v])=>{const m=s[me];m.pts+=v;m.g++;v===1?m.w++:v===0?m.l++:m.d++;m.opp.push([op,v])})}));
-  s.forEach(p=>p.sb=p.opp.reduce((a,[o,v])=>a+v*s[o].pts,0));
+  s.forEach(p=>{
+    p.sb=p.opp.reduce((a,[o,v])=>a+v*s[o].pts,0);          // Sonneborn-Berger
+    p.bh=p.opp.reduce((a,[o])=>a+s[o].pts,0);              // Buchholz
+    p.koya=p.opp.reduce((a,[o,v])=>a+(s[o].pts>=s[o].g/2?v:0),0); // Koya: vs opponents on >= 50%
+  });
   // round-robin order: points, direct encounter, wins, Sonneborn-Berger, rating
   const h2h=(a,b)=>{const m=a.opp.find(([o])=>o===b.id);return m?(m[1]===1?-1:m[1]===0?1:0):0};
-  return s.slice().sort((a,b)=>b.pts-a.pts||h2h(a,b)||b.w-a.w||b.sb-a.sb||b.rtg-a.rtg);
+  return s.slice().sort((a,b)=>b.pts-a.pts||h2h(a,b)||b.w-a.w||b.sb-a.sb||b.koya-a.koya||b.rtg-a.rtg);
+}
+// tournament statistics for one class (played games only; forfeits counted apart)
+function stats(c){
+  const o={games:0,white:0,draw:0,black:0,wo:0,upsets:0,clubs:{},avg:0};
+  c.players.forEach(p=>o.clubs[p.club]=(o.clubs[p.club]||0)+1);
+  o.avg=Math.round(c.players.reduce((a,p)=>a+(p.rtg||0),0)/(c.players.length||1));
+  c.rounds.forEach(g=>g.forEach(x=>{if(!x.res)return;if(forfeit(x.res)){o.wo++;return}o.games++;
+    const w=c.players[x.w].rtg,b=c.players[x.b].rtg;
+    if(x.res==="1-0"){o.white++;if(w+100<=b)o.upsets++}else if(x.res==="0-1"){o.black++;if(b+100<=w)o.upsets++}else o.draw++}));
+  return o;
 }
 const curRound=c=>{const i=c.rounds.findIndex(g=>g.some(x=>!x.res));return i<0?c.rounds.length:i+1};
 const doneRounds=c=>c.rounds.filter(g=>g.every(x=>x.res)).length;
 const fmt=n=>n===0?"0":n<1?"½":(n%1?Math.floor(n)+"½":String(n));
 const pill=s=>s==="live"?'<span class="pill live">Berlangsung</span>':s==="done"?'<span class="pill ok">Selesai</span>':'<span class="pill">Segera</span>';
+
+// ---------- share & self-registration ----------
+const shareUrl=()=>location.href.replace(/[^/]*$/,"turnamen.html?kelas=0");
+function copyLink(){const u=shareUrl();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast("Link disalin"),()=>{prompt("Salin link ini:",u)})}
+const waHref=()=>"https://wa.me/?text="+encodeURIComponent("Pairing & klasemen "+T.name+": "+shareUrl());
+const PKEY="ksl-pending";
+const pending=()=>{try{return JSON.parse(localStorage.getItem(PKEY)||"[]")}catch(e){return[]}};
+const setPending=a=>{try{localStorage.setItem(PKEY,JSON.stringify(a))}catch(e){}};
+
+// ---------- plan (free / premium), simulated in this browser ----------
+const plan=()=>{try{return localStorage.getItem("ksl-plan")||"free"}catch(e){return"free"}};
+const setPlan=v=>{try{localStorage.setItem("ksl-plan",v)}catch(e){}};
+const pro=()=>plan()!=="free";
+const proPill='<span class="pill pro">Premium</span>';
 
 // ---------- url params ----------
 const Q=new URLSearchParams(location.search);
@@ -115,6 +149,8 @@ const GUIDE=[
   ["klasemen","Klasemen","Poin dan tie-break dihitung otomatis. Juara 1-3 ditandai."],
   ["peserta","Daftar peserta","Semua pemain per kelas dengan rating dan asal klub."],
   ["tabel-silang","Tabel silang","Hasil semua pertemuan dalam satu tabel."],
+  ["segera","Turnamen akan datang","Lihat pendaftar dari berbagai klub, lalu daftar."],
+  ["daftar-peserta","Daftar jadi peserta","Pemain mendaftar sendiri. Panitia tinggal menerima."],
   ["pemain","Detail pemain","Riwayat lawan dan hasil tiap babak satu pemain."]]],
  ["Panitia / wasit",[
   ["masuk","Masuk","Hanya panitia yang login. Penonton tidak perlu akun."],
@@ -123,7 +159,8 @@ const GUIDE=[
   ["panel-buat","Buat turnamen","Tiga langkah: info, kelas dan sistem, lalu terbitkan."],
   ["panel-pemain","Kelola pemain","Tambah manual atau impor Excel, per kelas."],
   ["panel-babak","Babak dan hasil","Isi hasil per meja, lalu buat pairing babak berikutnya."],
-  ["panel-penyelenggara","Penyelenggara (admin KSL)","Pantau dan setujui klub lain yang mendaftar."]]],
+  ["panel-penyelenggara","Penyelenggara (admin KSL)","Pantau dan setujui klub lain yang mendaftar."],
+  ["paket","Paket Gratis / Premium","Fitur inti gratis. Premium untuk fitur tambahan."]]],
 ];
 const file=id=>(id==="index"?"index":id)+".html";
 let done={};try{done=JSON.parse(localStorage.getItem("ksl-guide")||"{}")}catch(e){}
@@ -145,11 +182,11 @@ function shell(){
     </div>
   </div></header>`;
   const railItems=isPanel
-    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"],0,["index","home","Halaman publik"],["masuk","out","Keluar"]]
+    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman publik"],["masuk","out","Keluar"]]
     :[["index","home","Beranda"],["turnamen","info","Ringkasan turnamen"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],0,["panel","lock","Panel panitia"]];
   const href=x=>["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]));
   const rail=isPanel
-    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL</span></div></div></nav>`
+    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL · ${pro()?"Premium":"Gratis"}</span></div></div></nav>`
     :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
@@ -157,7 +194,7 @@ function shell(){
   const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${p==="index"||p==="masuk"||isPanel?file(p):link(file(p))}" class="${page===p?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
   app.insertAdjacentHTML("afterbegin",rail+head);
   app.insertAdjacentHTML("beforeend",bnav);
-  document.body.insertAdjacentHTML("beforeend",`<aside id="guide"><div class="gh"><b>Guide</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" data-act="guide-close">${icon("x")}Tutup</button></div><ol id="gList"></ol><div class="pad bt sm mute">Centang fitur yang sudah dicoba. <button class="lnk" data-act="reset">Reset data contoh</button></div></aside><div id="shade" data-act="guide-close"></div><div id="toast"></div>`);
+  document.body.insertAdjacentHTML("beforeend",`<aside id="guide"><div class="gh"><b>Guide</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" data-act="guide-close">${icon("x")}Tutup</button></div><ol id="gList"></ol><div class="pad bt sm mute">Centang fitur yang sudah dicoba. <button class="lnk" data-act="reset">Reset data contoh</button></div></aside><div id="shade" data-act="guide-close"></div><div id="toast"></div><div id="pop" data-act="pop-close"><div class="popc" data-act="pop-stay" role="dialog" aria-modal="true"><div class="row nowrap" style="gap:8px">${icon("info","lg")}<b></b></div><p></p><button class="btn block" data-act="pop-close">Mengerti</button></div></div>`);
   renderGuide();
 }
 function renderGuide(){
@@ -167,7 +204,14 @@ function renderGuide(){
   document.getElementById("gCount").textContent=n+"/"+tot;
   document.getElementById("gBar").style.width=(n/tot*100)+"%";
 }
-function toast(t,ic="check"){const e=document.getElementById("toast");e.innerHTML=icon(ic)+t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),1900)}
+// popup for "?" help: title (or first words before ":"), short text, one close button
+function openPop(h,t){
+  if(!h){const i=t.indexOf(": ");if(i>0&&i<40){h=t.slice(0,i);t=t.slice(i+2)}else h="Info"}
+  const p=document.getElementById("pop");p.querySelector("b").textContent=h;p.querySelector("p").textContent=t;p.classList.add("open");p.querySelector("button").focus();
+}
+function closePop(){document.getElementById("pop").classList.remove("open")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePop();if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("tip")){e.preventDefault();e.target.click()}});
+function toast(t,ic="check",ms=1900){const e=document.getElementById("toast");e.innerHTML=icon(ic)+"<span>"+t+"</span>";e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),ms)}
 
 // ---------- shared blocks ----------
 function tourHead(active){
@@ -201,8 +245,11 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act;
   if(a==="guide")document.getElementById("guide").classList.add("open");
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
-  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelector("header").remove();document.querySelector(".rail").remove();document.querySelector(".bnav").remove();document.getElementById("guide").remove();document.getElementById("shade").remove();document.getElementById("toast").remove();shell()}
+  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelectorAll("header,.rail,.bnav,#guide,#shade,#toast,#pop").forEach(x=>x.remove());shell()}
   else if(a==="reset")reset();
+  else if(a==="pro"){e.preventDefault();if(pro())toast(el.dataset.f+" (Premium) dijalankan");else location.href="paket.html?f="+encodeURIComponent(el.dataset.f)}
+  else if(a==="tip"){e.preventDefault();openPop(el.dataset.h,el.dataset.t)}
+  else if(a==="pop-close")closePop();
   else if(acts[a]){e.preventDefault();acts[a](el);render()}
 });
 document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e.target.selectionStart;setParam("cari",e.target.value);render();const f=document.getElementById("cari");f.focus();f.setSelectionRange(pos,pos)});
@@ -210,6 +257,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={stats,forfeit,plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

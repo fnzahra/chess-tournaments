@@ -4,18 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Masuk · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794695628">
+<link rel="stylesheet" href="assets/style.css?v=1794697563">
 </head>
 <body data-page="masuk" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794695628"></script>
+<script src="assets/app.js?v=1794697563"></script>
 <script>
 const {icon}=KSL;
 KSL.page(()=>`
   <div class="card" style="max-width:380px;margin:24px auto">
     <div class="pad">
-      <h1>Masuk penyelenggara</h1>
-      <div class="sm mute mt2">Untuk panitia dan wasit. Penonton tidak perlu masuk.</div>
+      <h1>Masuk penyelenggara${KSL.tip("Untuk panitia dan wasit. Penonton tidak perlu masuk.","Masuk")}</h1>
     </div>
     <div class="pad bt">
       <div class="field"><label>Nomor HP atau email</label><input inputmode="email" value="0877 5057 xxxx"></div>
