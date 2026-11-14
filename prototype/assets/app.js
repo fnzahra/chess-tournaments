@@ -66,7 +66,7 @@ T.classes.forEach(c=>play(c,4));
 const KEY="ksl-proto-v2";
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;if(k.players)c.players=k.players;else(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri][bi];if(Array.isArray(r)){x.w=r[0];x.b=r[1];x.res=r[2]}else x.res=r}))})}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}))))}catch(e){}}
-function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending");localStorage.removeItem("ksl-plan")}catch(e){}location.reload()}
+function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending");localStorage.removeItem("ksl-plan");localStorage.removeItem("ksl-orgs")}catch(e){}location.reload()}
 
 // ---------- glossary & tie-break presets ----------
 const TERMS={
@@ -101,6 +101,16 @@ function standings(c){
   // round-robin order: points, direct encounter, wins, Sonneborn-Berger, rating
   const h2h=(a,b)=>{const m=a.opp.find(([o])=>o===b.id);return m?(m[1]===1?-1:m[1]===0?1:0):0};
   return s.slice().sort((a,b)=>b.pts-a.pts||h2h(a,b)||b.w-a.w||b.sb-a.sb||b.koya-a.koya||b.rtg-a.rtg);
+}
+// tournament statistics for one class (played games only; forfeits counted apart)
+function stats(c){
+  const o={games:0,white:0,draw:0,black:0,wo:0,upsets:0,clubs:{},avg:0};
+  c.players.forEach(p=>o.clubs[p.club]=(o.clubs[p.club]||0)+1);
+  o.avg=Math.round(c.players.reduce((a,p)=>a+(p.rtg||0),0)/(c.players.length||1));
+  c.rounds.forEach(g=>g.forEach(x=>{if(!x.res)return;if(forfeit(x.res)){o.wo++;return}o.games++;
+    const w=c.players[x.w].rtg,b=c.players[x.b].rtg;
+    if(x.res==="1-0"){o.white++;if(w+100<=b)o.upsets++}else if(x.res==="0-1"){o.black++;if(b+100<=w)o.upsets++}else o.draw++}));
+  return o;
 }
 const curRound=c=>{const i=c.rounds.findIndex(g=>g.some(x=>!x.res));return i<0?c.rounds.length:i+1};
 const doneRounds=c=>c.rounds.filter(g=>g.every(x=>x.res)).length;
@@ -247,6 +257,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={forfeit,plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={stats,forfeit,plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();
