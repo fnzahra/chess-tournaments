@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masuk · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css?v=1794697563">
+</head>
+<body data-page="masuk" data-area="publik">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js?v=1794697563"></script>
+<script>
+const {icon}=KSL;
+KSL.page(()=>`
+  <div class="card" style="max-width:380px;margin:24px auto">
+    <div class="pad">
+      <h1>Masuk penyelenggara${KSL.tip("Untuk panitia dan wasit. Penonton tidak perlu masuk.","Masuk")}</h1>
+    </div>
+    <div class="pad bt">
+      <div class="field"><label>Nomor HP atau email</label><input inputmode="email" value="0877 5057 xxxx"></div>
+      <div class="field"><label>Kata sandi</label><input type="password" value="prototype"><div class="hint"><a class="lnk" href="#" data-act="lupa">Lupa kata sandi?</a></div></div>
+      <a class="btn block" href="panel.html">${icon("lock")}Masuk</a>
+    </div>
+    <div class="pad bt sm mute" style="text-align:center">Klub atau komunitas baru? <a class="lnk" href="daftar.html">Daftar penyelenggara</a></div>
+  </div>`,{lupa:()=>KSL.toast("Link reset dikirim lewat WhatsApp","msg")});
+</script>
+</body>
+</html>
