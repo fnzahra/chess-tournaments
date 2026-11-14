@@ -261,4 +261,4 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
   .bnav a.on{background:var(--dark);color:#fff}
 }
 @container app (min-width:701px){ .mob{display:none!important} }
-@container app (max-width:360px){ .xt td.n,.xt th.n{min-width:20px} .xt th,.xt td{padding:5px 2px} .tb[data-act=device],.toolbar .div{display:none} th,td{padding:6px 4px;font-size:12px} td .av{display:none} .board{gap:4px} }
+@container app (max-width:360px){ .keep3{grid-template-columns:repeat(3,minmax(0,1fr))!important} .keep3 .stat{padding:8px} .keep3 .stat span{font-size:11px;overflow-wrap:anywhere} .xt td.n,.xt th.n{min-width:20px} .xt th,.xt td{padding:5px 2px} .tb[data-act=device],.toolbar .div{display:none} th,td{padding:6px 4px;font-size:12px} td .av{display:none} .board{gap:4px} }

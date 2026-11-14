@@ -4,17 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kelola pemain · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794695848">
+<link rel="stylesheet" href="assets/style.css?v=1794696400">
 </head>
 <body data-page="panel-pemain" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794695848"></script>
+<script src="assets/app.js?v=1794696400"></script>
 <script>
 const {T,icon,kelas,link}=KSL;
+let ed=null;
 KSL.page(()=>{
   const c=T.classes[kelas()];
   return KSL.panelShell("panel-pemain",`
-  <div class="row between mb"><div><h1>Pemain</h1><div class="sm mute">${T.name}</div></div><button class="btn alt sm" data-act="xls">${icon("upload")}Impor Excel</button></div>
+  <div class="row between mb"><div><h1>Pemain</h1><div class="sm mute">${T.name}</div></div><label class="btn alt sm" style="margin:0;color:var(--ink);font-size:12px">${icon("upload")}Impor CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label></div>
+  ${(()=>{const pend=KSL.pending().map((p,i)=>({...p,i})).filter(p=>p.k===kelas());return pend.length?`<div class="card mb"><div class="pad row between"><b>Menunggu konfirmasi (${pend.length})</b><span class="sm mute">Dari halaman Daftar jadi peserta</span></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${KSL.av(p.name)}<span><b>${p.name}</b><div class="sm mute">${p.club}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""})()}
   <div class="card">
     <div class="pad row between"><div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div><span class="sm mute">${c.desc}</span></div>
     <div class="pad bt">
@@ -37,15 +39,24 @@ KSL.page(()=>{
     </div>
     <div class="tscroll bt"><table>
       <tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th class="dsk">Klub / Kota</th><th class="r">Aksi</th></tr>
-      ${c.players.map((p,i)=>`<tr><td class="n">${i+1}</td><td><span class="who">${KSL.av(p.name)}<b>${p.name}</b>${i>7?' <span class="pill acc">baru</span>':""}</span></td><td class="n">${p.rtg||"-"}</td><td class="dsk mute">${p.club}</td><td class="r"><button class="btn alt sm" data-act="edit" title="Ubah">${icon("edit")}</button></td></tr>`).join("")}
+      ${c.players.map((p,i)=>ed===i?`<tr><td class="n">${i+1}</td><td colspan="3"><div class="grid addrow"><div><input id="en" value="${p.name}"></div><div><input id="er" inputmode="numeric" value="${p.rtg}"></div><div><input id="ek" value="${p.club}"></div><div class="row nowrap"><button class="btn sm" data-act="esave" data-i="${i}">Simpan</button><button class="btn alt sm" data-act="ecancel">Batal</button></div></div></td><td></td></tr>`:`<tr><td class="n">${i+1}</td><td><span class="who">${KSL.av(p.name)}<b>${p.name}</b>${i>7?' <span class="pill acc">baru</span>':""}</span></td><td class="n">${p.rtg||"-"}</td><td class="dsk mute">${p.club}</td><td class="r"><button class="btn alt sm" data-act="edit" data-i="${i}" title="Ubah ${p.name}">${icon("edit")}</button></td></tr>`).join("")}
     </table></div>
     <div class="pad bt sm mute">Pemain hanya bisa ditambah atau dihapus sebelum babak 1 dimulai. Setelah itu, data hanya bisa diubah (nama, rating, klub).</div>
   </div>`)},{
   add:()=>{const c=T.classes[kelas()],n=document.getElementById("pn").value.trim();if(!n){KSL.toast("Isi nama pemain dulu","info");return}
     c.players.push({id:c.players.length,name:n,rtg:+document.getElementById("pr").value||0,club:document.getElementById("pk").value||"-"});KSL.save();KSL.toast(n+" ditambahkan")},
-  edit:()=>KSL.toast("Form ubah pemain","edit"),
-  xls:()=>KSL.toast("Pilih file Excel: kolom Nama, Rating, Klub","upload")
+  edit:el=>{ed=+el.dataset.i},
+  ecancel:()=>{ed=null},
+  esave:el=>{const p=T.classes[kelas()].players[+el.dataset.i],n=document.getElementById("en").value.trim();if(!n){KSL.toast("Nama tidak boleh kosong","info");return}
+    p.name=n;p.rtg=+document.getElementById("er").value||0;p.club=document.getElementById("ek").value.trim()||"-";ed=null;KSL.save();KSL.toast("Data "+n+" disimpan")},
+  acc:el=>{const a=KSL.pending(),p=a.splice(+el.dataset.i,1)[0],c=T.classes[p.k];c.players.push({id:c.players.length,name:p.name,rtg:0,club:p.club});KSL.setPending(a);KSL.save();KSL.toast(p.name+" diterima")},
+  rej:el=>{const a=KSL.pending(),p=a.splice(+el.dataset.i,1)[0];KSL.setPending(a);KSL.toast("Pendaftaran "+p.name+" ditolak","x")}
 });
+// CSV import: one player per line, "Nama,Rating,Klub" (header line optional)
+document.addEventListener("change",e=>{if(e.target.id!=="csv"||!e.target.files[0])return;
+  e.target.files[0].text().then(t=>{const c=T.classes[kelas()];let n=0;
+    t.split(String.fromCharCode(10)).map(l=>l.split(/[;,]/).map(x=>x.trim())).filter(r=>r[0]&&!/^nama$/i.test(r[0])).forEach(([nm,rt,cl])=>{c.players.push({id:c.players.length,name:nm,rtg:+rt||0,club:cl||"-"});n++});
+    KSL.save();KSL.render();KSL.toast(n+" pemain diimpor","upload")})});
 </script>
 </body>
 </html>

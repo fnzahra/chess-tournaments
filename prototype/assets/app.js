@@ -59,9 +59,9 @@ const T=TOURS[0];
 T.classes.forEach(c=>play(c,4));
 // restore edits saved in this browser
 const KEY="ksl-proto-v2";
-try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>c.rounds[ri][bi].res=r))})}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,extra:c.players.slice(8),res:c.rounds.map(g=>g.map(x=>x.res))}))))}catch(e){}}
-function reset(){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;if(k.players)c.players=k.players;else(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri][bi];if(Array.isArray(r)){x.w=r[0];x.b=r[1];x.res=r[2]}else x.res=r}))})}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}))))}catch(e){}}
+function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending")}catch(e){}location.reload()}
 
 // ---------- glossary & tie-break presets ----------
 const TERMS={
@@ -87,15 +87,27 @@ const score=r=>r==="1-0"?[1,0]:r==="0-1"?[0,1]:r==="½-½"?[.5,.5]:null;
 function standings(c){
   const s=c.players.map(p=>({...p,pts:0,w:0,d:0,l:0,g:0,opp:[]}));
   c.rounds.forEach(g=>g.forEach(x=>{const p=score(x.res);if(!p)return;[[x.w,x.b,p[0]],[x.b,x.w,p[1]]].forEach(([me,op,v])=>{const m=s[me];m.pts+=v;m.g++;v===1?m.w++:v===0?m.l++:m.d++;m.opp.push([op,v])})}));
-  s.forEach(p=>p.sb=p.opp.reduce((a,[o,v])=>a+v*s[o].pts,0));
+  s.forEach(p=>{
+    p.sb=p.opp.reduce((a,[o,v])=>a+v*s[o].pts,0);          // Sonneborn-Berger
+    p.bh=p.opp.reduce((a,[o])=>a+s[o].pts,0);              // Buchholz
+    p.koya=p.opp.reduce((a,[o,v])=>a+(s[o].pts>=s[o].g/2?v:0),0); // Koya: vs opponents on >= 50%
+  });
   // round-robin order: points, direct encounter, wins, Sonneborn-Berger, rating
   const h2h=(a,b)=>{const m=a.opp.find(([o])=>o===b.id);return m?(m[1]===1?-1:m[1]===0?1:0):0};
-  return s.slice().sort((a,b)=>b.pts-a.pts||h2h(a,b)||b.w-a.w||b.sb-a.sb||b.rtg-a.rtg);
+  return s.slice().sort((a,b)=>b.pts-a.pts||h2h(a,b)||b.w-a.w||b.sb-a.sb||b.koya-a.koya||b.rtg-a.rtg);
 }
 const curRound=c=>{const i=c.rounds.findIndex(g=>g.some(x=>!x.res));return i<0?c.rounds.length:i+1};
 const doneRounds=c=>c.rounds.filter(g=>g.every(x=>x.res)).length;
 const fmt=n=>n===0?"0":n<1?"½":(n%1?Math.floor(n)+"½":String(n));
 const pill=s=>s==="live"?'<span class="pill live">Berlangsung</span>':s==="done"?'<span class="pill ok">Selesai</span>':'<span class="pill">Segera</span>';
+
+// ---------- share & self-registration ----------
+const shareUrl=()=>location.href.replace(/[^/]*$/,"turnamen.html?kelas=0");
+function copyLink(){const u=shareUrl();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast("Link disalin"),()=>{prompt("Salin link ini:",u)})}
+const waHref=()=>"https://wa.me/?text="+encodeURIComponent("Pairing & klasemen "+T.name+": "+shareUrl());
+const PKEY="ksl-pending";
+const pending=()=>{try{return JSON.parse(localStorage.getItem(PKEY)||"[]")}catch(e){return[]}};
+const setPending=a=>{try{localStorage.setItem(PKEY,JSON.stringify(a))}catch(e){}};
 
 // ---------- url params ----------
 const Q=new URLSearchParams(location.search);
@@ -115,6 +127,7 @@ const GUIDE=[
   ["klasemen","Klasemen","Poin dan tie-break dihitung otomatis. Juara 1-3 ditandai."],
   ["peserta","Daftar peserta","Semua pemain per kelas dengan rating dan asal klub."],
   ["tabel-silang","Tabel silang","Hasil semua pertemuan dalam satu tabel."],
+  ["daftar-peserta","Daftar jadi peserta","Pemain mendaftar sendiri. Panitia tinggal menerima."],
   ["pemain","Detail pemain","Riwayat lawan dan hasil tiap babak satu pemain."]]],
  ["Panitia / wasit",[
   ["masuk","Masuk","Hanya panitia yang login. Penonton tidak perlu akun."],
@@ -210,6 +223,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Buat turnamen · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794695848">
+<link rel="stylesheet" href="assets/style.css?v=1794696400">
 </head>
 <body data-page="panel-buat" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794695848"></script>
+<script src="assets/app.js?v=1794696400"></script>
 <script>
 const {icon}=KSL;
 const st={step:0,fmt:"rr",classes:["Kelas A","Kelas B"],tb:null};
@@ -58,7 +58,7 @@ KSL.page(()=>{
   fmt:el=>{st.fmt=el.dataset.k;st.tb=null},
   addk:()=>st.classes.push("Kelas "+String.fromCharCode(65+st.classes.length)),
   rm:el=>st.classes.splice(+el.dataset.i,1),
-  copy:()=>KSL.toast("Link disalin"),wa:()=>KSL.toast("Membuka WhatsApp","msg")
+  copy:()=>KSL.copyLink(),wa:()=>window.open(KSL.waHref(),"_blank","noopener")
 });
 document.addEventListener("change",e=>{const i=e.target.dataset.tb;if(i==null)return;st.tb[+i]=e.target.value;KSL.render()});
 </script>

@@ -4,38 +4,44 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beranda · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794695848">
+<link rel="stylesheet" href="assets/style.css?v=1794696400">
 </head>
 <body data-page="index" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794695848"></script>
+<script src="assets/app.js?v=1794696400"></script>
 <script>
-const {TOURS,icon,pill,curRound}=KSL;
+const {TOURS,icon,pill,curRound,av}=KSL;
+let q="";
 KSL.page(()=>{
   const row=t=>`<a href="${t.classes?"turnamen.html?kelas=0":"#"}" ${t.classes?"":'data-act="soon"'}>
     <div class="grow"><b>${t.name}</b>
       <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span><span>${icon("list")}${t.sys}</span></div></div>
     <div style="text-align:right">${pill(t.status)}<div class="sm mute mt2">${t.org==="KSL"?'<span class="pill acc">KSL</span>':t.org}</div></div>
     ${icon("right")}</a>`;
-  const live=TOURS.filter(t=>t.status==="live"),soon=TOURS.filter(t=>t.status==="soon"),done=TOURS.filter(t=>t.status==="done");
+  const m=t=>!q||(t.name+" "+t.place+" "+t.org).toLowerCase().includes(q);
+  const live=TOURS.filter(t=>t.status==="live"&&m(t)),soon=TOURS.filter(t=>t.status==="soon"&&m(t)),done=TOURS.filter(t=>t.status==="done"&&m(t));
+  // player matches across the live tournament's classes
+  const pm=q?TOURS[0].classes.flatMap((c,k)=>c.players.filter(p=>p.name.toLowerCase().includes(q)).map(p=>({...p,k,cn:c.name}))):[];
+  const empty=x=>x.length?"":'<div class="pad sm mute">Tidak ada yang cocok.</div>';
   const t=TOURS[0];
   return `
   <div class="hero">
     <h1>Turnamen Catur</h1>
-    <div class="input-ic" style="min-width:220px;flex:0 1 300px">${icon("search")}<input placeholder="Cari turnamen atau pemain"></div>
+    <div class="input-ic" style="min-width:220px;flex:0 1 300px">${icon("search")}<input id="q" placeholder="Cari turnamen atau pemain" value="${q}"></div>
   </div>
   <div class="grid g2">
     <div>
       <h3>Sedang berlangsung</h3>
-      <div class="card list mb">${live.map(row).join("")}</div>
+      ${pm.length?`<h3>Pemain</h3><div class="card list mb">${pm.map(p=>`<a href="pemain.html?kelas=${p.k}&id=${p.id}">${av(p.name)}<div class="grow"><b>${p.name}</b><div class="sm mute">${p.cn} · ${p.club}</div></div>${icon("right")}</a>`).join("")}</div>`:""}
+      <div class="card list mb">${live.map(row).join("")}${empty(live)}</div>
       <div class="card pad mb row between" style="background:var(--brand);color:#fff">
         <div><div class="sm" style="color:#bcd3c7">Babak berjalan</div><b>${t.name}</b><div class="sm" style="color:#bcd3c7">${t.classes.map(c=>c.name+": babak "+curRound(c)).join(" · ")}</div></div>
         <a class="btn alt" href="pairing.html?kelas=0">${icon("swap")}Lihat pairing</a>
       </div>
       <h3>Akan datang</h3>
-      <div class="card list mb">${soon.map(row).join("")}</div>
+      <div class="card list mb">${soon.map(row).join("")}${empty(soon)}</div>
       <h3>Arsip</h3>
-      <div class="card list">${done.map(row).join("")}</div>
+      <div class="card list">${done.map(row).join("")}${empty(done)}</div>
     </div>
     <div>
       <h3>Klub Catur King Sang Long</h3>
@@ -61,6 +67,7 @@ KSL.page(()=>{
     </div>
   </div>`;
 },{soon:()=>KSL.toast("Contoh data hanya untuk turnamen KSL yang berlangsung","info")});
+document.addEventListener("input",e=>{if(e.target.id!=="q")return;q=e.target.value.trim().toLowerCase();const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("q");f.focus();f.setSelectionRange(pos,pos)});
 </script>
 </body>
 </html>
