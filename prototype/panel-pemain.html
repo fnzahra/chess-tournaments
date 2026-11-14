@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kelola pemain · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696928">
+<link rel="stylesheet" href="assets/style.css?v=1794697018">
 </head>
 <body data-page="panel-pemain" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696928"></script>
+<script src="assets/app.js?v=1794697018"></script>
 <script>
 const {T,icon,kelas,link}=KSL;
 let ed=null;
@@ -16,7 +16,7 @@ KSL.page(()=>{
   const c=T.classes[kelas()];
   return KSL.panelShell("panel-pemain",`
   <div class="row between mb"><div><h1>Pemain</h1><div class="sm mute">${T.name}</div></div><label class="btn alt sm" style="margin:0;color:var(--ink);font-size:12px">${icon("upload")}Impor CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label></div>
-  ${(()=>{const pend=KSL.pending().map((p,i)=>({...p,i})).filter(p=>p.k===kelas());return pend.length?`<div class="card mb"><div class="pad row between"><b>Menunggu konfirmasi (${pend.length})</b></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${KSL.av(p.name)}<span><b>${p.name}</b><div class="sm mute">${p.club}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""})()}
+  ${(()=>{const pend=KSL.pending().map((p,i)=>({...p,i})).filter(p=>(p.t||"ksl")==="ksl"&&p.k===kelas());return pend.length?`<div class="card mb"><div class="pad row between"><b>Menunggu konfirmasi (${pend.length})</b></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${KSL.av(p.name)}<span><b>${p.name}</b><div class="sm mute">${p.club}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""})()}
   <div class="card">
     <div class="pad row between"><div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div><span class="sm mute">${c.desc}</span></div>
     <div class="pad bt">

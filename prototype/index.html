@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beranda · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696928">
+<link rel="stylesheet" href="assets/style.css?v=1794697018">
 </head>
 <body data-page="index" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696928"></script>
+<script src="assets/app.js?v=1794697018"></script>
 <script>
 const {TOURS,icon,pill,curRound,av}=KSL;
 let q="";
 KSL.page(()=>{
-  const row=t=>`<a href="${t.classes?"turnamen.html?kelas=0":"#"}" ${t.classes?"":'data-act="soon"'}>
+  const row=t=>`<a href="${t.classes?"turnamen.html?kelas=0":t.status==="soon"?"segera.html?t="+t.id:"https://s1.chess-results.com/tnr1537302.aspx?lan=26"}" ${t.status==="done"?'target="_blank" rel="noopener"':""}>
     <div class="grow"><b>${t.name}</b>
       <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span><span>${icon("list")}${t.sys}</span></div></div>
     <div style="text-align:right">${pill(t.status)}<div class="sm mute mt2">${t.org==="KSL"?'<span class="pill acc">KSL</span>':t.org}</div></div>

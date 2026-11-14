@@ -54,8 +54,10 @@ const TOURS=[
  {id:"ksl",name:"Turnamen Penggalangan Dana KSL",org:"KSL",place:"Rumah Raihan, Pamekasan",date:"Ahad, 12 Jul 2026",time:"07.00 - 09.00 WIB",status:"live",sys:"Liga satu putaran",fee:"Rp 5.000",tb:"Pertemuan langsung, Jumlah menang, Sonneborn-Berger, Koya",
   classes:[{name:"Kelas A",desc:"Kemampuan tinggi",players:mk(A),rounds:rr(8),pub:5},{name:"Kelas B",desc:"Menengah / pemula",players:mk(B),rounds:rr(8),pub:5}]},
  {id:"pahlawan",name:"Turnamen Catur Hari Pahlawan 2026",org:"KSL",place:"Pamekasan",date:"10 Nov 2026",status:"done",sys:"Swiss 7 babak",n:80},
- {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Galis",date:"29 Nov 2026",status:"soon",sys:"Swiss 5 babak",n:32},
- {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",status:"soon",sys:"Gugur",n:16}
+ {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Balai Desa Galis",date:"29 Nov 2026",time:"08.00 WIB",status:"soon",sys:"Swiss 5 babak",n:32,fee:"Rp 10.000",until:"27 Nov 2026",open:"Semua klub",
+  reg:[["Hasbullah","Komunitas Catur Galis"],["Raihan","KSL"],["Siti Aminah","Ruang Catur"],["Ahmad Fauzan","Komunitas Catur Galis"],["Yoga","KSL"],["Dimas","Sumenep"]]},
+ {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",time:"07.30 WIB",status:"soon",sys:"Gugur",n:16,fee:"Gratis",until:"4 Des 2026",open:"Pelajar SD–SMA",
+  reg:[["Alvin","KSL"],["Nabila","SMPN 2 Pamekasan"],["Fikri","KSL"]]}
 ];
 const T=TOURS[0];
 T.classes.forEach(c=>play(c,4));
@@ -135,6 +137,7 @@ const GUIDE=[
   ["klasemen","Klasemen","Poin dan tie-break dihitung otomatis. Juara 1-3 ditandai."],
   ["peserta","Daftar peserta","Semua pemain per kelas dengan rating dan asal klub."],
   ["tabel-silang","Tabel silang","Hasil semua pertemuan dalam satu tabel."],
+  ["segera","Turnamen akan datang","Lihat pendaftar dari berbagai klub, lalu daftar."],
   ["daftar-peserta","Daftar jadi peserta","Pemain mendaftar sendiri. Panitia tinggal menerima."],
   ["pemain","Detail pemain","Riwayat lawan dan hasil tiap babak satu pemain."]]],
  ["Panitia / wasit",[
