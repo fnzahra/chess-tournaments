@@ -79,7 +79,7 @@ const TERMS={
  "Rata-rata rating lawan":"Rata-rata rating semua lawan yang dihadapi.",
  "Menang dengan hitam":"Jumlah kemenangan saat bermain dengan buah hitam.",
  "Bye":"Tidak dapat lawan di babak itu karena jumlah pemain ganjil. Biasanya dapat 1 poin.",
- "WO":"Menang karena lawan tidak hadir. Tidak dihitung untuk rating."
+ "WO":"Menang karena lawan tidak hadir (ditulis +/−). Dapat 1 poin, tapi tidak dihitung untuk rating."
 };
 const TB={
  rr:["Pertemuan langsung","Jumlah menang","Sonneborn-Berger","Koya","Menang dengan hitam"],
@@ -88,7 +88,8 @@ const TB={
 };
 
 // ---------- chess helpers ----------
-const score=r=>r==="1-0"?[1,0]:r==="0-1"?[0,1]:r==="½-½"?[.5,.5]:null;
+const score=r=>r==="1-0"||r==="+/-"?[1,0]:r==="0-1"||r==="-/+"?[0,1]:r==="½-½"?[.5,.5]:null;
+const forfeit=r=>r==="+/-"||r==="-/+";
 function standings(c){
   const s=c.players.map(p=>({...p,pts:0,w:0,d:0,l:0,g:0,opp:[]}));
   c.rounds.forEach(g=>g.forEach(x=>{const p=score(x.res);if(!p)return;[[x.w,x.b,p[0]],[x.b,x.w,p[1]]].forEach(([me,op,v])=>{const m=s[me];m.pts+=v;m.g++;v===1?m.w++:v===0?m.l++:m.d++;m.opp.push([op,v])})}));
@@ -246,6 +247,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={forfeit,plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

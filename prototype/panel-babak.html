@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Babak dan hasil · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697142">
+<link rel="stylesheet" href="assets/style.css?v=1794697298">
 </head>
 <body data-page="panel-babak" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697142"></script>
+<script src="assets/app.js?v=1794697298"></script>
 <script>
 const {T,icon,kelas,qp,link,curRound}=KSL;
 let r=null,swap=false,pick=null; // pick = [board, "w"|"b"]
@@ -25,10 +25,10 @@ KSL.page(()=>{
       <div class="seg">${c.rounds.map((_,i)=>`<a class="${i+1===r?"on":""} ${i+1>c.pub?"off":""}" href="#" data-act="round" data-r="${i+1}">${i+1}</a>`).join("")}</div></div>
       <span class="pill ${left?"live":"ok"}">${left?left+" meja belum ada hasil":"Babak "+r+" lengkap"}</span>
     </div>
-    ${g.map((x,i)=>`<div class="board bt" style="grid-template-columns:28px 1fr auto">
+    ${g.map((x,i)=>`<div class="board bt rb" style="grid-template-columns:28px 1fr auto">
       <span class="no">${i+1}</span>
       <span class="row nowrap" style="min-width:0;gap:6px"><i class="sq w"></i>${nameBtn(c,x,i,"w")}<span class="mute sm">vs</span>${nameBtn(c,x,i,"b")}<i class="sq k"></i></span>
-      ${swap?`<button class="btn alt sm" data-act="color" data-b="${i}" ${x.res?"disabled":""}>${icon("swap")}Warna</button>`:`<span class="seg">${["1-0","½-½","0-1"].map(v=>`<button class="${x.res===v?"on":""}" data-act="res" data-b="${i}" data-v="${v}">${v}</button>`).join("")}</span>`}
+      ${swap?`<button class="btn alt sm" data-act="color" data-b="${i}" ${x.res?"disabled":""}>${icon("swap")}Warna</button>`:`<span class="row nowrap" style="gap:4px"><span class="seg">${["1-0","½-½","0-1"].map(v=>`<button class="${x.res===v?"on":""}" data-act="res" data-b="${i}" data-v="${v}">${v}</button>`).join("")}</span><button class="chip ${KSL.forfeit(x.res)?"on":""}" data-act="wo" data-b="${i}" title="Menang WO">${x.res==="+/-"?"+/−":x.res==="-/+"?"−/+":"WO"}</button></span>`}
     </div>`).join("")}
     <div class="pad bt row between">
       <span class="sm mute">${swap?"Ketuk dua nama":""}${KSL.tip(swap?"Ketuk dua nama untuk menukar lawan, atau tombol Warna untuk menukar putih/hitam. Meja yang sudah ada hasilnya tidak bisa diubah.":"Ketuk hasil untuk menyimpan, ketuk lagi untuk membatalkan. Klasemen publik ikut berubah otomatis.",swap?"Ubah pairing":"Isi hasil")}</span>
@@ -39,6 +39,7 @@ KSL.page(()=>{
   round:el=>r=+el.dataset.r,
   res:el=>{const x=T.classes[kelas()].rounds[r-1][+el.dataset.b],v=el.dataset.v;x.res=x.res===v?null:v;KSL.save();KSL.toast(x.res?"Hasil meja "+(+el.dataset.b+1)+" disimpan":"Hasil dibatalkan")},
   swap:()=>{swap=!swap;pick=null},
+  wo:el=>{const x=T.classes[kelas()].rounds[r-1][+el.dataset.b];x.res=x.res==="+/-"?"-/+":x.res==="-/+"?null:"+/-";KSL.save();KSL.toast(x.res?"WO: "+(x.res==="+/-"?"putih":"hitam")+" menang":"WO dibatalkan","info")},
   color:el=>{const x=T.classes[kelas()].rounds[r-1][+el.dataset.b];[x.w,x.b]=[x.b,x.w];KSL.save();KSL.toast("Warna meja "+(+el.dataset.b+1)+" ditukar")},
   pick:el=>{const g=T.classes[kelas()].rounds[r-1],b=+el.dataset.b,sd=el.dataset.s;
     if(g[b].res){KSL.toast("Meja "+(b+1)+" sudah ada hasilnya","info");return}
