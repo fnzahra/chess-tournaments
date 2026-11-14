@@ -111,7 +111,7 @@ function shell(){
   const app=document.getElementById("app");
   const isPanel=area==="panel", ph=document.body.classList.contains("phone");
   document.body.classList.toggle("area-panel",isPanel);
-  const brand=`<a href="index.html" class="logo"><span class="mark">${icon("crown")}</span><span class="wm"><b>Turnamen Catur</b><span>KSL · King Sang Long</span></span></a>`;
+  const brand=`<a href="index.html" class="logo"><span class="mark">${icon("crown")}</span><span class="wm">Turnamen Catur</span></a>`;
   const head=`<header><div class="hbar">
     ${brand}
     <span class="sp"></span>
