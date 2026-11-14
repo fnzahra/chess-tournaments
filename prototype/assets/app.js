@@ -34,6 +34,7 @@ const P={
  msg:'<path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/>',
  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
  dash:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><path d="M3 16h7v5H3z"/>'
 };
 const AVC=["#e7efeb","#f6efe2","#e8eef6","#f3e8ee","#ececee","#eef3e2"];
@@ -62,7 +63,7 @@ T.classes.forEach(c=>play(c,4));
 const KEY="ksl-proto-v2";
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;if(k.players)c.players=k.players;else(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri][bi];if(Array.isArray(r)){x.w=r[0];x.b=r[1];x.res=r[2]}else x.res=r}))})}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}))))}catch(e){}}
-function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending")}catch(e){}location.reload()}
+function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending");localStorage.removeItem("ksl-plan")}catch(e){}location.reload()}
 
 // ---------- glossary & tie-break presets ----------
 const TERMS={
@@ -110,6 +111,12 @@ const PKEY="ksl-pending";
 const pending=()=>{try{return JSON.parse(localStorage.getItem(PKEY)||"[]")}catch(e){return[]}};
 const setPending=a=>{try{localStorage.setItem(PKEY,JSON.stringify(a))}catch(e){}};
 
+// ---------- plan (free / premium), simulated in this browser ----------
+const plan=()=>{try{return localStorage.getItem("ksl-plan")||"free"}catch(e){return"free"}};
+const setPlan=v=>{try{localStorage.setItem("ksl-plan",v)}catch(e){}};
+const pro=()=>plan()!=="free";
+const proPill='<span class="pill pro">Premium</span>';
+
 // ---------- url params ----------
 const Q=new URLSearchParams(location.search);
 const qp=(k,d)=>Q.has(k)?Q.get(k):d;
@@ -137,7 +144,8 @@ const GUIDE=[
   ["panel-buat","Buat turnamen","Tiga langkah: info, kelas dan sistem, lalu terbitkan."],
   ["panel-pemain","Kelola pemain","Tambah manual atau impor Excel, per kelas."],
   ["panel-babak","Babak dan hasil","Isi hasil per meja, lalu buat pairing babak berikutnya."],
-  ["panel-penyelenggara","Penyelenggara (admin KSL)","Pantau dan setujui klub lain yang mendaftar."]]],
+  ["panel-penyelenggara","Penyelenggara (admin KSL)","Pantau dan setujui klub lain yang mendaftar."],
+  ["paket","Paket Gratis / Premium","Fitur inti gratis. Premium untuk fitur tambahan."]]],
 ];
 const file=id=>(id==="index"?"index":id)+".html";
 let done={};try{done=JSON.parse(localStorage.getItem("ksl-guide")||"{}")}catch(e){}
@@ -159,11 +167,11 @@ function shell(){
     </div>
   </div></header>`;
   const railItems=isPanel
-    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"],0,["index","home","Halaman publik"],["masuk","out","Keluar"]]
+    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman publik"],["masuk","out","Keluar"]]
     :[["index","home","Beranda"],["turnamen","info","Ringkasan turnamen"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],0,["panel","lock","Panel panitia"]];
   const href=x=>["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]));
   const rail=isPanel
-    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL</span></div></div></nav>`
+    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL · ${pro()?"Premium":"Gratis"}</span></div></div></nav>`
     :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
@@ -217,6 +225,7 @@ document.addEventListener("click",e=>{
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
   else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelector("header").remove();document.querySelector(".rail").remove();document.querySelector(".bnav").remove();document.getElementById("guide").remove();document.getElementById("shade").remove();document.getElementById("toast").remove();shell()}
   else if(a==="reset")reset();
+  else if(a==="pro"){e.preventDefault();if(pro())toast(el.dataset.f+" (Premium) dijalankan");else location.href="paket.html?f="+encodeURIComponent(el.dataset.f)}
   else if(a==="tip"){e.preventDefault();toast(el.dataset.t,"info",Math.max(2500,el.dataset.t.length*60))}
   else if(acts[a]){e.preventDefault();acts[a](el);render()}
 });
@@ -225,6 +234,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

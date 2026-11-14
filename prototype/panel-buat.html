@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Buat turnamen · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794696596">
+<link rel="stylesheet" href="assets/style.css?v=1794696723">
 </head>
 <body data-page="panel-buat" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794696596"></script>
+<script src="assets/app.js?v=1794696723"></script>
 <script>
 const {icon}=KSL;
 const st={step:0,fmt:"rr",classes:["Kelas A","Kelas B"],tb:null};
@@ -38,6 +38,7 @@ KSL.page(()=>{
         <div><label>Poin bye${KSL.tip(KSL.TERMS["Bye"])}</label><select><option>1</option><option>½</option><option>0</option></select></div>
         <div><label>Batas peserta</label><input placeholder="Tanpa batas"></div>
       </div>
+      <button class="row nowrap mt" style="width:100%;justify-content:space-between" data-act="pro" data-f="Kategori juara"><span class="sm">${icon("trophy")} Kategori juara (U-12, putri, senior)</span>${KSL.pro()?'<span class="pill ok">Aktif</span>':KSL.proPill}</button>
     </details>`;
   if(st.step===2)f=`
     <table class="mb"><tr><td class="mute">Nama</td><td><b>Turnamen Bulanan KSL Desember</b></td></tr><tr><td class="mute">Tanggal</td><td>20 Des 2026, 07.00 - 09.00 WIB</td></tr><tr><td class="mute">Kelas</td><td>${st.classes.join(", ")}</td></tr><tr><td class="mute">Sistem</td><td>${SYS[st.fmt][0]}</td></tr></table>
