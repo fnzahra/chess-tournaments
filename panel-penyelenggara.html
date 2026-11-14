@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penyelenggara · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="panel-penyelenggara" data-area="panel">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {icon}=KSL;
+const orgs=[
+ {name:"Klub Catur King Sang Long",city:"Pamekasan",pic:"Mukhlish",n:3,st:"owner"},
+ {name:"Komunitas Catur Galis",city:"Galis",pic:"Hasbullah",n:1,st:"aktif"},
+ {name:"Ruang Catur",city:"Pamekasan",pic:"Fathullah",n:0,st:"tunggu"}
+];
+const pillOf=s=>s==="owner"?'<span class="pill acc">Pemilik</span>':s==="aktif"?'<span class="pill ok">Aktif</span>':s==="tunggu"?'<span class="pill live">Menunggu</span>':'<span class="pill">Nonaktif</span>';
+KSL.page(()=>KSL.panelShell("panel-penyelenggara",`
+  <div class="mb"><h1>Penyelenggara</h1><div class="sm mute">Hanya admin KSL. Penyelenggara hanya bisa mengubah turnamennya sendiri.</div></div>
+  <div class="card tscroll"><table>
+    <tr><th>Klub / komunitas</th><th class="dsk">Penanggung jawab</th><th class="n">Turnamen</th><th>Status</th><th class="r">Aksi</th></tr>
+    ${orgs.map((o,i)=>`<tr><td><b>${o.name}</b><div class="sm mute">${o.city}</div></td><td class="dsk">${o.pic}</td><td class="n">${o.n}</td><td>${pillOf(o.st)}</td><td class="r">${
+      o.st==="tunggu"?`<div class="row nowrap" style="justify-content:flex-end"><button class="btn sm" data-act="ok" data-i="${i}">${icon("check")}Setujui</button><button class="btn alt sm" data-act="no" data-i="${i}">Tolak</button></div>`
+      :o.st==="aktif"?`<button class="btn alt sm" data-act="off" data-i="${i}">Nonaktifkan</button>`:o.st==="off"?`<button class="btn alt sm" data-act="ok" data-i="${i}">Aktifkan</button>`:""}</td></tr>`).join("")}
+  </table></div>`),{
+  ok:el=>{orgs[+el.dataset.i].st="aktif";KSL.toast("Penyelenggara disetujui")},
+  no:el=>{orgs.splice(+el.dataset.i,1);KSL.toast("Pendaftaran ditolak","x")},
+  off:el=>{orgs[+el.dataset.i].st="off";KSL.toast("Penyelenggara dinonaktifkan","info")}
+});
+</script>
+</body>
+</html>

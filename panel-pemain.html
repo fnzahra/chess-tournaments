@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelola pemain · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="panel-pemain" data-area="panel">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {T,icon,kelas,link}=KSL;
+KSL.page(()=>{
+  const c=T.classes[kelas()];
+  return KSL.panelShell("panel-pemain",`
+  <div class="row between mb"><div><h1>Pemain</h1><div class="sm mute">${T.name}</div></div><button class="btn alt sm" data-act="xls">${icon("upload")}Impor Excel</button></div>
+  <div class="card">
+    <div class="pad row between"><div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div><span class="sm mute">${c.desc}</span></div>
+    <div class="pad bt">
+      <div class="grid addrow">
+        <div><label>Nama pemain</label><input id="pn" placeholder="Nama lengkap"></div>
+        <div><label>Rating</label><input id="pr" inputmode="numeric" placeholder="0"></div>
+        <div><label>Klub / kota</label><input id="pk" placeholder="Pamekasan"></div>
+        <button class="btn" data-act="add">${icon("plus")}Tambah</button>
+      </div>
+    </div>
+    <div class="tscroll bt"><table>
+      <tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th class="dsk">Klub / Kota</th><th class="r">Aksi</th></tr>
+      ${c.players.map((p,i)=>`<tr><td class="n">${i+1}</td><td><b>${p.name}</b>${i>7?' <span class="pill acc">baru</span>':""}</td><td class="n">${p.rtg||"-"}</td><td class="dsk mute">${p.club}</td><td class="r"><button class="btn alt sm" data-act="edit" title="Ubah">${icon("edit")}</button></td></tr>`).join("")}
+    </table></div>
+    <div class="pad bt sm mute">Pemain hanya bisa ditambah atau dihapus sebelum babak 1 dimulai. Setelah itu, data hanya bisa diubah (nama, rating, klub).</div>
+  </div>`)},{
+  add:()=>{const c=T.classes[kelas()],n=document.getElementById("pn").value.trim();if(!n){KSL.toast("Isi nama pemain dulu","info");return}
+    c.players.push({id:c.players.length,name:n,rtg:+document.getElementById("pr").value||0,club:document.getElementById("pk").value||"-"});KSL.save();KSL.toast(n+" ditambahkan")},
+  edit:()=>KSL.toast("Form ubah pemain","edit"),
+  xls:()=>KSL.toast("Pilih file Excel: kolom Nama, Rating, Klub","upload")
+});
+</script>
+</body>
+</html>

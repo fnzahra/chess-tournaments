@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="panel" data-area="panel">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
+<script>
+const {T,TOURS,icon,pill,curRound,doneRounds}=KSL;
+KSL.page(()=>{
+  const mine=TOURS.filter(t=>t.org==="KSL");
+  return KSL.panelShell("panel",`
+  <div class="row between mb"><h1>Dashboard</h1><a class="btn sm" href="panel-buat.html">${icon("plus")}Buat turnamen</a></div>
+  <div class="grid g4 mb">
+    <div class="card stat"><b>${mine.filter(t=>t.status==="live").length}</b><span>berlangsung</span></div>
+    <div class="card stat"><b>${mine.filter(t=>t.status==="soon").length}</b><span>dijadwalkan</span></div>
+    <div class="card stat"><b>${mine.filter(t=>t.status==="done").length}</b><span>selesai</span></div>
+    <div class="card stat"><b>1</b><span>penyelenggara menunggu</span></div>
+  </div>
+  <h3>Perlu tindakan</h3>
+  <div class="card list mb">
+    ${T.classes.map((c,i)=>{const left=c.rounds[curRound(c)-1].filter(x=>!x.res).length;return `<a href="panel-babak.html?kelas=${i}">${icon("flag")}<div class="grow"><b>${c.name}: babak ${curRound(c)}</b><div class="sm mute">${left?left+" meja belum ada hasil":"Semua hasil terisi, siap pairing babak berikutnya"}</div></div><span class="pill ${left?"live":"ok"}">${doneRounds(c)} / ${c.rounds.length}</span>${icon("right")}</a>`}).join("")}
+    <a href="panel-penyelenggara.html">${icon("org")}<div class="grow"><b>Ruang Catur mendaftar</b><div class="sm mute">Menunggu persetujuan admin KSL</div></div><span class="pill acc">Baru</span>${icon("right")}</a>
+  </div>
+  <h3>Turnamen saya</h3>
+  <div class="card tscroll"><table>
+    <tr><th>Turnamen</th><th class="dsk">Tanggal</th><th>Status</th><th></th></tr>
+    ${mine.map(t=>`<tr><td><b>${t.name}</b><div class="sm mute">${t.sys}</div></td><td class="dsk">${t.date}</td><td>${pill(t.status)}</td><td class="r"><a class="btn alt sm" href="${t.classes?"panel-babak.html":"#"}" ${t.classes?"":'data-act="soon"'}>Kelola</a></td></tr>`).join("")}
+  </table></div>`)},{soon:()=>KSL.toast("Contoh data hanya untuk turnamen yang berlangsung","info")});
+</script>
+</body>
+</html>

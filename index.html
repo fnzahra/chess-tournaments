@@ -3,384 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Turnamen Catur KSL — Prototype</title>
-<style>
-:root{
-  --bg:#f4f5f7; --card:#fff; --ink:#1b2333; --mute:#6b7385; --line:#e3e6ec;
-  --brand:#16233f; --gold:#c9962b; --gold-soft:#fbf3e2; --ok:#1f8a4c; --bad:#c0392b; --live:#d9480f;
-  --r:8px; font-size:14px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4}
-a{color:inherit;text-decoration:none}
-button,input,select{font:inherit;color:inherit}
-button{cursor:pointer;border:0;background:none}
-
-/* device frame toggle */
-#stage{min-height:100vh}
-body.phone #stage{display:flex;justify-content:center;padding:16px;background:#d9dce3}
-#app{container-type:inline-size;container-name:app;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
-main{flex:1;width:100%}
-body.phone #app{width:390px;min-height:780px;max-height:calc(100vh - 32px);overflow:auto;border-radius:28px;border:8px solid #111;box-shadow:0 10px 30px #0003}
-
-/* header */
-header{background:var(--brand);color:#fff;position:sticky;top:0;z-index:20}
-.hbar{display:flex;align-items:center;gap:10px;padding:8px 14px;max-width:1100px;margin:auto}
-.logo{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}
-.logo i{width:28px;height:28px;border-radius:6px;background:var(--gold);color:var(--brand);display:grid;place-items:center;font-style:normal;font-size:17px}
-.logo small{color:var(--gold);font-weight:700}
-.nav{display:flex;gap:2px;margin-left:12px}
-.nav a{padding:6px 10px;border-radius:6px;color:#c8cfdd}
-.nav a.on,.nav a:hover{background:#ffffff1a;color:#fff}
-.sp{flex:1}
-.hbtn{padding:6px 10px;border-radius:6px;background:#ffffff14;color:#fff;display:flex;align-items:center;gap:6px;white-space:nowrap}
-.hbtn:hover{background:#ffffff26}
-.hbtn.gold{background:var(--gold);color:var(--brand);font-weight:600}
-.badge{background:var(--gold);color:var(--brand);border-radius:9px;padding:0 6px;font-size:11px;font-weight:700}
-
-/* layout */
-main{max-width:1100px;margin:auto;padding:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
-.pad{padding:12px 14px}
-h1{font-size:18px} h2{font-size:15px} h3{font-size:13px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.grid{display:grid;gap:10px}
-.g2{grid-template-columns:2fr 1fr}
-.g3{grid-template-columns:repeat(3,1fr)}
-.mute{color:var(--mute)} .sm{font-size:12px}
-.mb{margin-bottom:10px}.mt{margin-top:10px}
-.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:#eef0f4;color:var(--mute)}
-.pill.live{background:#fde8dd;color:var(--live)} .pill.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--live)}
-.pill.ok{background:#e3f4ea;color:var(--ok)} .pill.gold{background:var(--gold-soft);color:#8a6414}
-.btn{padding:7px 12px;border-radius:6px;background:var(--brand);color:#fff;font-weight:600;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
-.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn.gold{background:var(--gold);color:var(--brand)}
-.btn.sm{padding:4px 9px;font-size:12px}
-
-/* tables */
-table{width:100%;border-collapse:collapse}
-th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-size:11px;color:var(--mute);font-weight:600;text-transform:uppercase;background:#fafbfc}
-td.n,th.n{text-align:center;width:1%}
-tr.me td{background:var(--gold-soft)}
-.tscroll{overflow-x:auto}
-.medal{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;background:#eef0f4}
-.m1{background:#f5d77a}.m2{background:#d9dde3}.m3{background:#e8c29d}
-
-/* tabs */
-.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
-.tabs button{padding:8px 12px;color:var(--mute);border-bottom:2px solid transparent;white-space:nowrap;font-weight:600}
-.tabs button.on{color:var(--brand);border-color:var(--gold)}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
-.seg button{padding:5px 10px;font-weight:600;font-size:12px}
-.seg button+button{border-left:1px solid var(--line)}
-.seg button.on{background:var(--brand);color:#fff}
-
-/* pairing boards */
-.board{display:grid;grid-template-columns:32px 1fr 76px 1fr;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--line)}
-.board:last-child{border-bottom:0}
-.board .no{font-weight:700;color:var(--mute);text-align:center}
-.board .w,.board .b{display:flex;align-items:center;gap:6px;min-width:0}
-.board .w{justify-content:flex-end;text-align:right}
-.board .w .pc{order:-1;margin-right:auto}
-.board .b .pc{margin-left:auto}
-.board .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.board .pt{font-size:11px;color:var(--mute)}
-.pc{width:12px;height:12px;border-radius:3px;border:1px solid #999;flex:none}
-.pc.wh{background:#fff}.pc.bl{background:#222}
-.res{text-align:center;font-weight:700}
-.res.wait{color:var(--mute);font-weight:400;font-size:12px}
-
-/* tournament list */
-.tl a{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 14px;border-bottom:1px solid var(--line)}
-.tl a:hover{background:#fafbfc}
-.tl a:last-child{border-bottom:0}
-
-/* forms */
-label{display:block;font-size:12px;font-weight:600;color:var(--mute);margin-bottom:3px}
-input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#fff}
-.field{margin-bottom:10px}
-.steps{display:flex;gap:6px;margin-bottom:12px}
-.steps span{flex:1;font-size:12px;padding:6px;border-radius:6px;background:#eef0f4;color:var(--mute);text-align:center}
-.steps span.on{background:var(--brand);color:#fff}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:5px 10px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:12px}
-.chip.on{border-color:var(--gold);background:var(--gold-soft);font-weight:600}
-
-/* side menu panel */
-.panelwrap{display:grid;grid-template-columns:190px 1fr;gap:12px}
-.side a{display:block;padding:7px 10px;border-radius:6px;color:var(--mute);font-weight:600}
-.side a.on{background:#fff;color:var(--brand);border:1px solid var(--line)}
-.stat b{display:block;font-size:20px}
-
-/* guide */
-#guide{position:fixed;top:0;right:0;bottom:0;width:340px;max-width:100%;background:#fff;box-shadow:-6px 0 20px #0002;z-index:50;transform:translateX(105%);transition:.2s;display:flex;flex-direction:column}
-#guide.open{transform:none}
-#guide .gh{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
-#guide ol{list-style:none;overflow:auto;padding:6px 0}
-#guide li{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:8px 14px;border-bottom:1px solid #f0f1f4}
-#guide li input{width:16px;height:16px;margin-top:2px}
-#guide li b{display:block}
-#guide li a{color:#8a6414;font-weight:600;font-size:12px}
-#guide .grp{padding:8px 14px 2px;font-size:11px;color:var(--mute);font-weight:700;text-transform:uppercase}
-.bar{height:5px;background:#eef0f4;border-radius:3px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:var(--gold)}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;padding:8px 14px;border-radius:6px;opacity:0;transition:.2s;z-index:60;pointer-events:none}
-#toast.on{opacity:1}
-
-/* bottom nav (phone only) */
-.bnav{display:none}
-
-/* ===== phone layout (container query: works in real phones and in the phone frame) ===== */
-@container app (max-width:700px){
-  .nav,.hide-m{display:none!important}
-  .g2,.g3,.panelwrap{grid-template-columns:1fr}
-  .g3.keep{grid-template-columns:repeat(3,1fr)}
-  main{padding:10px 10px 70px}
-  .side{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-  .side a{white-space:nowrap;padding:6px 10px}
-  .board{grid-template-columns:24px 1fr 56px 1fr;padding:7px 8px}
-  .bnav{display:flex;position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:20}
-  .bnav a{flex:1;text-align:center;padding:7px 0 6px;font-size:11px;color:var(--mute)}
-  .bnav a span{display:block;font-size:17px}
-  .bnav a.on{color:var(--brand);font-weight:700}
-  th,td{padding:6px 6px}
-}
-</style>
+<title>Beranda · Turnamen Catur KSL</title>
+<link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
-<div id="stage"><div id="app">
-  <header><div class="hbar">
-    <a href="#/" class="logo"><i>♚</i><span>Turnamen Catur <small>KSL</small></span></a>
-    <nav class="nav" id="nav"></nav>
-    <div class="sp"></div>
-    <button class="hbtn" id="devBtn" title="Ganti tampilan laptop / HP">📱 <span class="hide-m">Tampilan HP</span></button>
-    <button class="hbtn gold" id="guideBtn">☑ Guide <span class="badge" id="gCount"></span></button>
-  </div></header>
-  <main id="view"></main>
-  <nav class="bnav" id="bnav"></nav>
-</div></div>
-
-<aside id="guide">
-  <div class="gh"><b style="flex:1">Guide fitur</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" id="gClose">Tutup</button></div>
-  <ol id="gList"></ol>
-</aside>
-<div id="toast"></div>
-
+<body data-page="index" data-area="publik">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js"></script>
 <script>
-// ---------- dummy data ----------
-const A=[["Raihan",1652,"Bugih"],["Radit",1611,"Pamekasan"],["Fikri",1585,"Galis"],["Abdi",1560,"Pamekasan"],["Robet",1534,"Bugih"],["Navil",1510,"Pademawu"],["Yoga",1497,"Pamekasan"],["Reza",1480,"Larangan"]];
-const B=[["Alvin",1310,"Pamekasan"],["Dafa",1288,"Bugih"],["Fauzi",1260,"Galis"],["Hasan",1241,"Pamekasan"],["Jaka",1220,"Pademawu"],["Leo",1198,"Bugih"],["Sahrul",1175,"Larangan"],["Yuda",1150,"Pamekasan"]];
-const mk=l=>l.map((p,i)=>({id:i,name:p[0],rtg:p[1],club:p[2]}));
-// round robin (circle method), 8 players = 7 rounds x 4 boards
-function rr(n){const a=[...Array(n).keys()],R=[];for(let r=0;r<n-1;r++){const g=[];for(let i=0;i<n/2;i++){let w=a[i],b=a[n-1-i];if((i===0&&r%2)||(i>0&&(i+r)%2))[w,b]=[b,w];g.push({w,b,res:null})}R.push(g);a.splice(1,0,a.pop())}return R}
-let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
-function play(cls,done){cls.rounds.forEach((g,ri)=>{if(ri>=done)return;g.forEach(x=>{const d=cls.players[x.w].rtg-cls.players[x.b].rtg+30,v=rnd()+d/400;x.res=v>.62?"1-0":v<.38?"0-1":"½-½"})})}
-const T=[
- {id:"ksl",name:"Turnamen Penggalangan Dana KSL",org:"KSL",place:"Rumah Raihan, Pamekasan",date:"Ahad, 12 Jul 2026",status:"live",sys:"Liga satu putaran",
-  classes:[{name:"Kelas A",players:mk(A),rounds:rr(8),pub:5},{name:"Kelas B",players:mk(B),rounds:rr(8),pub:5}]},
- {id:"pahlawan",name:"Turnamen Catur Hari Pahlawan 2026",org:"KSL",place:"Pamekasan",date:"10 Nov 2026",status:"done",sys:"Swiss 7 babak",players:80},
- {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Galis",date:"29 Nov 2026",status:"soon",sys:"Swiss 5 babak",players:32},
- {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",status:"soon",sys:"Gugur",players:16},
-];
-T[0].classes.forEach(c=>play(c,4));
-const pts=r=>r==="1-0"?[1,0]:r==="0-1"?[0,1]:r==="½-½"?[.5,.5]:null;
-function standings(c){
-  const s=c.players.map(p=>({...p,pts:0,w:0,g:0,opp:[]}));
-  c.rounds.forEach(g=>g.forEach(x=>{const p=pts(x.res);if(!p)return;s[x.w].pts+=p[0];s[x.b].pts+=p[1];s[x.w].g++;s[x.b].g++;if(p[0]===1)s[x.w].w++;if(p[1]===1)s[x.b].w++;s[x.w].opp.push([x.b,p[0]]);s[x.b].opp.push([x.w,p[1]])}));
-  s.forEach(p=>p.sb=p.opp.reduce((a,[o,r])=>a+r*s[o].pts,0));
-  return s.slice().sort((a,b)=>b.pts-a.pts||b.sb-a.sb||b.w-a.w);
-}
-const curRound=c=>{const i=c.rounds.findIndex(g=>g.some(x=>!x.res));return i<0?c.rounds.length:i+1};
-const fmt=n=>(n%1?Math.floor(n)+"½":n).toString().replace(/^0½/,"½");
-const statusPill=s=>s==="live"?'<span class="pill live">Berlangsung</span>':s==="done"?'<span class="pill ok">Selesai</span>':'<span class="pill">Segera</span>';
-
-// ---------- state ----------
-const st={tab:"pairing",cls:0,round:null,find:"",ptab:"babak",pcls:0,pround:null,step:0,fmt:"Liga satu putaran"};
-const $=s=>document.querySelector(s);
-function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),1800)}
-
-// ---------- views ----------
-function vHome(){
-  const live=T.filter(t=>t.status==="live"),rest=T.filter(t=>t.status!=="live");
-  const item=t=>`<a href="#/t/${t.id}"><b>${t.name}</b>${statusPill(t.status)}<span class="mute sm">${t.date} · ${t.place} · ${t.sys}</span><span class="mute sm">${t.org==="KSL"?'<span class="pill gold">KSL</span>':t.org}</span></a>`;
+const {TOURS,icon,pill,curRound}=KSL;
+KSL.page(()=>{
+  const row=t=>`<a href="${t.classes?"turnamen.html?kelas=0":"#"}" ${t.classes?"":'data-act="soon"'}>
+    <div class="grow"><b>${t.name}</b>
+      <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span><span>${icon("list")}${t.sys}</span></div></div>
+    <div style="text-align:right">${pill(t.status)}<div class="sm mute mt2">${t.org==="KSL"?'<span class="pill acc">KSL</span>':t.org}</div></div>
+    ${icon("right")}</a>`;
+  const live=TOURS.filter(t=>t.status==="live"),soon=TOURS.filter(t=>t.status==="soon"),done=TOURS.filter(t=>t.status==="done");
+  const t=TOURS[0];
   return `
-  <div class="card pad mb row" style="justify-content:space-between">
+  <div class="card pad mb row between">
     <div><h1>Turnamen Catur KSL</h1><div class="mute sm">Pairing, hasil, dan klasemen langsung dari HP. Tanpa login.</div></div>
-    <div class="row" style="flex-wrap:nowrap"><input id="q" placeholder="Cari turnamen / pemain" style="min-width:180px"><a class="btn" href="#/login">Buat turnamen</a></div>
+    <div class="input-ic" style="min-width:220px;flex:0 1 300px">${icon("search")}<input placeholder="Cari turnamen atau pemain"></div>
   </div>
   <div class="grid g2">
     <div>
-      <h3 class="mb">Sedang berlangsung</h3>
-      <div class="card tl mb">${live.map(item).join("")}</div>
-      <h3 class="mb">Jadwal & arsip</h3>
-      <div class="card tl">${rest.map(item).join("")}</div>
+      <h3>Sedang berlangsung</h3>
+      <div class="card list mb">${live.map(row).join("")}</div>
+      <div class="card pad mb row between" style="background:var(--brand);color:#fff;border:0">
+        <div><div class="sm" style="color:#c4d6cc">Babak berjalan</div><b>${t.name}</b><div class="sm" style="color:#c4d6cc">${t.classes.map(c=>c.name+": babak "+curRound(c)).join(" · ")}</div></div>
+        <a class="btn acc" href="pairing.html?kelas=0">${icon("swap")}Lihat pairing</a>
+      </div>
+      <h3>Akan datang</h3>
+      <div class="card list mb">${soon.map(row).join("")}</div>
+      <h3>Arsip</h3>
+      <div class="card list">${done.map(row).join("")}</div>
     </div>
     <div>
-      <h3 class="mb">Klub Catur King Sang Long</h3>
-      <div class="card pad sm">
-        <b>"Selalu ada jalan"</b>
-        <div class="mute mt">Jl. Basar 99 Bugih, Pamekasan</div>
-        <div class="grid g3 keep mt stat"><div><b>4</b><span class="mute">turnamen</span></div><div><b>144</b><span class="mute">pemain</span></div><div><b>2</b><span class="mute">penyelenggara</span></div></div>
+      <h3>Klub Catur King Sang Long</h3>
+      <div class="card pad mb">
+        <b>Selalu ada jalan</b>
+        <div class="meta mt2"><span>${icon("pin")}Jl. Basar 99 Bugih, Pamekasan</span></div>
+        <div class="grid g3 keep3 mt">
+          <div class="stat card"><b>4</b><span>turnamen</span></div>
+          <div class="stat card"><b>144</b><span>pemain</span></div>
+          <div class="stat card"><b>2</b><span>penyelenggara</span></div>
+        </div>
       </div>
-      <h3 class="mb mt">Klub / komunitas lain?</h3>
-      <div class="card pad sm">Daftar gratis, buat turnamen sendiri, bagikan link + QR.<div class="mt"><a class="btn alt sm" href="#/login">Daftar penyelenggara</a></div></div>
+      <h3>Klub atau komunitas lain</h3>
+      <div class="card pad">
+        <div class="sm">Buat turnamen sendiri, bagikan link dan QR ke peserta.</div>
+        <div class="row mt"><a class="btn sm" href="daftar.html">${icon("org")}Daftar penyelenggara</a><a class="btn alt sm" href="masuk.html">Masuk</a></div>
+      </div>
     </div>
   </div>`;
-}
-
-function vTour(id){
-  const t=T.find(x=>x.id===id);
-  if(!t.classes)return `<a class="mute sm" href="#/">← Semua turnamen</a><div class="card pad mt"><h1>${t.name}</h1><div class="mute sm mt">${t.date} · ${t.place} · ${t.sys} · ${t.players} pemain</div><div class="mt">${statusPill(t.status)}</div><p class="mute sm mt">Contoh prototype hanya berisi data untuk "Turnamen Penggalangan Dana KSL".</p><a class="btn sm mt" href="#/t/ksl">Buka contoh</a></div>`;
-  const c=t.classes[st.cls],cr=curRound(c);if(st.round==null)st.round=Math.min(cr,c.rounds.length);
-  const s=standings(c),q=st.find.toLowerCase(),hit=p=>q&&p.name.toLowerCase().includes(q);
-  let body="";
-  if(st.tab==="pairing"){
-    const g=c.rounds[st.round-1];
-    body=`<div class="row pad" style="justify-content:space-between"><div class="seg">${c.rounds.map((_,i)=>`<button class="${i+1===st.round?"on":""}" data-round="${i+1}" ${i+1>c.pub?"disabled style=opacity:.35":""}>${i+1}</button>`).join("")}</div><span class="mute sm">Babak ${st.round}${st.round===cr?' · <span class="pill live">berjalan</span>':""}</span></div>
-    <div style="border-top:1px solid var(--line)">${g.map((x,i)=>{const w=c.players[x.w],b=c.players[x.b],sw=s.find(p=>p.id===x.w),sb=s.find(p=>p.id===x.b);return `<div class="board ${hit(w)||hit(b)?"me":""}" style="${hit(w)||hit(b)?"background:var(--gold-soft)":""}"><span class="no">${i+1}</span><span class="w"><i class="pc wh"></i><span class="pt">${fmt(sw.pts)}</span><span class="nm"><b>${w.name}</b></span></span><span class="res ${x.res?"":"wait"}">${x.res||"main…"}</span><span class="b"><span class="nm"><b>${b.name}</b></span><span class="pt">${fmt(sb.pts)}</span><i class="pc bl"></i></span></div>`}).join("")}</div>`;
-  }else if(st.tab==="klasemen"){
-    body=`<div class="tscroll"><table><tr><th class="n">#</th><th>Nama</th><th class="n">Poin</th><th class="n">SB</th><th class="n">M</th><th class="n hide-m">Main</th><th class="hide-m">Klub</th></tr>${s.map((p,i)=>`<tr class="${hit(p)?"me":""}"><td class="n"><span class="medal ${i<3?"m"+(i+1):""}">${i+1}</span></td><td><b>${p.name}</b></td><td class="n"><b>${fmt(p.pts)}</b></td><td class="n">${p.sb.toFixed(2)}</td><td class="n">${p.w}</td><td class="n hide-m">${p.g}</td><td class="hide-m mute">${p.club}</td></tr>`).join("")}</table></div><div class="pad mute sm">Setelah babak ${cr-1}. SB = Sonneborn-Berger, M = jumlah menang.</div>`;
-  }else if(st.tab==="pemain"){
-    body=`<div class="tscroll"><table><tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th>Klub / Kota</th></tr>${c.players.map((p,i)=>`<tr class="${hit(p)?"me":""}"><td class="n">${i+1}</td><td>${p.name}</td><td class="n">${p.rtg}</td><td class="mute">${p.club}</td></tr>`).join("")}</table></div>`;
-  }else{
-    const res=(a,b)=>{for(const g of c.rounds)for(const x of g){if(x.w===a&&x.b===b)return x.res?{"1-0":"1","0-1":"0","½-½":"½"}[x.res]:"";if(x.b===a&&x.w===b)return x.res?{"1-0":"0","0-1":"1","½-½":"½"}[x.res]:""}return""};
-    const ord=s.map(p=>p.id);
-    body=`<div class="tscroll"><table><tr><th class="n">#</th><th>Nama</th>${ord.map((_,i)=>`<th class="n">${i+1}</th>`).join("")}<th class="n">Poin</th></tr>${s.map((p,i)=>`<tr class="${hit(p)?"me":""}"><td class="n">${i+1}</td><td>${p.name}</td>${ord.map(o=>`<td class="n" style="${o===p.id?"background:#e9ebf0":""}">${o===p.id?"":res(p.id,o)}</td>`).join("")}<td class="n"><b>${fmt(p.pts)}</b></td></tr>`).join("")}</table></div>`;
-  }
-  return `
-  <a class="mute sm" href="#/">← Semua turnamen</a>
-  <div class="card pad mt mb">
-    <div class="row" style="justify-content:space-between"><h1>${t.name}</h1>${statusPill(t.status)}</div>
-    <div class="mute sm">${t.date} · ${t.place} · ${t.sys} · <span class="pill gold">KSL</span></div>
-    <div class="row mt"><div class="seg">${t.classes.map((k,i)=>`<button class="${i===st.cls?"on":""}" data-cls="${i}">${k.name}</button>`).join("")}</div>
-      <input id="find" placeholder="🔍 Cari nama saya" value="${st.find}" style="max-width:200px">
-      <span class="sp"></span><button class="btn alt sm" data-act="qr">▦ QR / Bagikan</button></div>
-  </div>
-  <div class="card">
-    <div class="tabs">${[["pairing","Pairing"],["klasemen","Klasemen"],["pemain","Pemain"],["silang","Tabel Silang"]].map(([k,l])=>`<button class="${st.tab===k?"on":""}" data-tab="${k}">${l}</button>`).join("")}</div>
-    ${body}
-  </div>
-  <div class="mute sm mt">Terakhir diperbarui 08:12 WIB · oleh Mukhlish (wasit)</div>`;
-}
-
-function vLogin(){return `
-  <div class="card pad" style="max-width:380px;margin:20px auto">
-    <h1>Masuk penyelenggara</h1><div class="mute sm mb">Untuk panitia / wasit. Penonton tidak perlu masuk.</div>
-    <div class="field"><label>No. HP / email</label><input value="0877 5057 xxxx"></div>
-    <div class="field"><label>Kata sandi</label><input type="password" value="prototype"></div>
-    <a class="btn" style="width:100%;justify-content:center" href="#/panel">Masuk</a>
-    <div class="mute sm mt" style="text-align:center">Belum punya akun? <a href="#/panel" style="color:#8a6414;font-weight:600">Daftar sebagai klub / komunitas</a></div>
-  </div>`}
-
-function panelShell(inner){
-  const L=[["babak","Babak & hasil"],["pemain","Pemain"],["baru","Buat turnamen"],["dash","Turnamen saya"]];
-  return `<div class="panelwrap"><nav class="side">${L.map(([k,l])=>`<a href="#/panel/${k}" class="${st.ptab===k?"on":""}">${l}</a>`).join("")}<div class="pad sm mute hide-m">Masuk sebagai<br><b style="color:var(--ink)">Mukhlish</b> · Admin KSL</div></nav><div>${inner}</div></div>`}
-
-function vDash(){
-  return panelShell(`
-  <div class="grid g3 keep mb">${[["1","berlangsung"],["2","dijadwalkan"],["1","selesai"]].map(([n,l])=>`<div class="card pad stat"><b>${n}</b><span class="mute sm">${l}</span></div>`).join("")}</div>
-  <div class="card tscroll"><table><tr><th>Turnamen</th><th class="hide-m">Tanggal</th><th>Status</th><th></th></tr>
-  ${T.filter(t=>t.org==="KSL").map(t=>`<tr><td><b>${t.name}</b><div class="mute sm">${t.sys}</div></td><td class="hide-m">${t.date}</td><td>${statusPill(t.status)}</td><td class="n"><a class="btn alt sm" href="#/panel/babak">Kelola</a></td></tr>`).join("")}</table></div>
-  <div class="card pad mt sm"><b>Admin KSL</b> · 1 penyelenggara lain terdaftar: Komunitas Catur Galis <span class="pill ok">aktif</span></div>`)}
-
-function vNew(){
-  const S=["Info","Kelas & sistem","Terbitkan"];
-  let f="";
-  if(st.step===0)f=`<div class="grid g2"><div class="field"><label>Nama turnamen</label><input value="Turnamen Bulanan KSL Desember"></div><div class="field"><label>Tanggal</label><input type="date" value="2026-12-20"></div></div><div class="field"><label>Tempat</label><input value="Jl. Basar 99 Bugih, Pamekasan"></div>`;
-  if(st.step===1)f=`<div class="field"><label>Kelas / grup</label><div class="chips"><span class="chip on">Kelas A ✕</span><span class="chip on">Kelas B ✕</span><button class="chip">+ Tambah kelas</button></div></div>
-   <div class="field"><label>Sistem pertandingan</label><div class="chips">${["Liga satu putaran","Swiss","Gugur"].map(x=>`<button class="chip ${st.fmt===x?"on":""}" data-fmt="${x}">${x}</button>`).join("")}</div><div class="mute sm mt">${{"Liga satu putaran":"Semua pemain saling bertemu sekali. Cocok ≤ 10 pemain.","Swiss":"Pemain dengan poin sama dipertemukan. Cocok untuk peserta banyak.","Gugur":"Kalah langsung tersingkir. Cepat selesai."}[st.fmt]}</div></div>
-   <div class="grid g2"><div class="field"><label>Jumlah babak</label><input value="${st.fmt==="Swiss"?5:7}"></div><div class="field"><label>Tie-break</label><select><option>Sonneborn-Berger, Menang</option><option>Buchholz, Buchholz Cut-1</option><option>Head-to-head</option></select></div></div>`;
-  if(st.step===2)f=`<div class="row"><div style="width:96px;height:96px;background:repeating-conic-gradient(#16233f 0 25%,#fff 0 50%) 0 0/16px 16px;border:6px solid #fff;outline:1px solid var(--line)"></div><div><b>Siap diterbitkan</b><div class="mute sm">Link: turnamencatur-ksl.id/t/bulanan-des</div><div class="row mt"><button class="btn alt sm" data-act="copy">Salin link</button><button class="btn alt sm" data-act="wa">Bagikan ke WA</button></div></div></div>`;
-  return panelShell(`<div class="card pad"><h2 class="mb">Buat turnamen</h2><div class="steps">${S.map((x,i)=>`<span class="${i<=st.step?"on":""}">${i+1}. ${x}</span>`).join("")}</div>${f}
-  <div class="row mt" style="justify-content:space-between"><button class="btn alt" data-step="-1" ${st.step?"":"disabled style=opacity:.4"}>Kembali</button><button class="btn ${st.step===2?"gold":""}" data-step="1">${st.step===2?"Terbitkan":"Lanjut"}</button></div></div>`)}
-
-function vPlayers(){
-  const c=T[0].classes[st.pcls];
-  return panelShell(`<div class="card">
-   <div class="pad row" style="justify-content:space-between"><div class="seg">${T[0].classes.map((k,i)=>`<button class="${i===st.pcls?"on":""}" data-pcls="${i}">${k.name}</button>`).join("")}</div><div class="row"><button class="btn alt sm" data-act="xls">⇪ Impor Excel</button></div></div>
-   <div class="pad row" style="border-top:1px solid var(--line);flex-wrap:nowrap"><input id="pn" placeholder="Nama pemain"><input id="pr" placeholder="Rating" style="max-width:80px"><input id="pk" placeholder="Klub/kota" class="hide-m" style="max-width:140px"><button class="btn" data-act="add">+ Tambah</button></div>
-   <div class="tscroll"><table><tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th class="hide-m">Klub / Kota</th><th></th></tr>${c.players.map((p,i)=>`<tr><td class="n">${i+1}</td><td>${p.name}</td><td class="n">${p.rtg}</td><td class="hide-m mute">${p.club}</td><td class="n mute">✎</td></tr>`).join("")}</table></div>
-   <div class="pad mute sm">${c.players.length} pemain · pemain baru bisa ditambah sebelum babak 1.</div></div>`)}
-
-function vRound(){
-  const t=T[0],c=t.classes[st.pcls],cr=curRound(c);if(st.pround==null||st.pround>c.rounds.length)st.pround=Math.min(cr,c.rounds.length);
-  const g=c.rounds[st.pround-1],left=g.filter(x=>!x.res).length;
-  return panelShell(`<div class="card">
-   <div class="pad row" style="justify-content:space-between"><div><b>${t.name}</b><div class="mute sm">Isi hasil per meja. Klasemen publik ter-update otomatis.</div></div><span class="pill live">Babak ${cr} berjalan</span></div>
-   <div class="pad row" style="border-top:1px solid var(--line)"><div class="seg">${t.classes.map((k,i)=>`<button class="${i===st.pcls?"on":""}" data-pcls="${i}">${k.name}</button>`).join("")}</div><div class="seg">${c.rounds.map((_,i)=>`<button class="${i+1===st.pround?"on":""}" data-pround="${i+1}" ${i+1>c.pub?"disabled style=opacity:.35":""}>${i+1}</button>`).join("")}</div></div>
-   <div style="border-top:1px solid var(--line)">${g.map((x,i)=>`<div class="board" style="grid-template-columns:24px 1fr auto"><span class="no">${i+1}</span><span class="nm"><i class="pc wh" style="display:inline-block;vertical-align:-1px"></i> ${c.players[x.w].name} <span class="mute">vs</span> ${c.players[x.b].name} <i class="pc bl" style="display:inline-block;vertical-align:-1px"></i></span><span class="seg">${["1-0","½-½","0-1"].map(r=>`<button class="${x.res===r?"on":""}" data-res="${i}|${r}">${r}</button>`).join("")}</span></div>`).join("")}</div>
-   <div class="pad row" style="justify-content:space-between;border-top:1px solid var(--line)"><span class="mute sm">${left?left+" meja belum ada hasil":"Semua hasil terisi ✓"}</span><div class="row"><button class="btn alt sm" data-act="edit">Ubah pairing manual</button><button class="btn ${left?"alt":"gold"} sm" data-act="next" ${left?"disabled style=opacity:.5":""}>Buat pairing babak ${st.pround+1}</button></div></div>
-  </div>
-  <a class="mute sm" href="#/t/ksl" style="display:block;margin-top:8px">Lihat halaman publik →</a>`)}
-
-// ---------- guide ----------
-const G=[
- ["Penonton & pemain",[
-  ["Beranda","Daftar turnamen KSL yang berlangsung, jadwal, dan arsip. Tanpa login.","#/"],
-  ["Pilih kelas","Satu turnamen bisa punya beberapa kelas, misalnya Kelas A dan B.","#/t/ksl"],
-  ["Pairing per babak","Siapa lawan saya, meja berapa, warna buah apa. Pilih nomor babak.","#/t/ksl"],
-  ["Cari nama saya","Ketik nama, baris pemain disorot di pairing dan klasemen.","#/t/ksl"],
-  ["Klasemen & juara","Poin dan tie-break otomatis. Juara 1–3 diberi medali.","#/t/ksl?klasemen"],
-  ["Tabel silang","Hasil semua pertemuan dalam satu tabel.","#/t/ksl?silang"],
-  ["QR / bagikan","Tempel QR di lokasi atau kirim link ke grup WA.","#/t/ksl"]]],
- ["Panitia / wasit",[
-  ["Masuk penyelenggara","Hanya panitia yang login. Klub lain bisa daftar sendiri.","#/login"],
-  ["Buat turnamen","3 langkah: info, kelas & sistem (liga, Swiss, gugur), terbitkan.","#/panel/baru"],
-  ["Kelola pemain","Tambah manual atau impor dari Excel, per kelas.","#/panel/pemain"],
-  ["Isi hasil babak","Ketuk 1-0, ½-½, atau 0-1 per meja. Klasemen langsung berubah.","#/panel/babak"],
-  ["Pairing babak berikut","Aktif setelah semua hasil terisi. Bisa diubah manual.","#/panel/babak"],
-  ["Admin KSL","Pantau semua turnamen dan penyelenggara lain.","#/panel/dash"]]],
- ["Tampilan",[["Tampilan HP","Tombol 📱 di header menampilkan versi HP di laptop.",""]]]
-];
-let done={};try{done=JSON.parse(localStorage.getItem("ksl-guide")||"{}")}catch(e){}
-function renderGuide(){
-  let n=0,tot=0,h="";
-  G.forEach(([grp,items])=>{h+=`<div class="grp">${grp}</div>`;items.forEach(([t,d,l])=>{tot++;if(done[t])n++;h+=`<li><input type="checkbox" data-g="${t}" ${done[t]?"checked":""}><div><b>${t}</b><span class="mute sm">${d}</span>${l?` <a href="${l}" data-close>Lihat →</a>`:""}</div></li>`})});
-  $("#gList").innerHTML=h;$("#gCount").textContent=n+"/"+tot;$("#gBar").style.width=(n/tot*100)+"%";
-}
-
-// ---------- router ----------
-function render(){
-  const h=location.hash.slice(1)||"/",[path,q]=h.split("?"),p=path.split("/").filter(Boolean);
-  const isPanel=p[0]==="panel";
-  $("#nav").innerHTML=[["#/","Turnamen",!p[0]||p[0]==="t"],["#/panel/babak","Panel panitia",isPanel||p[0]==="login"]].map(([u,l,on])=>`<a href="${u}" class="${on?"on":""}">${l}</a>`).join("");
-  $("#bnav").innerHTML=(isPanel?[["#/panel/babak","⚑","Babak","babak"],["#/panel/pemain","☰","Pemain","pemain"],["#/panel/baru","＋","Buat","baru"],["#/","♚","Publik",""]]:[["#/","⌂","Beranda",""],["#/t/ksl","⇄","Pairing","pairing"],["#/t/ksl?klasemen","🏆","Klasemen","klasemen"],["#/login","⚙","Panitia",""]])
-    .map(([u,i,l,k])=>`<a href="${u}" class="${(isPanel?st.ptab===k&&k:p[0]==="t"&&st.tab===k)||(!p[0]&&u==="#/")?"on":""}"><span>${i}</span>${l}</a>`).join("");
-  let v;
-  if(p[0]==="t"){if(q)st.tab=q;v=vTour(p[1])}
-  else if(p[0]==="login")v=vLogin();
-  else if(isPanel){st.ptab=p[1]||"babak";v={babak:vRound,pemain:vPlayers,baru:vNew,dash:vDash}[st.ptab]()}
-  else v=vHome();
-  $("#view").innerHTML=v;
-  // re-render nav highlight after tab state set
-  if(p[0]==="t")$("#bnav").querySelectorAll("a").forEach(a=>a.classList.toggle("on",(a.getAttribute("href").split("?")[1]||(a.getAttribute("href")==="#/t/ksl"?"pairing":"x"))===st.tab));
-}
-window.addEventListener("hashchange",()=>{const s=document.querySelector("#app");render();s.scrollTop=0;scrollTo(0,0)});
-
-// ---------- events ----------
-document.addEventListener("click",e=>{
-  const b=e.target.closest("button,[data-close],input[type=checkbox]");if(!b)return;const d=b.dataset;
-  if(b.id==="guideBtn"){$("#guide").classList.add("open");return}
-  if(b.id==="gClose"||d.close!==undefined){$("#guide").classList.remove("open");return}
-  if(b.id==="devBtn"){document.body.classList.toggle("phone");b.innerHTML=document.body.classList.contains("phone")?'💻 <span class="hide-m">Tampilan laptop</span>':'📱 <span class="hide-m">Tampilan HP</span>';return}
-  if(d.g){done[d.g]=b.checked;try{localStorage.setItem("ksl-guide",JSON.stringify(done))}catch(e){}renderGuide();return}
-  if(d.tab){st.tab=d.tab;history.replaceState(null,"","#/t/ksl"+(d.tab==="pairing"?"":"?"+d.tab))}
-  if(d.cls){st.cls=+d.cls;st.round=null}
-  if(d.round)st.round=+d.round;
-  if(d.pcls){st.pcls=+d.pcls;st.pround=null}
-  if(d.pround)st.pround=+d.pround;
-  if(d.fmt)st.fmt=d.fmt;
-  if(d.step){const n=st.step+ +d.step;if(n>2){toast("Turnamen diterbitkan ✓");st.step=0;location.hash="#/panel/dash";return}st.step=Math.max(0,n)}
-  if(d.res){const[i,r]=d.res.split("|"),x=T[0].classes[st.pcls].rounds[st.pround-1][+i];x.res=x.res===r?null:r;toast("Hasil disimpan · klasemen ter-update")}
-  if(d.act){const c=T[0].classes[st.pcls];
-    if(d.act==="add"){const n=$("#pn").value.trim();if(!n){toast("Isi nama pemain dulu");return}
-      c.players.push({id:c.players.length,name:n,rtg:+$("#pr").value||0,club:$("#pk").value||"-"});toast(n+" ditambahkan")}
-    else if(d.act==="next"){toast("Pairing babak "+(st.pround+1)+" dibuat · cek lalu terbitkan");if(st.pround<c.rounds.length){c.pub=Math.max(c.pub,st.pround+1);st.pround++}}
-    else toast({qr:"QR & link turnamen siap dibagikan",copy:"Link disalin",wa:"Membuka WhatsApp…",xls:"Pilih file Excel (.xlsx)",edit:"Mode ubah pairing: seret nama untuk menukar"}[d.act])}
-  render();
-});
-document.addEventListener("input",e=>{if(e.target.id==="find"){st.find=e.target.value;const pos=e.target.selectionStart;render();const f=$("#find");f.focus();f.setSelectionRange(pos,pos)}});
-renderGuide();render();
+},{soon:()=>KSL.toast("Contoh data hanya untuk turnamen KSL yang berlangsung","info")});
 </script>
 </body>
 </html>
