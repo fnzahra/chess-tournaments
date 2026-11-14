@@ -23,7 +23,7 @@ KSL.page(()=>{
   return `<a class="back" href="${link("klasemen.html",{id:null})}">${icon("left")}Klasemen ${c.name}</a>
   <div class="card pad mb">
     <div class="row between nowrap">
-      <div class="row nowrap"><span class="logo"><span class="mark" style="width:40px;height:40px;background:var(--soft);color:var(--brand)">${icon("user","lg")}</span></span>
+      <div class="row nowrap">${KSL.av(p.name,"lg")}
       <div><h1>${p.name}</h1><div class="meta"><span>${icon("pin")}${p.club}</span><span>Rating ${p.rtg}</span><span>${c.name}</span></div></div></div>
       <span class="rank ${rank<4?"r"+rank:""}" style="width:34px;height:34px;font-size:14px" title="Peringkat">${rank}</span>
     </div>

@@ -36,6 +36,8 @@ const P={
  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
  dash:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><path d="M3 16h7v5H3z"/>'
 };
+const AVC=["#e7efeb","#f6efe2","#e8eef6","#f3e8ee","#ececee","#eef3e2"];
+const av=(n,c="")=>{const h=[...n].reduce((a,ch)=>a+ch.charCodeAt(0),0);return `<span class="av ${c}" style="background:${AVC[h%AVC.length]}">${n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase()}</span>`};
 const icon=(n,c="")=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 
 // ---------- sample data ----------
@@ -107,19 +109,26 @@ let done={};try{done=JSON.parse(localStorage.getItem("ksl-guide")||"{}")}catch(e
 
 function shell(){
   const app=document.getElementById("app");
-  const isPanel=area==="panel";
+  const isPanel=area==="panel", ph=document.body.classList.contains("phone");
   const head=`<header><div class="hbar">
     <a href="index.html" class="logo"><span class="mark">${icon("crown")}</span><span>Turnamen Catur<small>KSL</small></span></a>
-    <nav class="nav"><a href="index.html" class="${!isPanel?"on":""}">${icon("home")}Turnamen</a><a href="panel.html" class="${isPanel?"on":""}">${icon("lock")}Panel panitia</a></nav>
     <span class="sp"></span>
-    <button class="hbtn" data-act="device" title="Ganti tampilan laptop / HP">${icon(document.body.classList.contains("phone")?"laptop":"phone")}<span class="dsk">${document.body.classList.contains("phone")?"Tampilan laptop":"Tampilan HP"}</span></button>
-    <button class="hbtn acc" data-act="guide">${icon("guide")}Guide <span class="count" id="gCount"></span></button>
+    <div class="toolbar">
+      ${isPanel?`<span class="who-pill dsk">${av("Mukhlish")}<span><b>Mukhlish</b> <span class="mute">Admin KSL</span></span></span><span class="div dsk"></span>`:""}
+      <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
+      <span class="div"></span>
+      <button class="tb" data-act="guide">${icon("guide")}Guide <span class="count" id="gCount"></span></button>
+    </div>
   </div></header>`;
+  const railItems=isPanel
+    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"],0,["index","home","Halaman publik"],["masuk","out","Keluar"]]
+    :[["index","home","Beranda"],["turnamen","info","Ringkasan turnamen"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],0,["panel","lock","Panel panitia"]];
+  const rail=`<nav class="rail"><a href="index.html" class="mark" data-tip="Turnamen Catur KSL" style="width:40px;height:40px;color:#fff">${icon("crown","lg")}</a>${railItems.map(x=>x?`<a href="${["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]))}" class="${page===x[0]?"on":""}" data-tip="${x[2]}">${icon(x[1],"lg")}</a>`:"<hr>").join("")}</nav>`;
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
     :[["index","home","Beranda"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["masuk","lock","Panitia"]];
   const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${p==="index"||p==="masuk"||isPanel?file(p):link(file(p))}" class="${page===p?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
-  app.insertAdjacentHTML("afterbegin",head);
+  app.insertAdjacentHTML("afterbegin",rail+head);
   app.insertAdjacentHTML("beforeend",bnav);
   document.body.insertAdjacentHTML("beforeend",`<aside id="guide"><div class="gh"><b>Guide</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" data-act="guide-close">${icon("x")}Tutup</button></div><ol id="gList"></ol><div class="pad bt sm mute">Centang fitur yang sudah dicoba. <button class="lnk" data-act="reset">Reset data contoh</button></div></aside><div id="shade" data-act="guide-close"></div><div id="toast"></div>`);
   renderGuide();
@@ -151,13 +160,9 @@ function tourHead(active){
   </div>`;
 }
 const hit=p=>{const q=(Q.get("cari")||"").toLowerCase();return q&&p.name.toLowerCase().includes(q)};
-const pLink=(id,name)=>`<a class="nm" href="${link("pemain.html",{id})}">${name}</a>`;
+const pLink=(id,name,withAv)=>{const a=`<a class="nm" href="${link("pemain.html",{id})}">${name}</a>`;return withAv?`<span class="who">${av(name)}${a}</span>`:a};
 
-function panelShell(active,inner){
-  const L=[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat turnamen"],["panel-penyelenggara","org","Penyelenggara"]];
-  return `<div class="panelwrap"><nav class="side">${L.map(([p,i,l])=>`<a href="${file(p)}" class="${p===active?"on":""}">${icon(i)}${l}</a>`).join("")}
-    <div class="who">Masuk sebagai<b>Mukhlish</b>Admin KSL<div class="mt"><a class="lnk" href="masuk.html">${icon("out")} Keluar</a></div></div></nav><div>${inner}</div></div>`;
-}
+function panelShell(active,inner){return inner}
 
 // ---------- render loop & events ----------
 let renderFn=()=>"";
@@ -169,7 +174,7 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act;
   if(a==="guide")document.getElementById("guide").classList.add("open");
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
-  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelector("header").remove();document.querySelector(".bnav").remove();document.getElementById("guide").remove();document.getElementById("shade").remove();document.getElementById("toast").remove();shell()}
+  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelector("header").remove();document.querySelector(".rail").remove();document.querySelector(".bnav").remove();document.getElementById("guide").remove();document.getElementById("shade").remove();document.getElementById("toast").remove();shell()}
   else if(a==="reset")reset();
   else if(acts[a]){e.preventDefault();acts[a](el);render()}
 });
@@ -178,6 +183,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

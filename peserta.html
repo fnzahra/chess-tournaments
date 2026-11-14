@@ -22,7 +22,7 @@ KSL.page(()=>{
   </div>
   <div class="card tscroll"><table>
     <tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th>Klub / Kota</th></tr>
-    ${ps.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n">${i+1}</td><td>${pLink(p.id,p.name)}</td><td class="n">${p.rtg||"-"}</td><td class="mute">${p.club}</td></tr>`).join("")}
+    ${ps.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n">${i+1}</td><td>${pLink(p.id,p.name,1)}</td><td class="n">${p.rtg||"-"}</td><td class="mute">${p.club}</td></tr>`).join("")}
   </table></div>
   <div class="sm mute mt">Diurutkan berdasarkan rating awal. Rating adalah rating klub, bukan rating FIDE.</div>`;
 });

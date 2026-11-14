@@ -27,7 +27,7 @@ KSL.page(()=>{
     </div>
     <div class="tscroll bt"><table>
       <tr><th class="n">No</th><th>Nama</th><th class="n">Rating</th><th class="dsk">Klub / Kota</th><th class="r">Aksi</th></tr>
-      ${c.players.map((p,i)=>`<tr><td class="n">${i+1}</td><td><b>${p.name}</b>${i>7?' <span class="pill acc">baru</span>':""}</td><td class="n">${p.rtg||"-"}</td><td class="dsk mute">${p.club}</td><td class="r"><button class="btn alt sm" data-act="edit" title="Ubah">${icon("edit")}</button></td></tr>`).join("")}
+      ${c.players.map((p,i)=>`<tr><td class="n">${i+1}</td><td><span class="who">${KSL.av(p.name)}<b>${p.name}</b>${i>7?' <span class="pill acc">baru</span>':""}</span></td><td class="n">${p.rtg||"-"}</td><td class="dsk mute">${p.club}</td><td class="r"><button class="btn alt sm" data-act="edit" title="Ubah">${icon("edit")}</button></td></tr>`).join("")}
     </table></div>
     <div class="pad bt sm mute">Pemain hanya bisa ditambah atau dihapus sebelum babak 1 dimulai. Setelah itu, data hanya bisa diubah (nama, rating, klub).</div>
   </div>`)},{

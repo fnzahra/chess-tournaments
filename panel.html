@@ -23,8 +23,8 @@ KSL.page(()=>{
   </div>
   <h3>Perlu tindakan</h3>
   <div class="card list mb">
-    ${T.classes.map((c,i)=>{const left=c.rounds[curRound(c)-1].filter(x=>!x.res).length;return `<a href="panel-babak.html?kelas=${i}">${icon("flag")}<div class="grow"><b>${c.name}: babak ${curRound(c)}</b><div class="sm mute">${left?left+" meja belum ada hasil":"Semua hasil terisi, siap pairing babak berikutnya"}</div></div><span class="pill ${left?"live":"ok"}">${doneRounds(c)} / ${c.rounds.length}</span>${icon("right")}</a>`}).join("")}
-    <a href="panel-penyelenggara.html">${icon("org")}<div class="grow"><b>Ruang Catur mendaftar</b><div class="sm mute">Menunggu persetujuan admin KSL</div></div><span class="pill acc">Baru</span>${icon("right")}</a>
+    ${T.classes.map((c,i)=>{const left=c.rounds[curRound(c)-1].filter(x=>!x.res).length;return `<a href="panel-babak.html?kelas=${i}"><span class="ico">${icon("flag")}</span><div class="grow"><b>${c.name}: babak ${curRound(c)}</b><div class="sm mute">${left?left+" meja belum ada hasil":"Semua hasil terisi, siap pairing babak berikutnya"}</div></div><span class="pill ${left?"live":"ok"}">${doneRounds(c)} / ${c.rounds.length}</span>${icon("right")}</a>`}).join("")}
+    <a href="panel-penyelenggara.html"><span class="ico">${icon("org")}</span><div class="grow"><b>Ruang Catur mendaftar</b><div class="sm mute">Menunggu persetujuan admin KSL</div></div><span class="pill acc">Baru</span>${icon("right")}</a>
   </div>
   <h3>Turnamen saya</h3>
   <div class="card tscroll"><table>
