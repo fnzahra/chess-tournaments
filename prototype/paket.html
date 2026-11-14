@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Paket · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697018">
+<link rel="stylesheet" href="assets/style.css?v=1794697142">
 </head>
 <body data-page="paket" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697018"></script>
+<script src="assets/app.js?v=1794697142"></script>
 <script>
 const {icon,qp}=KSL;
 // prices are proposals for client discussion, payment is simulated
@@ -22,7 +22,7 @@ KSL.page(()=>{
     <div class="price">${price}<span> ${per}</span></div>
     <ul>${items}</ul>${cta}</div>`;
   return KSL.panelShell("paket",`
-  <h1 class="mb">Paket${KSL.tip("Fitur inti selalu gratis. Premium membuka fitur tambahan. Turnamen pertama: Premium terbuka gratis. Harga masih usulan.")}</h1>
+  <h1 class="mb">Paket${KSL.tip("Fitur inti selalu gratis. Premium membuka fitur tambahan. Turnamen pertama: Premium terbuka gratis. Harga masih usulan.","Paket")}</h1>
   ${f?`<div class="card pad mb row nowrap" style="background:var(--accent-soft)">${icon("lock")}<span class="sm"><b>${f}</b> termasuk Premium.</span></div>`:""}
   ${pay?`<div class="card pad mb" style="max-width:420px">
       <b>Bayar ${pay==="event"?"Premium Turnamen · Rp 49.000":"Premium Klub · Rp 299.000/tahun"}</b>
@@ -34,7 +34,7 @@ KSL.page(()=>{
     ${card("event","Premium Turnamen","Rp 49rb","/ turnamen",li("Semua fitur Gratis")+PRO.map(x=>li(x)).join(""),cur==="event"?'<span class="btn alt" style="opacity:.6">Aktif</span>':'<button class="btn" data-act="buy" data-p="event">Pilih</button>')}
     ${card("club","Premium Klub","Rp 299rb","/ tahun",li("Semua fitur Premium")+li("Turnamen tanpa batas")+li("Hemat untuk turnamen rutin"),cur==="club"?'<span class="btn alt" style="opacity:.6">Aktif</span>':'<button class="btn acc" data-act="buy" data-p="club">Pilih</button>',1)}
   </div>
-  <div class="card pad mt row nowrap">${icon("info")}<span class="sm">Pembayaran pendaftaran peserta online: biaya layanan per transaksi, bukan langganan.${KSL.tip("Uang pendaftaran langsung ke rekening penyelenggara lewat payment gateway berizin BI. Platform hanya memotong biaya layanan.")}</span></div>`)
+  <div class="card pad mt row nowrap">${icon("info")}<span class="sm">Pembayaran pendaftaran peserta online: biaya layanan per transaksi, bukan langganan.${KSL.tip("Uang pendaftaran langsung ke rekening penyelenggara lewat payment gateway berizin BI. Platform hanya memotong biaya layanan.","Pembayaran pendaftaran")}</span></div>`)
 },{
   buy:el=>{pay=el.dataset.p},
   cancel:()=>{pay=null},

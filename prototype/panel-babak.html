@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Babak dan hasil · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697018">
+<link rel="stylesheet" href="assets/style.css?v=1794697142">
 </head>
 <body data-page="panel-babak" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697018"></script>
+<script src="assets/app.js?v=1794697142"></script>
 <script>
 const {T,icon,kelas,qp,link,curRound}=KSL;
 let r=null,swap=false,pick=null; // pick = [board, "w"|"b"]
@@ -31,7 +31,7 @@ KSL.page(()=>{
       ${swap?`<button class="btn alt sm" data-act="color" data-b="${i}" ${x.res?"disabled":""}>${icon("swap")}Warna</button>`:`<span class="seg">${["1-0","½-½","0-1"].map(v=>`<button class="${x.res===v?"on":""}" data-act="res" data-b="${i}" data-v="${v}">${v}</button>`).join("")}</span>`}
     </div>`).join("")}
     <div class="pad bt row between">
-      <span class="sm mute">${swap?"Ketuk dua nama":""}${KSL.tip(swap?"Ketuk dua nama untuk menukar lawan, atau tombol Warna untuk menukar putih/hitam. Meja yang sudah ada hasilnya tidak bisa diubah.":"Ketuk hasil untuk menyimpan, ketuk lagi untuk membatalkan. Klasemen publik ikut berubah otomatis.")}</span>
+      <span class="sm mute">${swap?"Ketuk dua nama":""}${KSL.tip(swap?"Ketuk dua nama untuk menukar lawan, atau tombol Warna untuk menukar putih/hitam. Meja yang sudah ada hasilnya tidak bisa diubah.":"Ketuk hasil untuk menyimpan, ketuk lagi untuk membatalkan. Klasemen publik ikut berubah otomatis.",swap?"Ubah pairing":"Isi hasil")}</span>
       <div class="row"><button class="btn alt sm" data-act="pro" data-f="Kirim pairing ke WA">${icon("msg")}Kirim ke WA${KSL.pro()?"":" "+KSL.proPill}</button><button class="btn ${swap?"":"alt"} sm" data-act="swap">${icon(swap?"check":"edit")}${swap?"Selesai mengubah":"Ubah pairing"}</button>
       <button class="btn sm ${left?"alt":"acc"}" data-act="next" ${left||last||r<c.pub?"disabled":""}>${icon("swap")}${last?"Babak terakhir":"Buat pairing babak "+(r+1)}</button></div>
     </div>

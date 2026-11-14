@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daftar jadi peserta · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697018">
+<link rel="stylesheet" href="assets/style.css?v=1794697142">
 </head>
 <body data-page="daftar-peserta" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697018"></script>
+<script src="assets/app.js?v=1794697142"></script>
 <script>
 const {TOURS,icon,kelas,link,qp}=KSL;
 const T=TOURS.find(t=>t.id===qp("t","ksl"))||TOURS[0];
@@ -28,8 +28,8 @@ KSL.page(()=>done?`
     <form class="pad bt" id="f">
       <div class="field"><label>Kelas</label><div class="grid g2e">${CL.map((c,i)=>`<label class="opt ${i===kelas()?"on":""}" style="margin:0"><input type="radio" name="k" value="${i}" ${i===kelas()?"checked":""} style="display:none"><b>${c.name}</b><span class="sm mute">${c.desc}</span></label>`).join("")}</div></div>
       <div class="field"><label>Nama lengkap</label><input name="name" required placeholder="Sesuai yang ingin ditampilkan"></div>
-      <div class="grid g2e"><div class="field"><label>Klub asal${KSL.tip("Boleh dari klub mana pun, atau isi kota bila tidak punya klub.")}</label><input name="club" placeholder="Pamekasan"></div><div class="field"><label>Nomor WhatsApp${KSL.tip("Untuk konfirmasi panitia. Tidak tampil di publik.")}</label><input name="hp" inputmode="tel" required placeholder="08xx"></div></div>
-      <div class="field"><label>Tanggal lahir (opsional)${KSL.tip("Untuk kategori usia. Tidak tampil di publik.")}</label><input name="dob" type="date"></div>
+      <div class="grid g2e"><div class="field"><label>Klub asal${KSL.tip("Boleh dari klub mana pun, atau isi kota bila tidak punya klub.","Klub asal")}</label><input name="club" placeholder="Pamekasan"></div><div class="field"><label>Nomor WhatsApp${KSL.tip("Untuk konfirmasi panitia. Tidak tampil di publik.","Nomor WhatsApp")}</label><input name="hp" inputmode="tel" required placeholder="08xx"></div></div>
+      <div class="field"><label>Tanggal lahir (opsional)${KSL.tip("Untuk kategori usia. Tidak tampil di publik.","Tanggal lahir")}</label><input name="dob" type="date"></div>
       <label class="row nowrap sm" style="color:var(--ink);font-weight:500;align-items:flex-start"><input type="checkbox" required style="width:auto;height:auto;margin-top:2px"> Saya (atau orang tua/wali untuk peserta di bawah 17 tahun) setuju data ini dipakai untuk turnamen ini.</label>
       <button class="btn block mt" type="submit">Kirim pendaftaran</button>
     </form>

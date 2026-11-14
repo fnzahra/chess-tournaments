@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daftar penyelenggara · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697018">
+<link rel="stylesheet" href="assets/style.css?v=1794697142">
 </head>
 <body data-page="daftar" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697018"></script>
+<script src="assets/app.js?v=1794697142"></script>
 <script>
 const {icon}=KSL;
 // sign-up flow: 0 form -> 1 WhatsApp code -> 2 account ready
@@ -18,12 +18,12 @@ const head=()=>`<div class="prog"><div class="track"><i style="width:${(st.step+
   <div class="labels">${S.map((x,i)=>`<span class="${i===st.step?"on":i<st.step?"done":""}">${i<st.step?icon("check"):""}${x}</span>`).join("")}</div></div>`;
 KSL.page(()=>`
   <div class="card" style="max-width:480px;margin:16px auto">
-    <div class="pad"><h1 class="mb">Daftar penyelenggara${KSL.tip("Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri. Gratis.")}</h1>${head()}</div>
+    <div class="pad"><h1 class="mb">Daftar penyelenggara${KSL.tip("Untuk klub, sekolah, atau komunitas yang ingin membuat turnamen sendiri. Gratis.","Daftar penyelenggara")}</h1>${head()}</div>
     ${st.step===0?`
     <form class="pad bt" id="f">
       <div class="field"><label>Nama klub / komunitas</label><input name="club" required placeholder="Komunitas Catur Galis"></div>
       <div class="grid g2e"><div class="field"><label>Kota</label><input required placeholder="Pamekasan"></div><div class="field"><label>Jenis</label><select><option>Klub catur</option><option>Sekolah</option><option>Komunitas</option></select></div></div>
-      <div class="grid g2e"><div class="field"><label>Nama Anda</label><input required></div><div class="field"><label>WhatsApp${KSL.tip("Kode verifikasi dikirim ke nomor ini.")}</label><input name="wa" required inputmode="tel" placeholder="08xx"></div></div>
+      <div class="grid g2e"><div class="field"><label>Nama Anda</label><input required></div><div class="field"><label>WhatsApp${KSL.tip("Kode verifikasi dikirim ke nomor ini.","Nomor WhatsApp")}</label><input name="wa" required inputmode="tel" placeholder="08xx"></div></div>
       <div class="field"><label>Kata sandi</label><input type="password" required minlength="8" placeholder="Minimal 8 karakter"></div>
       <label class="row nowrap sm" style="color:var(--ink);font-weight:500;align-items:flex-start"><input type="checkbox" required style="width:auto;height:auto;margin-top:2px"> Saya setuju dengan <a class="lnk" href="#" data-act="sk">Syarat &amp; Ketentuan</a> dan <a class="lnk" href="#" data-act="sk">Kebijakan Privasi</a>.</label>
       <button class="btn block mt" type="submit">Kirim kode</button>

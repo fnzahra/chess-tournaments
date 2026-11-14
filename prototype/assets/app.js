@@ -39,7 +39,8 @@ const P={
 };
 const AVC=["#e7efeb","#f6efe2","#e8eef6","#f3e8ee","#ececee","#eef3e2"];
 const av=(n,c="")=>{const h=[...n].reduce((a,ch)=>a+ch.charCodeAt(0),0);return `<span class="av ${c}" style="background:${AVC[h%AVC.length]}">${n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase()}</span>`};
-const tip=t=>`<span class="tip" role="button" tabindex="0" data-act="tip" data-t="${t.replace(/"/g,"&quot;")}" aria-label="Penjelasan">?</span>`;
+const esc=t=>String(t).replace(/"/g,"&quot;");
+const tip=(t,h="")=>`<span class="tip" role="button" tabindex="0" data-act="tip" data-h="${esc(h)}" data-t="${esc(t)}" aria-label="Penjelasan">?</span>`;
 const icon=(n,c="")=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 
 // ---------- sample data ----------
@@ -182,7 +183,7 @@ function shell(){
   const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${p==="index"||p==="masuk"||isPanel?file(p):link(file(p))}" class="${page===p?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
   app.insertAdjacentHTML("afterbegin",rail+head);
   app.insertAdjacentHTML("beforeend",bnav);
-  document.body.insertAdjacentHTML("beforeend",`<aside id="guide"><div class="gh"><b>Guide</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" data-act="guide-close">${icon("x")}Tutup</button></div><ol id="gList"></ol><div class="pad bt sm mute">Centang fitur yang sudah dicoba. <button class="lnk" data-act="reset">Reset data contoh</button></div></aside><div id="shade" data-act="guide-close"></div><div id="toast"></div>`);
+  document.body.insertAdjacentHTML("beforeend",`<aside id="guide"><div class="gh"><b>Guide</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" data-act="guide-close">${icon("x")}Tutup</button></div><ol id="gList"></ol><div class="pad bt sm mute">Centang fitur yang sudah dicoba. <button class="lnk" data-act="reset">Reset data contoh</button></div></aside><div id="shade" data-act="guide-close"></div><div id="toast"></div><div id="pop" data-act="pop-close"><div class="popc" data-act="pop-stay" role="dialog" aria-modal="true"><div class="row nowrap" style="gap:8px">${icon("info","lg")}<b></b></div><p></p><button class="btn block" data-act="pop-close">Mengerti</button></div></div>`);
   renderGuide();
 }
 function renderGuide(){
@@ -192,6 +193,13 @@ function renderGuide(){
   document.getElementById("gCount").textContent=n+"/"+tot;
   document.getElementById("gBar").style.width=(n/tot*100)+"%";
 }
+// popup for "?" help: title (or first words before ":"), short text, one close button
+function openPop(h,t){
+  if(!h){const i=t.indexOf(": ");if(i>0&&i<40){h=t.slice(0,i);t=t.slice(i+2)}else h="Info"}
+  const p=document.getElementById("pop");p.querySelector("b").textContent=h;p.querySelector("p").textContent=t;p.classList.add("open");p.querySelector("button").focus();
+}
+function closePop(){document.getElementById("pop").classList.remove("open")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePop();if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("tip")){e.preventDefault();e.target.click()}});
 function toast(t,ic="check",ms=1900){const e=document.getElementById("toast");e.innerHTML=icon(ic)+"<span>"+t+"</span>";e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),ms)}
 
 // ---------- shared blocks ----------
@@ -226,10 +234,11 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act;
   if(a==="guide")document.getElementById("guide").classList.add("open");
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
-  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelector("header").remove();document.querySelector(".rail").remove();document.querySelector(".bnav").remove();document.getElementById("guide").remove();document.getElementById("shade").remove();document.getElementById("toast").remove();shell()}
+  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelectorAll("header,.rail,.bnav,#guide,#shade,#toast,#pop").forEach(x=>x.remove());shell()}
   else if(a==="reset")reset();
   else if(a==="pro"){e.preventDefault();if(pro())toast(el.dataset.f+" (Premium) dijalankan");else location.href="paket.html?f="+encodeURIComponent(el.dataset.f)}
-  else if(a==="tip"){e.preventDefault();toast(el.dataset.t,"info",Math.max(2500,el.dataset.t.length*60))}
+  else if(a==="tip"){e.preventDefault();openPop(el.dataset.h,el.dataset.t)}
+  else if(a==="pop-close")closePop();
   else if(acts[a]){e.preventDefault();acts[a](el);render()}
 });
 document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e.target.selectionStart;setParam("cari",e.target.value);render();const f=document.getElementById("cari");f.focus();f.setSelectionRange(pos,pos)});

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tabel silang · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697018">
+<link rel="stylesheet" href="assets/style.css?v=1794697142">
 </head>
 <body data-page="tabel-silang" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697018"></script>
+<script src="assets/app.js?v=1794697142"></script>
 <script>
 const {T,standings,fmt,kelas,hit,pLink}=KSL;
 KSL.page(()=>{
@@ -19,7 +19,7 @@ KSL.page(()=>{
   const cls=v=>v==="1"?"res-w":v==="0"?"res-l":v==="½"?"res-d":"";
   return KSL.tourHead("tabel-silang")+`
   <div class="card tscroll"><table class="xt">
-    <tr><th class="n">#</th><th>Nama${KSL.tip("Baca per baris: 1 = menang, ½ = seri, 0 = kalah melawan pemain di kolom itu. Kosong = belum bertemu.")}</th>${ord.map((_,i)=>`<th class="n">${i+1}</th>`).join("")}<th class="n">Poin</th></tr>
+    <tr><th class="n">#</th><th>Nama${KSL.tip("Baca per baris: 1 = menang, ½ = seri, 0 = kalah melawan pemain di kolom itu. Kosong = belum bertemu.","Membaca tabel silang")}</th>${ord.map((_,i)=>`<th class="n">${i+1}</th>`).join("")}<th class="n">Poin</th></tr>
     ${s.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n">${i+1}</td><td>${pLink(p.id,p.name)}</td>${ord.map(o=>{const v=o===p.id?"":res(p.id,o);return `<td class="n ${cls(v)}" style="${o===p.id?"background:var(--soft)":""}">${v}</td>`}).join("")}<td class="n b">${fmt(p.pts)}</td></tr>`).join("")}
   </table></div>`;
 });

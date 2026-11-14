@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kelola pemain · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697018">
+<link rel="stylesheet" href="assets/style.css?v=1794697142">
 </head>
 <body data-page="panel-pemain" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697018"></script>
+<script src="assets/app.js?v=1794697142"></script>
 <script>
 const {T,icon,kelas,link}=KSL;
 let ed=null;
@@ -21,7 +21,7 @@ KSL.page(()=>{
     <div class="pad row between"><div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div><span class="sm mute">${c.desc}</span></div>
     <div class="pad bt">
       <div class="grid addrow">
-        <div><label>Nama pemain${KSL.tip("Pemain dari klub mana pun bisa dipilih dari database. Ketik namanya, profil dan ratingnya ikut terbawa. Kalau belum ada, pemain baru dibuat.")}</label><input id="pn" list="semua" placeholder="Ketik nama atau ID pemain"><datalist id="semua">${["Ahmad Fauzan · Komunitas Catur Galis · 1488","Siti Aminah · Ruang Catur · 1302","Hasbullah · Komunitas Catur Galis · 1555","Fathullah · Ruang Catur · 1410"].map(x=>`<option value="${x.split(" · ")[0]}">${x}</option>`).join("")}</datalist></div>
+        <div><label>Nama pemain${KSL.tip("Pemain dari klub mana pun bisa dipilih dari database. Ketik namanya, profil dan ratingnya ikut terbawa. Kalau belum ada, pemain baru dibuat.","Pilih pemain")}</label><input id="pn" list="semua" placeholder="Ketik nama atau ID pemain"><datalist id="semua">${["Ahmad Fauzan · Komunitas Catur Galis · 1488","Siti Aminah · Ruang Catur · 1302","Hasbullah · Komunitas Catur Galis · 1555","Fathullah · Ruang Catur · 1410"].map(x=>`<option value="${x.split(" · ")[0]}">${x}</option>`).join("")}</datalist></div>
         <div><label>Rating</label><input id="pr" inputmode="numeric" placeholder="0"></div>
         <div><label>Klub / kota</label><input id="pk" placeholder="Pamekasan"></div>
         <button class="btn" data-act="add">${icon("plus")}Tambah</button>
@@ -36,7 +36,7 @@ KSL.page(()=>{
       </details>
     </div>
     <div class="tscroll bt"><table>
-      <tr><th class="n">No</th><th>Nama</th><th class="n">Rating${KSL.tip("Rating klub. Pemain yang pernah ikut, ratingnya terisi otomatis.")}</th><th class="dsk">Klub / Kota</th><th class="r">Aksi</th></tr>
+      <tr><th class="n">No</th><th>Nama</th><th class="n">Rating${KSL.tip("Rating klub. Pemain yang pernah ikut, ratingnya terisi otomatis.","Rating klub")}</th><th class="dsk">Klub / Kota</th><th class="r">Aksi</th></tr>
       ${c.players.map((p,i)=>ed===i?`<tr><td class="n">${i+1}</td><td colspan="3"><div class="grid addrow"><div><input id="en" value="${p.name}"></div><div><input id="er" inputmode="numeric" value="${p.rtg}"></div><div><input id="ek" value="${p.club}"></div><div class="row nowrap"><button class="btn sm" data-act="esave" data-i="${i}">Simpan</button><button class="btn alt sm" data-act="ecancel">Batal</button></div></div></td><td></td></tr>`:`<tr><td class="n">${i+1}</td><td><span class="who">${KSL.av(p.name)}<b>${p.name}</b>${i>7?' <span class="pill acc">baru</span>':""}</span></td><td class="n">${p.rtg||"-"}</td><td class="dsk mute">${p.club}</td><td class="r"><button class="btn alt sm" data-act="edit" data-i="${i}" title="Ubah ${p.name}">${icon("edit")}</button></td></tr>`).join("")}
     </table></div>
   </div>`)},{
