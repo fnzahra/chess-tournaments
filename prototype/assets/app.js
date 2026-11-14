@@ -116,7 +116,9 @@ function shell(){
     ${brand}
     <span class="sp"></span>
     <div class="toolbar">
-            <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
+            ${isPanel?`<a class="tb" href="index.html" title="Lihat halaman penonton">${icon("home")}<span class="dsk">Tampilan publik</span></a>`:`<a class="tb" href="panel.html" title="Lihat halaman panitia">${icon("lock")}<span class="dsk">Tampilan panitia</span></a>`}
+      <span class="div"></span>
+      <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
       <span class="div"></span>
       <button class="tb" data-act="guide">${icon("guide")}Guide <span class="count" id="gCount"></span></button>
     </div>
@@ -127,7 +129,7 @@ function shell(){
   const href=x=>["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]));
   const rail=isPanel
     ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL</span></div></div></nav>`
-    :`<nav class="rail">${railItems.map(x=>x?`<a href="${href(x)}" class="${page===x[0]?"on":""}" data-tip="${x[2]}">${icon(x[1],"lg")}</a>`:"<hr>").join("")}</nav>`;
+    :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
     :[["index","home","Beranda"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["masuk","lock","Panitia"]];
