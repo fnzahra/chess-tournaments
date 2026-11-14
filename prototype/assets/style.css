@@ -54,11 +54,14 @@ body.phone .rail{height:auto}
 header{grid-column:2;position:sticky;top:0;z-index:20;background:#f3f4f3e6;backdrop-filter:blur(8px)}
 .hbar{display:flex;align-items:center;gap:10px;padding:8px 16px;max-width:1160px;margin:auto}
 /* brand wordmark: mark + two-line name, one weight/colour family */
-.logo{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .logo .mark{width:30px;height:30px;border-radius:8px}
 .wm{font-size:15px;font-weight:700}
-/* KSL emblem cropped from assets/ksl-logo.jpg (drawing only, without the caption) */
-.mark.ksl{background:#fff url(ksl-logo.jpg) 50% 24%/107.4% auto no-repeat;box-shadow:0 0 0 1px var(--line)}
+/* KSL emblem: transparent PNG, no tile */
+.ksl-logo{height:30px;width:auto;display:block}
+.wm{line-height:1}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:6px 2px 14px}
+.hero h1{font-size:24px;font-weight:800}
 .sp{flex:1}
 /* floating pill toolbar */
 .toolbar{display:flex;align-items:center;gap:2px;padding:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;box-shadow:var(--sh)}

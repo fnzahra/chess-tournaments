@@ -20,7 +20,7 @@ KSL.page(()=>{
   const live=TOURS.filter(t=>t.status==="live"),soon=TOURS.filter(t=>t.status==="soon"),done=TOURS.filter(t=>t.status==="done");
   const t=TOURS[0];
   return `
-  <div class="card pad mb row between">
+  <div class="hero">
     <h1>Turnamen Catur</h1>
     <div class="input-ic" style="min-width:220px;flex:0 1 300px">${icon("search")}<input placeholder="Cari turnamen atau pemain"></div>
   </div>
