@@ -116,7 +116,7 @@ function shell(){
     <button class="hbtn acc" data-act="guide">${icon("guide")}Guide <span class="count" id="gCount"></span></button>
   </div></header>`;
   const tabs=isPanel
-    ?[["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel","dash","Dashboard"]]
+    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
     :[["index","home","Beranda"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["masuk","lock","Panitia"]];
   const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${p==="index"||p==="masuk"||isPanel?file(p):link(file(p))}" class="${page===p?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
   app.insertAdjacentHTML("afterbegin",head);
