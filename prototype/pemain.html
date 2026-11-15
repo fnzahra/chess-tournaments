@@ -21,7 +21,7 @@ KSL.page(()=>{
   const y=v=>36-((v-mn)/(mx-mn||1))*32;
   return `<a class="back" href="cari.html">${icon("left")}Klub & pemain</a>
   <div class="card pad mb">
-    <div class="row nowrap">${av(P.name,"lg")}<div class="grow"><h1>${P.name}</h1><div class="meta"><span><b>${P.pid}</b>${KSL.tip("ID pemain unik. Dipakai di semua turnamen dan klub, jadi pemain dengan nama sama tidak tertukar.","ID pemain")}</span><span>${icon("org")}${clubName(P.club)}</span></div></div></div>
+    <div class="row nowrap">${av(P.name,"lg")}<div class="grow"><h1>${KSL.titleBadge(P.title)}${P.name}</h1><div class="meta"><span><b>${P.pid}</b>${KSL.tip("ID pemain unik. Dipakai di semua turnamen dan klub, jadi pemain dengan nama sama tidak tertukar.","ID pemain")}</span><span>${icon("org")}${clubName(P.club)}</span></div></div></div>
     <div class="grid g4 mt">
       <div class="card stat"><b>${now}</b><span>rating klub${KSL.tip("Rating klub (Elo) di aplikasi ini: dihitung dari hasil partai, berubah setiap babak. Menang dari lawan yang lebih kuat menambah lebih banyak. WO dan bye tidak dihitung. Bukan rating resmi FIDE/PERCASI.","Rating klub")}</span></div>
       <div class="card stat"><b class="${now>=first?"res-w":"res-l"}">${now>=first?"+":"−"}${Math.abs(now-first)}</b><span>sejak ${log[0]?log[0].date:"-"}</span></div>
@@ -41,8 +41,8 @@ KSL.page(()=>{
     <tr><th>Tanggal</th><th>Turnamen</th><th class="n">Rating</th><th class="n">±</th></tr>
     ${log.slice().reverse().map(x=>`<tr><td class="sm">${x.date}</td><td class="sm">${x.t.name}<div class="mute">${x.cls} · babak ${x.round}</div></td><td class="n">${x.before} → <b>${x.after}</b></td><td class="n ${x.after>=x.before?"res-w":"res-l"}">${x.after>=x.before?"+":"−"}${Math.abs(x.after-x.before)}</td></tr>`).join("")||'<tr><td colspan="4" class="mute">Belum ada partai yang dinilai.</td></tr>'}
   </table></div>
-  <div class="sm mute mt">Data pribadi (HP, tanggal lahir) tidak ditampilkan di halaman publik.</div>`;
-});
+  <div class="sm mute mt">Data pribadi (HP, tanggal lahir) tidak ditampilkan di halaman publik. · <a href="#" class="lnk" data-act="fb">Ajukan koreksi data</a></div>`;
+},{fb:()=>KSL.openFeedback(P.name+" ("+P.pid+")")});
 </script>
 </body>
 </html>

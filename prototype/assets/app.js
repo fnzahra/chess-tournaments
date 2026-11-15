@@ -92,7 +92,32 @@ const KEY="ksl-proto-v3";
 try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");TOURS.forEach(t=>{const s=all[t.id];if(!s||!t.classes)return;
   s.forEach((k,i)=>{const c=t.classes[i];if(!c)return;c.pub=k.pub;if(k.players)c.players=k.players;k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri]&&c.rounds[ri][bi];if(!x)return;x.w=r[0];x.b=r[1];x.res=r[2]}))})})}catch(e){}
 function save(t=T){try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");all[t.id]=t.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}));localStorage.setItem(KEY,JSON.stringify(all))}catch(e){}}
-function reset(){try{["ksl-proto-v2",KEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub","ksl-auth"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
+function reset(){try{["ksl-proto-v2",KEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub","ksl-auth","ksl-feedback"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
+const TITLES=["","GM","IM","FM","CM","WGM","WIM","WFM","WCM","NM"];
+const titleBadge=t=>t?`<span class="pill acc" style="padding:1px 6px;font-size:10px;margin-right:4px">${t}</span>`:"";
+const FKEY="ksl-feedback";
+const feedback=()=>{try{return JSON.parse(localStorage.getItem(FKEY)||"[]")}catch(e){return[]}};
+const setFeedback=a=>{try{localStorage.setItem(FKEY,JSON.stringify(a))}catch(e){}};
+function openFeedback(ctx=""){
+  const o=document.createElement("div");o.className="ovl";
+  o.innerHTML=`<div class="popc" role="dialog" aria-modal="true" style="width:min(400px,100%)">
+    <div class="row between"><b>Ajukan Koreksi Data</b><button class="btn alt sm" data-x>${icon("x")}</button></div>
+    <div class="sm mute">Kirim pesan ke panitia jika ada salah ketik nama, gelar, atau klub. Tidak perlu login.</div>
+    <form id="fbf">
+      ${ctx?`<div class="sm mb">Terkait: <b>${ctx}</b></div>`:""}
+      <div class="field"><label>Pesan koreksi</label><textarea name="msg" required placeholder="Contoh: Nama saya seharusnya Ahmad Fauzan, klub Galis" style="height:76px;padding:8px 12px;resize:vertical"></textarea></div>
+      <div class="field"><label>Kontak (opsional)</label><input name="who" placeholder="No. WA / email jika ingin dikabari"></div>
+      <div class="row"><button class="btn acc" style="flex:1" type="submit">${icon("msg")}Kirim ke panitia</button><button class="btn alt" type="button" data-x>Batal</button></div>
+    </form>
+  </div>`;
+  o.onclick=e=>{if(e.target===o||e.target.closest("[data-x]"))o.remove()};
+  o.querySelector("#fbf").onsubmit=e=>{
+    e.preventDefault();const f=new FormData(e.target),msg=(f.get("msg")||"").trim();if(!msg)return;
+    setFeedback(feedback().concat({t:T.id,ctx,msg,who:(f.get("who")||"").trim()||"Anonim",at:Date.now()}));
+    o.remove();toast("Pesan koreksi dikirim ke panitia");
+  };
+  document.body.appendChild(o);
+}
 const loggedIn=()=>{try{return !!localStorage.getItem("ksl-auth")}catch(e){return false}};
 const setAuth=v=>{try{v?localStorage.setItem("ksl-auth",v):localStorage.removeItem("ksl-auth")}catch(e){}};
 
@@ -367,6 +392,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={loggedIn,setAuth,panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,score,
+window.KSL={TITLES,titleBadge,feedback,setFeedback,openFeedback,loggedIn,setAuth,panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

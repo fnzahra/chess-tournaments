@@ -21,10 +21,11 @@ KSL.page(()=>{
     <div class="card stat"><b>${clubs}</b><span>asal kota / klub</span></div>
   </div>
   <div class="card tscroll"><table>
-    <tr><th class="n">No</th><th>Nama</th><th class="n">Rating${KSL.tip("Rating klub (Elo) aplikasi ini, diperbarui otomatis setiap babak. Angka kecil = perubahan sejak awal turnamen. Bukan rating resmi FIDE atau PERCASI.","Rating klub")}</th><th>Klub / Kota</th></tr>
-    ${ps.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n">${i+1}</td><td>${pLink(p.id,p.name,1)}<div class="pid" style="padding-left:32px">${p.pid}</div></td><td class="n"><b>${tr.cur[p.id]}</b> <span class="sm ${tr.cur[p.id]>=p.rtg?"res-w":"res-l"}">${tr.cur[p.id]>=p.rtg?"+":"−"}${Math.abs(tr.cur[p.id]-p.rtg)}</span></td><td class="mute">${p.club}</td></tr>`).join("")}
-  </table></div>`;
-});
+    <tr><th class="n">No</th><th class="n">Kode</th><th>Nama</th><th class="n">Rating${KSL.tip("Rating klub (Elo) aplikasi ini, diperbarui otomatis setiap babak. Angka kecil = perubahan sejak awal turnamen. Bukan rating resmi FIDE atau PERCASI.","Rating klub")}</th><th>Klub / Kota</th></tr>
+    ${ps.map((p,i)=>`<tr class="${hit(p)?"hl":""}"><td class="n">${i+1}</td><td class="n pid">${p.pid}</td><td><span class="who">${KSL.av(p.name)}<span>${KSL.titleBadge(p.title)}${pLink(p.id,p.name)}</span></span></td><td class="n"><b>${tr.cur[p.id]}</b> <span class="sm ${tr.cur[p.id]>=p.rtg?"res-w":"res-l"}">${tr.cur[p.id]>=p.rtg?"+":"−"}${Math.abs(tr.cur[p.id]-p.rtg)}</span></td><td class="mute">${p.club}</td></tr>`).join("")}
+  </table></div>
+  <div class="sm mute mt">Ada kesalahan nama, gelar, atau klub? <a href="#" class="lnk" data-act="fb">Ajukan koreksi ke panitia</a></div>`;
+},{fb:()=>KSL.openFeedback(T.name)});
 </script>
 </body>
 </html>
