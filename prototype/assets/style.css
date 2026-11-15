@@ -334,8 +334,11 @@ input[readonly][data-act]{cursor:pointer;background:var(--soft)}
   .board{grid-template-columns:20px 1fr 48px 1fr;padding:9px 10px;gap:6px}
   .tabs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;padding:4px}
   .tabs a{height:auto;flex-direction:column;gap:1px;padding:5px 0;border-radius:10px;font-size:11px;justify-content:center}
-  .xt th,.xt td{padding:6px 3px;font-size:12px} .xt td.n,.xt th.n{min-width:24px}
-  .xt td:nth-child(2){max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .xt{width:100%}
+  .xt th,.xt td{padding:5px 2px;font-size:11px}
+  .xt td.n,.xt th.n{min-width:18px;width:auto}
+  .xt-wrap{width:100%}
+  .xt td:nth-child(2),.xt th:nth-child(2){min-width:0;max-width:78px;padding-right:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .acts{flex-direction:column;align-items:stretch;gap:4px}
   .addrow{grid-template-columns:1fr 1fr} .addrow>:first-child{grid-column:1/-1}
   .bnav{grid-column:1/-1;display:flex;position:sticky;bottom:8px;margin:0 10px 8px;padding:4px;background:var(--card);border-radius:999px;box-shadow:0 4px 20px #0000001f;z-index:20}
