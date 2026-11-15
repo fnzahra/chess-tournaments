@@ -92,7 +92,9 @@ const KEY="ksl-proto-v3";
 try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");TOURS.forEach(t=>{const s=all[t.id];if(!s||!t.classes)return;
   s.forEach((k,i)=>{const c=t.classes[i];if(!c)return;c.pub=k.pub;if(k.players)c.players=k.players;k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri]&&c.rounds[ri][bi];if(!x)return;x.w=r[0];x.b=r[1];x.res=r[2]}))})})}catch(e){}
 function save(t=T){try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");all[t.id]=t.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}));localStorage.setItem(KEY,JSON.stringify(all))}catch(e){}}
-function reset(){try{["ksl-proto-v2",KEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
+function reset(){try{["ksl-proto-v2",KEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub","ksl-auth"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
+const loggedIn=()=>{try{return !!localStorage.getItem("ksl-auth")}catch(e){return false}};
+const setAuth=v=>{try{v?localStorage.setItem("ksl-auth",v):localStorage.removeItem("ksl-auth")}catch(e){}};
 
 // ---------- plan (free / premium), simulated in this browser ----------
 const plan=()=>{try{return localStorage.getItem("ksl-plan")||"free"}catch(e){return"free"}};
@@ -247,7 +249,7 @@ function shell(){
       <span class="div"></span>
       <button class="tb" data-act="guide" aria-label="Panduan">${icon("guide")}<span class="dsk">Panduan</span> <span class="count" id="gCount"></span></button>
       <span class="div"></span>
-      ${isPanel?`<button class="tb" data-act="logout">${icon("out")}<span class="dsk">Keluar</span></button>`:`<a class="tb" href="masuk.html">${icon("lock")}Masuk</a>`}
+      ${isPanel?`<button class="tb" data-act="logout">${icon("out")}<span class="dsk">Keluar</span></button>`:loggedIn()?`<a class="tb" href="panel.html">${icon("dash")}<span class="dsk">Panel Klub</span></a>`:`<a class="tb" href="masuk.html">${icon("lock")}Masuk</a>`}
     </div>
   </div></header>`;
   const railItems=[["panel","dash","Dashboard"],["panel-turnamen","trophy","Kelola Turnamen"],["panel-babak","flag","Babak & Hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat Turnamen"],["panel-klub","org","Klub Saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman Publik"]];
@@ -288,7 +290,7 @@ function toast(t,ic="check",ms=1900){const e=document.getElementById("toast");e.
 // ---------- shared blocks ----------
 function tourHead(active){
   const k=kelas();
-  const tabs=[["turnamen","info","Ringkasan"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],["tabel-silang","grid","Tabel silang","Silang"]];
+  const tabs=[["turnamen","info","Ringkasan"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["tabel-silang","grid","Tabel Silang","Silang"],["peserta","users","Peserta"]];
   return `<a class="back" href="index.html">${icon("left")}Semua turnamen</a>
   <div class="card mb">
     <div class="pad">
@@ -338,7 +340,7 @@ document.addEventListener("click",e=>{
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
   else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelectorAll("header,.rail,.bnav,#guide,#shade,#toast,#cfm,#pop").forEach(x=>x.remove());shell()}
   else if(a==="reset")confirm2("Reset data contoh?","Semua hasil, peserta, dan perubahan yang kamu buat di prototype ini akan kembali ke awal. Tidak bisa dibatalkan.","Reset").then(v=>v&&reset());
-  else if(a==="logout"){location.href="masuk.html"}
+  else if(a==="logout"){setAuth("");location.href="masuk.html"}
   else if(a==="copyLink"){copyLink()}
   else if(a==="tip"){e.preventDefault();openPop(el.dataset.h,el.dataset.t)}
   else if(a==="pop-close")closePop();
@@ -349,6 +351,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,score,
+window.KSL={loggedIn,setAuth,panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

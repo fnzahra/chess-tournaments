@@ -50,7 +50,7 @@ KSL.page(()=>done?`
   </div>`,{google:()=>{googleAcc="pengurus@gmail.com";KSL.toast("Akun Google terhubung, isi nama klub")},unGoogle:()=>{googleAcc=null}});
 document.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.target),name=f.get("club").trim();
   if(CLUBS.some(c=>c.name.toLowerCase()===name.toLowerCase())){KSL.toast("Nama klub sudah terdaftar. Masuk dengan akun klub itu, atau pakai nama lain.","x",3200);return}
-  done=name;KSL.render();KSL.toast("Akun klub dibuat")});
+  done=name;KSL.setAuth("ksl");KSL.render();KSL.toast("Akun klub dibuat")});
 </script>
 </body>
 </html>

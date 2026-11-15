@@ -124,6 +124,7 @@ td.n,th.n{text-align:center;width:1%}
 td.r,th.r{text-align:right}
 tr.hl td{background:var(--accent-soft)}
 .tscroll{overflow-x:auto}
+.card>table td:last-child{white-space:normal}
 .rank{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;background:var(--soft);color:var(--mute)}
 .r1{background:#f3e3b5;color:#7a5a26}.r2{background:#e4e4e7;color:#3f3f46}.r3{background:#efd9c3;color:#7c4a1e}
 .sq{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid #a1a1aa;flex:none}
@@ -254,8 +255,10 @@ input[readonly][data-act]{cursor:pointer;background:var(--soft)}
 .chip-cd{font-size:11px;font-weight:600;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:2px 8px;white-space:nowrap}
 
 /* home banner with board illustration */
-.banner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;overflow:hidden}
-.banner h1{font-size:24px;font-weight:800}
+.banner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;overflow:hidden;background:linear-gradient(180deg,#fff 0%,#f8faf9 100%);border:1px solid var(--line);box-shadow:none}
+.banner h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.bn-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.bn-bar .input-ic{flex:1;min-width:210px;max-width:320px}
 .bn-text{flex:1;min-width:0}
 .board-art{position:relative;display:grid;grid-template-columns:repeat(8,1fr);width:180px;height:180px;flex:none;border-radius:12px;overflow:hidden;transform:rotate(-6deg);box-shadow:var(--sh)}
 .board-art i{background:#efe9dc}.board-art i.d{background:var(--brand)}

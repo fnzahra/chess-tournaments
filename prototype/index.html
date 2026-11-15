@@ -36,8 +36,10 @@ KSL.page(()=>{
     <div class="bn-text">
       <h1>Turnamen Catur</h1>
       <div class="mute mt2">Pilih turnamen untuk melihat pairing, hasil, dan klasemen.</div>
-      <div class="input-ic mt" style="max-width:360px">${icon("search")}<input id="q" placeholder="Cari turnamen, tempat, atau klub" value="${q}"></div>
-      <div class="row mt"><a class="btn acc" href="daftar.html">${icon("plus")}Buat Turnamen</a></div>
+      <div class="bn-bar">
+        <div class="input-ic">${icon("search")}<input id="q" placeholder="Cari turnamen, tempat, atau klub" value="${q}"></div>
+        <a class="btn acc" href="${KSL.loggedIn()?"panel-buat.html":"daftar.html"}">${icon("plus")}Buat Turnamen</a>
+      </div>
     </div>
     <div class="board-art dsk" aria-hidden="true">${Array.from({length:64},(_,i)=>`<i class="${(Math.floor(i/8)+i)%2?"d":""}"></i>`).join("")}<img src="assets/ksl-logo.png" alt="Logo King Sang Long"></div>
   </div>

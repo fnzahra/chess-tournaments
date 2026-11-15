@@ -44,7 +44,7 @@ KSL.page(()=>`
     </form>`}
     <div class="pad bt sm mute" style="text-align:center">Klub atau komunitas baru? <a class="lnk" href="daftar.html">Daftar klub</a></div>
   </div>`,{
-  google:()=>{KSL.toast("Masuk dengan Google berhasil");setTimeout(()=>location.href="panel.html",600)},
+  google:()=>{KSL.setAuth("ksl");KSL.toast("Masuk dengan Google berhasil");setTimeout(()=>location.href="panel.html",600)},
   mode:el=>{mode=el.dataset.m;otpSent=false},
   ganti:()=>{otpSent=false},
   resend:()=>{KSL.toast("Kode OTP dikirim ulang ke WhatsApp "+wa,"msg")},
@@ -54,10 +54,10 @@ document.addEventListener("submit",e=>{
   e.preventDefault();const f=new FormData(e.target);
   if(e.target.id==="f"){
     if(String(f.get("pw")).length<6){KSL.toast("Email/HP atau kata sandi salah","x");return}
-    KSL.toast("Berhasil masuk");setTimeout(()=>location.href="panel.html",500);
+    KSL.setAuth("ksl");KSL.toast("Berhasil masuk");setTimeout(()=>location.href="panel.html",500);
   }else if(e.target.id==="fwa"){
     if(!otpSent){wa=(f.get("wa")||"").trim();if(!wa){KSL.toast("Isi nomor WhatsApp dulu","x");return}otpSent=true;KSL.render();KSL.toast("Kode OTP dikirim ke WhatsApp "+wa,"msg")}
-    else{if(String(f.get("otp")).trim().length<4){KSL.toast("Masukkan 4 digit kode OTP","x");return}KSL.toast("Verifikasi berhasil");setTimeout(()=>location.href="panel.html",500)}
+    else{if(String(f.get("otp")).trim().length<4){KSL.toast("Masukkan 4 digit kode OTP","x");return}KSL.setAuth("ksl");KSL.toast("Verifikasi berhasil");setTimeout(()=>location.href="panel.html",500)}
   }
 });
 </script>
