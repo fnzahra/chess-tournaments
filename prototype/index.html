@@ -4,73 +4,64 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beranda · Turnamen Catur</title>
-<link rel="stylesheet" href="assets/style.css?v=1794708545">
+<link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="index" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794708545"></script>
+<script src="assets/app.js?v=1794710626"></script>
 <script>
-const {TOURS,icon,pill,curRound,av}=KSL;
+const {TOURS,icon,pill,curRound,av,orgName,CLUBS}=KSL;
 let q="";
 KSL.page(()=>{
-  const href=t=>t.classes?"turnamen.html?kelas=0":t.status==="soon"?"segera.html?t="+t.id:"https://s1.chess-results.com/tnr1537302.aspx?lan=26";
-  // list row: title + one meta line (organiser included), status pill on the right only
-  const row=t=>`<a href="${href(t)}" ${t.status==="done"?'target="_blank" rel="noopener"':""}>
+  // every tournament opens inside the app: running/archive -> summary, upcoming -> info & sign-up
+  const href=t=>t.classes?"turnamen.html?t="+t.id:"segera.html?t="+t.id;
+  const row=t=>`<a href="${href(t)}">
     <div class="grow"><b>${t.name}</b>
-      <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span><span>${icon("list")}${t.sys}</span><span>${icon("org")}${t.org}</span></div></div>
+      <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span><span>${icon("list")}${t.sys}</span><span>${icon("org")}${orgName(t)}</span></div></div>
     ${t.start&&KSL.until(t.start)?`<span class="chip-cd">${KSL.until(t.start).d} hari lagi</span>`:pill(t.status)}${icon("right")}</a>`;
-  const m=t=>!q||(t.name+" "+t.place+" "+t.org).toLowerCase().includes(q);
+  const m=t=>!q||(t.name+" "+t.place+" "+orgName(t)).toLowerCase().includes(q);
   const live=TOURS.filter(t=>t.status==="live"&&m(t)),soon=TOURS.filter(t=>t.status==="soon"&&m(t)),done=TOURS.filter(t=>t.status==="done"&&m(t));
-  const pm=q?TOURS[0].classes.flatMap((c,k)=>c.players.filter(p=>p.name.toLowerCase().includes(q)).map(p=>({...p,k,cn:c.name}))):[];
   const empty=x=>x.length?"":'<div class="pad sm mute">Tidak ada yang cocok.</div>';
-  // featured card for the tournament being played right now
-  const hero=t=>`<div class="card feat mb">
-    <div class="row between nowrap"><span class="pill live">Berlangsung</span><span class="sm" style="color:#bcd3c7">${t.org}</span></div>
-    <a href="${href(t)}"><h2 class="mt">${t.name}</h2></a>
-    <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span><span>${icon("list")}${t.sys}</span></div>
-    <div class="grid g2e keep2 mt">${t.classes.map((c,k)=>{const cr=curRound(c),n=c.rounds.length;return `<a class="fc" href="pairing.html?kelas=${k}"><div class="row between nowrap"><b>${c.name}</b><span class="sm">Babak ${cr}/${n}</span></div><div class="bar mt2"><i style="width:${(KSL.doneRounds(c))/n*100}%"></i></div></a>`}).join("")}</div>
-    <div class="row mt"><a class="btn alt" href="pairing.html?kelas=0">${icon("swap")}Pairing</a><a class="btn ghost" href="klasemen.html?kelas=0">${icon("trophy")}Klasemen</a><a class="btn ghost" href="turnamen.html?kelas=0">${icon("info")}Ringkasan</a></div>
-  </div>`;
+  const card=t=>`<a class="card feat mb" href="${href(t)}" style="display:block">
+    <div class="row between nowrap"><span class="pill live">Berlangsung</span><span class="sm" style="color:#bcd3c7">${orgName(t)}</span></div>
+    <h2 class="mt">${t.name}</h2>
+    <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span></div>
+    <div class="grid g2e keep2 mt">${t.classes.map(c=>{const n=c.rounds.length;return `<div class="fc"><div class="row between nowrap"><b>${c.name}</b><span class="sm">Babak ${curRound(c)}/${n}</span></div><div class="bar mt2"><i style="width:${KSL.doneRounds(c)/n*100}%"></i></div></div>`}).join("")}</div>
+    <div class="row between mt"><span class="sm">Pairing, klasemen, peserta</span>${icon("right")}</div>
+  </a>`;
+  // top club ratings across all tournaments (one row per player ID)
+  const top=KSL.PLAYERS.map(p=>({...p,r:KSL.ratingNow(p.pid)})).sort((a,b)=>b.r-a.r).slice(0,5);
   return `
   <div class="card banner mb">
     <div class="bn-text">
       <h1>Turnamen Catur</h1>
-      <div class="mute mt2">Pairing, hasil, dan klasemen langsung di HP.</div>
-      <div class="input-ic mt" style="max-width:360px">${icon("search")}<input id="q" placeholder="Cari turnamen atau pemain" value="${q}"></div>
-      <div class="row mt"><a class="btn acc" href="${live[0]?"pairing.html?kelas=0":"#"}">${icon("swap")}Lihat pairing</a><a class="btn alt" href="masuk.html">${icon("plus")}Buat turnamen</a></div>
+      <div class="mute mt2">Pilih turnamen untuk melihat pairing, hasil, dan klasemen.</div>
+      <div class="input-ic mt" style="max-width:360px">${icon("search")}<input id="q" placeholder="Cari turnamen, tempat, atau klub" value="${q}"></div>
     </div>
-    <div class="board-art dsk" aria-hidden="true">${Array.from({length:64},(_,i)=>`<i class="${(Math.floor(i/8)+i)%2?"d":""}"></i>`).join("")}<img src="assets/ksl-logo.png" alt=""></div>
+    <div class="board-art dsk" aria-hidden="true">${Array.from({length:64},(_,i)=>`<i class="${(Math.floor(i/8)+i)%2?"d":""}"></i>`).join("")}</div>
   </div>
   <div class="grid g2">
     <div>
-      ${pm.length?`<h3>Pemain</h3><div class="card list mb">${pm.map(p=>`<a href="pemain.html?kelas=${p.k}&id=${p.id}">${av(p.name)}<div class="grow"><b>${p.name}</b><div class="sm mute">${p.cn} · ${p.club}</div></div>${icon("right")}</a>`).join("")}</div>`:""}
-      <h3>Sedang berlangsung</h3>
-      ${live.map(hero).join("")||'<div class="card mb">'+empty(live)+'</div>'}
+      <h3>Sedang berlangsung (${live.length})</h3>
+      ${live.map(card).join("")||'<div class="card mb">'+empty(live)+'</div>'}
       <h3>Akan datang</h3>
       <div class="card list mb">${soon.map(row).join("")}${empty(soon)}</div>
       <h3>Arsip</h3>
       <div class="card list">${done.map(row).join("")}${empty(done)}</div>
     </div>
     <aside class="side-col">
-      <div class="card pad mb">
-        <div class="row nowrap"><img src="assets/ksl-logo.png" alt="" style="height:40px"><div><b>Klub Catur King Sang Long</b><div class="sm mute">Selalu ada jalan</div></div></div>
-        <div class="meta mt"><span>${icon("pin")}Jl. Basar 99 Bugih, Pamekasan</span></div>
-        <div class="grid g3 keep3 mt">
-          <div class="stat card"><b>4</b><span>turnamen</span></div>
-          <div class="stat card"><b>144</b><span>pemain</span></div>
-          <div class="stat card"><b>2</b><span>penyelenggara</span></div>
-        </div>
-      </div>
-      <h3 class="mt">Rating tertinggi${KSL.tip("Rating klub terkini, diperbarui otomatis setiap babak dari semua kelas turnamen yang berjalan.","Rating tertinggi")}</h3>
-      <div class="card list mb">${TOURS[0].classes.flatMap((c,k)=>{const tr=KSL.ratingTrack(c);return c.players.map(p=>({...p,k,r:tr.cur[p.id]}))}).sort((a,b)=>b.r-a.r).slice(0,5).map((p,i)=>`<a href="pemain.html?kelas=${p.k}&id=${p.id}"><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span>${av(p.name)}<div class="grow"><b>${p.name}</b><div class="sm mute">${p.club}</div></div><b>${p.r}</b></a>`).join("")}</div>
+      <h3>Klub & komunitas</h3>
+      <div class="card list mb">${CLUBS.slice(0,4).map(c=>`<a href="cari.html?klub=${c.id}">${av(c.name)}<div class="grow"><b class="sm">${c.name}</b><div class="sm mute">${c.city}</div></div>${icon("right")}</a>`).join("")}<a href="cari.html" class="sm lnk" style="justify-content:center">Lihat semua klub & pemain</a></div>
+      <h3>Rating klub tertinggi${KSL.tip("Rating klub (Elo) terkini dari semua turnamen di aplikasi ini. Bukan rating resmi FIDE/PERCASI.","Rating klub")}</h3>
+      <div class="card list mb">${top.map((p,i)=>`<a href="pemain.html?pid=${p.pid}"><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span><div class="grow"><b>${p.name}</b><div class="pid">${p.pid} · ${KSL.clubName(p.club)}</div></div><b>${p.r}</b></a>`).join("")}</div>
       <div class="card pad promo">
         <b>Punya klub atau komunitas catur?</b>
-        <div class="sm mute mt2">Buat turnamen sendiri, gratis.</div>
-        <div class="row mt"><a class="btn sm" href="daftar.html">Daftar gratis</a><a class="lnk sm" href="masuk.html">Masuk</a></div>
+        <div class="sm mute mt2">Buat turnamen sendiri.</div>
+        <div class="row mt"><a class="btn sm" href="daftar.html">Daftar klub</a><a class="lnk sm" href="masuk.html">Masuk</a></div>
       </div>
     </aside>
   </div>`;
-},{soon:()=>KSL.toast("Contoh data hanya untuk turnamen KSL yang berlangsung","info")});
+});
 document.addEventListener("input",e=>{if(e.target.id!=="q")return;q=e.target.value.trim().toLowerCase();const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("q");f.focus();f.setSelectionRange(pos,pos)});
 </script>
 </body>

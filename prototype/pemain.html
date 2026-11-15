@@ -3,53 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Detail pemain · Turnamen Catur</title>
-<link rel="stylesheet" href="assets/style.css?v=1794708545">
+<title>Profil pemain · Turnamen Catur</title>
+<link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="pemain" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794708545"></script>
+<script src="assets/app.js?v=1794710626"></script>
 <script>
-const {T,icon,standings,fmt,link,kelas,qp,score,pLink}=KSL;
+const {icon,fmt,qp,score,byPid,clubName,TOURS,av}=KSL;
+// player is identified by unique ID (?pid=TC-…); names can repeat
+const pid=qp("pid",KSL.PLAYERS[0].pid),P=byPid(pid)||KSL.PLAYERS[0];
 KSL.page(()=>{
-  const c=T.classes[kelas()],id=Math.min(+qp("id",0)||0,c.players.length-1),p=c.players[id];
-  const s=standings(c),rank=s.findIndex(x=>x.id===id)+1,me=s[rank-1];
-  let cum=0,dElo=0;const tr=KSL.ratingTrack(c),hr=tr.hist[id];
-  const rows=c.rounds.slice(0,c.pub).map((g,ri)=>{
-    const bi=g.findIndex(x=>x.w===id||x.b===id);if(bi<0)return `<tr><td class="n">${ri+1}</td><td colspan="5" class="mute">Bye</td></tr>`;
-    const x=g[bi],white=x.w===id,op=c.players[white?x.b:x.w],sc=score(x.res),v=sc?sc[white?0:1]:null;
-    if(v!=null){cum+=v;if(!KSL.forfeit(x.res))dElo+=40*(v-1/(1+Math.pow(10,(op.rtg-p.rtg)/400)))}
-    return `<tr><td class="n">${ri+1}</td><td class="n">${bi+1}</td><td class="n"><i class="sq ${white?"w":"k"}" title="${white?"Putih":"Hitam"}"></i></td><td>${pLink(op.id,op.name)} <span class="mute sm">${op.rtg}</span></td><td class="n ${v===1?"res-w":v===0?"res-l":"res-d"}">${v==null?'<span class="mute">main</span>':fmt(v)}</td><td class="n b">${v==null?"":fmt(cum)}</td><td class="n">${hr[ri+1]??""}</td></tr>`}).join("");
-  // sample cross-club history (prototype data): same player profile used by any organiser
-  const hist=[["Turnamen Catur Hari Pahlawan 2026","KSL","10 Nov 2026",12+id,"80"],["Open Galis Cup 2026","Komunitas Catur Galis","Sep 2026",3+id%4,"32"],["Rintisan Pelajar 2025","KSL","Des 2025",5+id%3,"16"]];
-  const pts=hr.length>1?hr:[p.rtg,p.rtg],mx=Math.max(...pts),mn=Math.min(...pts);
-  const spark=pts.map((v,i)=>`${i*40},${36-((v-mn)/(mx-mn||1))*32}`).join(" ");
-  const pid="TC-"+String(1000+id+kelas()*100).padStart(5,"0");
-  return `<a class="back" href="${link("klasemen.html",{id:null})}">${icon("left")}Klasemen ${c.name}</a>
+  const log=KSL.ratingLog(P.pid),now=log.length?log[log.length-1].after:P.rtg,first=log.length?log[0].before:P.rtg;
+  // every tournament (with results) the player is in, newest first
+  const tours=TOURS.filter(t=>t.classes).map(t=>{for(const c of t.classes){const p=c.players.find(x=>x.pid===P.pid);if(p){const s=KSL.standings(c);return {t,c,p,rank:s.findIndex(x=>x.id===p.id)+1,me:s.find(x=>x.id===p.id)}}}}).filter(Boolean).sort((a,b)=>a.t.iso<b.t.iso?1:-1);
+  const pts=log.length?[log[0].before,...log.map(x=>x.after)]:[P.rtg,P.rtg],mx=Math.max(...pts),mn=Math.min(...pts),w=Math.max(40,(pts.length-1)*24);
+  const y=v=>36-((v-mn)/(mx-mn||1))*32;
+  return `<a class="back" href="cari.html">${icon("left")}Klub & pemain</a>
   <div class="card pad mb">
-    <div class="row between nowrap">
-      <div class="row nowrap">${KSL.av(p.name,"lg")}
-      <div><h1>${p.name}</h1><div class="meta"><span>${icon("org")}${p.club}</span><span>${pid}${KSL.tip("ID pemain berlaku di semua klub dan penyelenggara. Pemain bisa ikut turnamen klub mana pun dengan profil yang sama.","ID pemain")}</span><span>${c.name}</span></div></div></div>
-      <span class="rank ${rank<4?"r"+rank:""}" style="width:34px;height:34px;font-size:14px" title="Peringkat">${rank}</span>
-    </div>
+    <div class="row nowrap">${av(P.name,"lg")}<div class="grow"><h1>${P.name}</h1><div class="meta"><span><b>${P.pid}</b>${KSL.tip("ID pemain unik. Dipakai di semua turnamen dan klub, jadi pemain dengan nama sama tidak tertukar.","ID pemain")}</span><span>${icon("org")}${clubName(P.club)}</span></div></div></div>
     <div class="grid g4 mt">
-      <div class="card stat"><b>${fmt(me.pts)}</b><span>poin</span></div>
-      <div class="card stat"><b>${rank}</b><span>peringkat</span></div>
-      <div class="card stat"><b>${me.w} / ${me.d} / ${me.l}</b><span>menang / seri / kalah</span></div>
-      <div class="card stat"><b>${tr.cur[id]} <span class="${tr.cur[id]>=p.rtg?"res-w":"res-l"}" style="font-size:13px">${tr.cur[id]>=p.rtg?"+":"−"}${Math.abs(tr.cur[id]-p.rtg)}</span></b><span>rating${KSL.tip("Satu rating per pemain, dihitung dari semua turnamen yang memakai rating, dari klub mana pun. Diperbarui otomatis setiap babak (rumus FIDE B.02). Angka +/− adalah perubahan di turnamen ini.","Rating")}</span></div>
+      <div class="card stat"><b>${now}</b><span>rating klub${KSL.tip("Rating klub (Elo) di aplikasi ini: dihitung dari hasil partai, berubah setiap babak. Menang dari lawan yang lebih kuat menambah lebih banyak. WO dan bye tidak dihitung. Bukan rating resmi FIDE/PERCASI.","Rating klub")}</span></div>
+      <div class="card stat"><b class="${now>=first?"res-w":"res-l"}">${now>=first?"+":"−"}${Math.abs(now-first)}</b><span>sejak ${log[0]?log[0].date:"-"}</span></div>
+      <div class="card stat"><b>${tours.length}</b><span>turnamen</span></div>
+      <div class="card stat"><b>${log.length}</b><span>babak dinilai</span></div>
     </div>
   </div>
   <div class="grid g2 mb">
-    <div><h3>Riwayat turnamen</h3>
-      <div class="card list">${hist.map(([n,o,d,rk,np])=>`<div><div class="grow"><b class="sm">${n}</b><div class="sm mute">${o} · ${d}</div></div><span class="sm mute">#${rk} / ${np}</span></div>`).join("")}</div></div>
-    <div><h3>Rating per babak</h3>
-      <div class="card pad"><svg viewBox="-4 0 168 40" width="100%" height="56" aria-label="Grafik rating"><polyline points="${spark}" fill="none" stroke="var(--brand)" stroke-width="2"/>${pts.map((v,i)=>`<circle cx="${i*40}" cy="${36-((v-mn)/(mx-mn||1))*32}" r="2.5" fill="var(--brand)"/>`).join("")}</svg>
-      <div class="row between sm mute"><span>Awal ${pts[0]}</span><span>Sekarang ${tr.cur[id]}</span></div></div></div>
+    <div><h3>Turnamen</h3>
+      <div class="card list">${tours.map(x=>`<a href="klasemen.html?t=${x.t.id}&kelas=${x.t.classes.indexOf(x.c)}"><div class="grow"><b class="sm">${x.t.name}</b><div class="sm mute">${x.t.date} · ${x.c.name} · ${fmt(x.me.pts)} poin</div></div><span class="rank ${x.rank<4?"r"+x.rank:""}">${x.rank}</span></a>`).join("")||'<div class="pad sm mute">Belum ada turnamen.</div>'}</div></div>
+    <div><h3>Grafik rating</h3>
+      <div class="card pad"><svg viewBox="-4 0 ${w+8} 40" width="100%" height="64" aria-label="Grafik rating"><polyline points="${pts.map((v,i)=>`${i*24},${y(v)}`).join(" ")}" fill="none" stroke="var(--brand)" stroke-width="2"/></svg>
+      <div class="row between sm mute"><span>${first}</span><span>${now}</span></div></div></div>
   </div>
-  <h3>Babak di turnamen ini</h3>
+  <h3>Riwayat perubahan rating</h3>
   <div class="card tscroll"><table>
-    <tr><th class="n">Babak</th><th class="n">Meja</th><th class="n">Warna</th><th>Lawan</th><th class="n">Hasil</th><th class="n">Total</th><th class="n">Rating</th></tr>${rows}
-  </table></div>`;
+    <tr><th>Tanggal</th><th>Turnamen</th><th class="n">Rating</th><th class="n">±</th></tr>
+    ${log.slice().reverse().map(x=>`<tr><td class="sm">${x.date}</td><td class="sm">${x.t.name}<div class="mute">${x.cls} · babak ${x.round}</div></td><td class="n">${x.before} → <b>${x.after}</b></td><td class="n ${x.after>=x.before?"res-w":"res-l"}">${x.after>=x.before?"+":"−"}${Math.abs(x.after-x.before)}</td></tr>`).join("")||'<tr><td colspan="4" class="mute">Belum ada partai yang dinilai.</td></tr>'}
+  </table></div>
+  <div class="sm mute mt">Data pribadi (HP, tanggal lahir) tidak ditampilkan di halaman publik.</div>`;
 });
 </script>
 </body>

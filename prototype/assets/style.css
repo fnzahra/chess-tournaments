@@ -331,3 +331,19 @@ input[readonly][data-act]{cursor:pointer;background:var(--soft)}
 .keep3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .keep3 .stat span{overflow-wrap:anywhere}
 @container app (max-width:360px){ .cdu{min-width:0;flex:1} .cdu b{font-size:18px} .cd{gap:5px} }
+
+/* confirm dialog + danger button */
+#cfm{position:fixed;inset:0;z-index:75;background:#18181b59;display:none;align-items:center;justify-content:center;padding:16px}
+#cfm.open{display:flex}
+.btn.danger{background:#b42318;border-color:#b42318}.btn.danger:hover{background:#912018}
+.logo .mark{display:grid;width:30px;height:30px;border-radius:8px}
+.pid{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.tsel{max-width:340px;font-weight:600}
+.board.rb .nm{max-width:42vw}
+.ovl{position:fixed;inset:0;z-index:70;background:#18181b59;display:flex;align-items:center;justify-content:center;padding:16px}
+.opt span{display:block}
+.pick{border:1px solid var(--line);border-radius:10px;margin-top:6px;max-height:260px;overflow:auto}
+.pick button{display:flex;width:100%;gap:10px;align-items:center;padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+.pick button:last-child{border-bottom:0}
+.pick button:hover{background:var(--soft)}
+.pill.warn{background:#fdf2e3;color:#9a5b00}

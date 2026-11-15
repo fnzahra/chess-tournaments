@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ringkasan · Turnamen Catur</title>
-<link rel="stylesheet" href="assets/style.css?v=1794708545">
+<link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="turnamen" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794708545"></script>
+<script src="assets/app.js?v=1794710626"></script>
 <script>
 const {T,icon,standings,curRound,doneRounds,fmt,link,pLink}=KSL;
 KSL.page(()=>{
   const c0=T.classes[KSL.kelas()],st=KSL.stats(c0),pc=v=>st.games?Math.round(v/st.games*100):0;
-  const info=[["cal","Tanggal",T.date],["clock","Waktu",T.time],["pin","Tempat",T.place],["list","Sistem",T.sys],["trophy","Tie-break",T.tb],["user","Wasit","Mukhlish"]];
+  const info=[["cal","Tanggal",T.date],["clock","Waktu",T.time],["pin","Tempat",T.place],["list","Sistem",T.sys],["trophy","Tie-break",T.tb],["user","Wasit",T.arb.join(", ")],["user","Biaya",KSL.rupiah(T.fee)]];
   return KSL.tourHead("turnamen")+`
   <div class="grid g2">
     <div>
@@ -41,19 +41,15 @@ KSL.page(()=>{
       <div class="card"><table>${info.map(([i,k,v])=>`<tr><td class="mute" style="width:1%">${icon(i)}</td><td class="mute">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table></div>
     </div>
     <div>
-      <h3>Bagikan</h3>
+      <h3>Link turnamen</h3>
       <div class="card pad mb">
-        <div class="row nowrap" style="align-items:flex-start"><div class="qr"></div><div class="sm"><b>Tempel QR di lokasi</b><div class="mute mt2">Peserta scan untuk melihat pairing dan klasemen.</div></div></div>
+        <div class="sm mute">Bagikan ke grup peserta. Siapa pun bisa membuka tanpa login.</div>
+        <input class="mt" readonly value="${location.href.replace(/[^/]*$/,"")}turnamen.html?t=${T.id}" aria-label="Link turnamen" onclick="this.select()">
         <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><a class="btn alt sm" href="${KSL.waHref()}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
-      </div>
-      <h3>Pendaftaran peserta</h3>
-      <div class="card pad">
-        <div class="sm">Biaya ${T.fee}. Panitia akan mengonfirmasi lewat WhatsApp.</div>
-        <a class="btn sm mt" href="${link("daftar-peserta.html")}">${icon("user")}Daftar jadi peserta</a>
       </div>
     </div>
   </div>
-  <div class="sm mute mt">Terakhir diperbarui 08.12 WIB oleh Mukhlish</div>`;
+  <div class="sm mute mt">${T.status==="done"?"Turnamen selesai · hasil final":"Terakhir diperbarui 08.12 WIB oleh "+T.arb[0]}</div>`;
 },{copy:()=>KSL.copyLink()});
 </script>
 </body>

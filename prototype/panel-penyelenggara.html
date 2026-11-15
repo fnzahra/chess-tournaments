@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Penyelenggara · Turnamen Catur</title>
-<link rel="stylesheet" href="assets/style.css?v=1794708545">
+<link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="panel-penyelenggara" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794708545"></script>
+<script src="assets/app.js?v=1794710626"></script>
 <script>
 const {icon}=KSL;
 const OKEY="ksl-orgs";
@@ -24,7 +24,7 @@ const pillOf=s=>s==="owner"?'<span class="pill acc">Pemilik</span>':s==="aktif"?
 KSL.page(()=>{
   const act=orgs.filter(o=>o.st==="owner"||o.st==="aktif");
   return KSL.panelShell("panel-penyelenggara",`
-  <h1 class="mb">Penyelenggara${KSL.tip("Hanya admin KSL. Setiap penyelenggara hanya bisa mengubah turnamennya sendiri.","Penyelenggara")}</h1>
+  <h1 class="mb">Penyelenggara${KSL.tip("Hanya admin aplikasi. Setiap penyelenggara hanya bisa mengubah turnamennya sendiri.","Penyelenggara")}</h1>
   <div class="grid g4 mb">
     <div class="card stat"><b>${act.length}</b><span>aktif</span></div>
     <div class="card stat"><b>${orgs.filter(o=>o.st==="tunggu").length}</b><span>menunggu</span></div>
@@ -37,7 +37,7 @@ KSL.page(()=>{
       <div class="field"><label>Nama klub / komunitas</label><input name="name" required value="${orgs[ed].name}"></div>
       <div class="field"><label>Kota</label><input name="city" required value="${orgs[ed].city}"></div>
       <div class="field"><label>Penanggung jawab</label><input name="pic" required value="${orgs[ed].pic}"></div>
-      <div class="field"><label>WhatsApp${KSL.tip("Hanya terlihat oleh admin KSL.","WhatsApp")}</label><input name="wa" inputmode="tel" value="${orgs[ed].wa||""}"></div>
+      <div class="field"><label>WhatsApp${KSL.tip("Hanya terlihat oleh admin aplikasi.","WhatsApp")}</label><input name="wa" inputmode="tel" value="${orgs[ed].wa||""}"></div>
     </div>
     <button class="btn" type="submit">${icon("check")}Simpan</button>
   </form>`:""}
@@ -48,8 +48,8 @@ KSL.page(()=>{
       :o.st==="aktif"?`<button class="btn alt sm" data-act="off" data-i="${i}">Nonaktifkan</button>`:o.st==="off"?`<button class="btn alt sm" data-act="ok" data-i="${i}">Aktifkan</button>`:""}<button class="btn alt sm" data-act="edit" data-i="${i}" title="Ubah data ${o.name}">${icon("edit")}Ubah</button></div></td></tr>`).join("")}
   </table></div>`)},{
   ok:el=>{orgs[+el.dataset.i].st="aktif";keep();KSL.toast("Penyelenggara disetujui")},
-  no:el=>{orgs.splice(+el.dataset.i,1);ed=null;keep();KSL.toast("Pendaftaran ditolak","x")},
-  off:el=>{orgs[+el.dataset.i].st="off";keep();KSL.toast("Penyelenggara dinonaktifkan","info")},
+  no:el=>{const o=orgs[+el.dataset.i];KSL.confirm("Tolak "+o.name+"?","Pendaftaran klub ini dihapus. Mereka perlu mendaftar ulang.","Tolak").then(ok=>{if(!ok)return;orgs.splice(+el.dataset.i,1);ed=null;keep();KSL.render();KSL.toast("Pendaftaran "+o.name+" ditolak","info")})},
+  off:el=>{const o=orgs[+el.dataset.i];KSL.confirm("Nonaktifkan "+o.name+"?","Klub ini tidak bisa membuat atau mengubah turnamen sampai diaktifkan lagi. Turnamen yang sudah ada tetap tampil.","Nonaktifkan").then(ok=>{if(!ok)return;o.st="off";keep();KSL.render();KSL.toast(o.name+" dinonaktifkan","info")})},
   edit:el=>{ed=+el.dataset.i;setTimeout(()=>document.getElementById("oe").scrollIntoView({block:"nearest"}))},
   cancel:()=>{ed=null}
 });
