@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daftar jadi peserta · Turnamen Catur</title>
+<title>Daftar jadi peserta · King Sang Long</title>
 <link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="daftar-peserta" data-area="publik">
@@ -25,15 +25,15 @@ KSL.page(()=>{
     <div class="sm mt">Panitia akan menghubungi nomor WhatsApp <b>${st.done.hp}</b> untuk konfirmasi pendaftaran.</div>
     <a class="btn alt mt" href="${back}">Kembali ke turnamen</a></div>`;
   const ql=st.q.trim().toLowerCase();
-  const found=ql.length>1?PLAYERS.filter(p=>(p.name+" "+p.pid).toLowerCase().includes(ql)).slice(0,6):[];
+  const found=PLAYERS.filter(p=>!ql||(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql));
   return `<a class="back" href="${back}">${icon("left")}${T.name}</a>
   <div class="card" style="max-width:560px">
     <div class="pad"><h1>Daftar jadi peserta</h1><div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span></div></div>
     ${st.step==="find"?`
     <div class="pad bt">
       <label>Pernah ikut turnamen di aplikasi ini?${KSL.tip("Cari profilmu supaya tidak dibuat profil ganda. Rating dan riwayatmu ikut terbawa.","Profil pemain")}</label>
-      <div class="input-ic">${icon("search")}<input id="pq" placeholder="Ketik nama atau ID pemain (TC-…)" value="${st.q}"></div>
-      ${found.length?`<div class="list mt">${found.map(p=>`<div><span class="who grow">${av(p.name)}<span><b>${p.name}</b><div class="pid">${p.pid} · ${clubName(p.club)}</div></span></span><button class="btn sm" data-act="me" data-pid="${p.pid}">Ini saya</button></div>`).join("")}</div>`:ql.length>1?`<div class="sm mute mt">Tidak ditemukan.</div>`:""}
+      <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
+      ${found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="me" data-pid="${p.pid}" ${already(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${already(p.pid)?'<span class="pill">Sudah daftar</span>':icon("right")}</button>`).join("")}</div>`:`<div class="sm mute mt">Tidak ditemukan.</div>`}
       <button class="btn alt block mt" data-act="new">${icon("plus")}Saya belum punya profil</button>
     </div>`:`
     <form class="pad bt" id="f">

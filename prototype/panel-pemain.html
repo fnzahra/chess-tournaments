@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Peserta · Turnamen Catur</title>
+<title>Peserta · King Sang Long</title>
 <link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="panel-pemain" data-area="panel">
@@ -16,7 +16,7 @@ const st={add:"db",q:"",newClub:false,ed:null};
 KSL.page(()=>{
   const c=T.classes[kelas()],inClass=pid=>c.players.some(p=>p.pid===pid);
   const pend=KSL.pending().map((p,i)=>({...p,i})).filter(p=>p.t===T.id&&p.k===kelas());
-  const ql=st.q.trim().toLowerCase(),found=ql.length>1?PLAYERS.filter(p=>(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql)).slice(0,8):[];
+  const ql=st.q.trim().toLowerCase(),found=PLAYERS.filter(p=>!ql||(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql));
   return `
   <div class="row between mb"><div><h1>Peserta</h1>${KSL.tourPicker("panel-pemain.html")||`<div class="sm mute">${T.name}</div>`}</div>
     <label class="btn alt sm" style="margin:0;color:var(--ink);font-size:12px">${icon("upload")}Impor CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label></div>
@@ -26,8 +26,8 @@ KSL.page(()=>{
     <div class="pad bt">
       <div class="seg mb"><button class="${st.add==="db"?"on":""}" data-act="mode" data-m="db">Pilih dari database</button><button class="${st.add==="new"?"on":""}" data-act="mode" data-m="new">Pemain baru</button></div>
       ${st.add==="db"?`
-        <div class="input-ic">${icon("search")}<input id="pq" placeholder="Nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
-        ${found.length?`<div class="pick">${found.map(p=>`<button data-act="pickp" data-pid="${p.pid}" ${inClass(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${inClass(p.pid)?'<span class="pill">Sudah ikut</span>':icon("plus")}</button>`).join("")}</div>`:ql.length>1?`<div class="sm mute mt">Tidak ditemukan. <a href="#" class="lnk" data-act="mode" data-m="new">Tambah pemain baru</a></div>`:`<div class="hint">Nama bisa sama, jadi cek ID dan klubnya.</div>`}`:`
+        <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
+        ${found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="pickp" data-pid="${p.pid}" ${inClass(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${inClass(p.pid)?'<span class="pill">Sudah ikut</span>':icon("plus")}</button>`).join("")}</div>`:`<div class="sm mute mt">Tidak ditemukan. <a href="#" class="lnk" data-act="mode" data-m="new">Tambah pemain baru</a></div>`}`:`
         <form id="np" class="grid g2e">
           <div class="field"><label>Nama lengkap</label><input name="name" required></div>
           <div class="field"><label>Rating awal${KSL.tip("Kosongkan bila belum punya rating. Nanti dihitung otomatis dari hasil partai.","Rating awal")}</label><input name="rtg" inputmode="numeric" placeholder="Belum ada"></div>
