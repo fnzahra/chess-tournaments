@@ -222,6 +222,7 @@ const GUIDE=[
   ["masuk","Masuk","Email atau nomor HP + kata sandi."],
   ["daftar","Daftar klub","Satu formulir singkat."],
   ["panel","Dashboard","Turnamen berjalan dan yang perlu tindakan."],
+  ["panel-turnamen","Kelola turnamen","Ringkasan, edit info, dan akses cepat babak & peserta."],
   ["panel-buat","Buat turnamen","Info, kelas & sistem, wasit, lalu terbitkan."],
   ["panel-pemain","Peserta","Pilih dari database atau tambah baru, konfirmasi WA."],
   ["panel-babak","Babak dan hasil","Isi hasil, WO, lalu pairing babak berikutnya."],
@@ -249,8 +250,8 @@ function shell(){
       ${isPanel?`<button class="tb" data-act="logout">${icon("out")}<span class="dsk">Keluar</span></button>`:`<a class="tb" href="masuk.html">${icon("lock")}Masuk</a>`}
     </div>
   </div></header>`;
-  const railItems=[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat turnamen"],["panel-klub","org","Klub saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman publik"]];
-  const href=x=>file(x[0])+(isPanel&&["panel-babak","panel-pemain"].includes(x[0])?"?t="+T.id:"");
+  const railItems=[["panel","dash","Dashboard"],["panel-turnamen","trophy","Kelola turnamen"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat turnamen"],["panel-klub","org","Klub saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman publik"]];
+  const href=x=>file(x[0])+(isPanel&&["panel-turnamen","panel-babak","panel-pemain"].includes(x[0])?"?t="+T.id:"");
   const rail=isPanel
     ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">${clubName("ksl")} · ${plan()!=="free"?"Premium":trialLeft()>0?"Trial "+trialLeft()+" hari":"Gratis"}</span></div></div></nav>`
     :"";

@@ -15,7 +15,7 @@ const T=TOURS.find(t=>t.id===qp("t"))||TOURS.find(t=>t.status==="soon");
 const CL=T.classes||[{name:"Umum"}];
 const back=T.classes?"turnamen.html?t="+T.id:"segera.html?t="+T.id;
 // step: find (search own profile) -> form -> done. Picking an existing profile avoids duplicates.
-const st={step:"find",q:"",pick:null,newClub:false,done:null};
+const st={step:"find",q:"",open:false,pick:null,newClub:false,done:null};
 const already=pid=>(T.reg||[]).some(r=>r.pid===pid)||KSL.pending().some(p=>p.t===T.id&&p.pid===pid);
 KSL.page(()=>{
   if(st.done)return `<div class="card pad" style="max-width:440px;margin:24px auto;text-align:center">
@@ -32,8 +32,11 @@ KSL.page(()=>{
     ${st.step==="find"?`
     <div class="pad bt">
       <label>Pernah ikut turnamen di aplikasi ini?${KSL.tip("Cari profilmu supaya tidak dibuat profil ganda. Rating dan riwayatmu ikut terbawa.","Profil pemain")}</label>
-      <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
-      ${found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="me" data-pid="${p.pid}" ${already(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${already(p.pid)?'<span class="pill">Sudah daftar</span>':icon("right")}</button>`).join("")}</div>`:`<div class="sm mute mt">Tidak ditemukan.</div>`}
+      <div class="combo">
+        <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
+        ${st.open?(found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="me" data-pid="${p.pid}" ${already(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${already(p.pid)?'<span class="pill">Sudah daftar</span>':icon("right")}</button>`).join("")}</div>`:`<div class="pick"><div class="pad sm mute">Tidak ditemukan.</div></div>`):""}
+      </div>
+      <div class="hint">Klik kolom cari untuk melihat daftar pemain, ketik untuk menyaring.</div>
       <button class="btn alt block mt" data-act="new">${icon("plus")}Saya belum punya profil</button>
     </div>`:`
     <form class="pad bt" id="f">
@@ -47,12 +50,14 @@ KSL.page(()=>{
     </form>`}
   </div>`;
 },{
-  me:el=>{const p=PLAYERS.find(x=>x.pid===el.dataset.pid);if(already(p.pid)){KSL.toast("Kamu sudah terdaftar di turnamen ini","x");return}st.pick=p;st.step="form"},
+  me:el=>{const p=PLAYERS.find(x=>x.pid===el.dataset.pid);if(already(p.pid)){KSL.toast("Kamu sudah terdaftar di turnamen ini","x");return}st.pick=p;st.open=false;st.step="form"},
   new:()=>{st.pick=null;st.step="form"},
   back:()=>{st.step="find"},
   clubNew:()=>{st.newClub=true},clubList:()=>{st.newClub=false}
 });
-document.addEventListener("input",e=>{if(e.target.id!=="pq")return;st.q=e.target.value;const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("pq");f.focus();f.setSelectionRange(pos,pos)});
+document.addEventListener("focusin",e=>{if(e.target.id!=="pq"||st.open)return;st.open=true;KSL.render();const f=document.getElementById("pq");f.focus()});
+document.addEventListener("mousedown",e=>{if(st.open&&!e.target.closest(".combo")){st.open=false;KSL.render()}});
+document.addEventListener("input",e=>{if(e.target.id!=="pq")return;st.q=e.target.value;st.open=true;const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("pq");f.focus();f.setSelectionRange(pos,pos)});
 document.addEventListener("submit",e=>{
   e.preventDefault();const f=new FormData(e.target);
   const name=st.pick?st.pick.name:(f.get("name")||"").trim();if(!name){KSL.toast("Nama wajib diisi","x");return}

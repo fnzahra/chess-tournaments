@@ -12,13 +12,13 @@
 <script>
 const {T,icon,kelas,link,av,CLUBS,PLAYERS,clubName}=KSL;
 // add: "db" = pick existing player by name/ID, "new" = create profile; q = search text
-const st={add:"db",q:"",newClub:false,ed:null};
+const st={add:"db",q:"",open:false,newClub:false,ed:null};
 KSL.page(()=>{
   const c=T.classes[kelas()],inClass=pid=>c.players.some(p=>p.pid===pid);
   const pend=KSL.pending().map((p,i)=>({...p,i})).filter(p=>p.t===T.id&&p.k===kelas());
   const ql=st.q.trim().toLowerCase(),found=PLAYERS.filter(p=>!ql||(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql));
   return `
-  <div class="row between mb"><div><h1>Peserta</h1>${KSL.tourPicker("panel-pemain.html")||`<div class="sm mute">${T.name}</div>`}</div>
+  <div class="row between mb"><div class="page-head"><h1>Peserta</h1>${KSL.tourPicker("panel-pemain.html")||`<span class="sm mute">${T.name}</span>`}</div>
     <label class="btn alt sm" style="margin:0;color:var(--ink);font-size:12px">${icon("upload")}Impor CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label></div>
   ${pend.length?`<div class="card mb"><div class="pad"><b>Pendaftar baru (${pend.length})</b></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${av(p.name)}<span><b>${p.name}</b><div class="pid">${p.pid||"Profil baru"} · ${p.club}${p.hp?" · WA "+p.hp:""}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""}
   <div class="card mb">
@@ -26,8 +26,11 @@ KSL.page(()=>{
     <div class="pad bt">
       <div class="seg mb"><button class="${st.add==="db"?"on":""}" data-act="mode" data-m="db">Pilih dari database</button><button class="${st.add==="new"?"on":""}" data-act="mode" data-m="new">Pemain baru</button></div>
       ${st.add==="db"?`
-        <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
-        ${found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="pickp" data-pid="${p.pid}" ${inClass(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${inClass(p.pid)?'<span class="pill">Sudah ikut</span>':icon("plus")}</button>`).join("")}</div>`:`<div class="sm mute mt">Tidak ditemukan. <a href="#" class="lnk" data-act="mode" data-m="new">Tambah pemain baru</a></div>`}`:`
+        <div class="combo">
+          <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
+          ${st.open?(found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="pickp" data-pid="${p.pid}" ${inClass(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${inClass(p.pid)?'<span class="pill">Sudah ikut</span>':icon("plus")}</button>`).join("")}</div>`:`<div class="pick"><div class="pad sm mute">Tidak ditemukan. <a href="#" class="lnk" data-act="mode" data-m="new">Tambah pemain baru</a></div></div>`):""}
+        </div>
+        <div class="hint">Klik kolom cari untuk melihat daftar pemain, ketik untuk menyaring.</div>`:`
         <form id="np" class="grid g2e">
           <div class="field"><label>Nama lengkap</label><input name="name" required></div>
           <div class="field"><label>Rating awal${KSL.tip("Kosongkan bila belum punya rating. Nanti dihitung otomatis dari hasil partai.","Rating awal")}</label><input name="rtg" inputmode="numeric" placeholder="Belum ada"></div>
@@ -46,7 +49,7 @@ KSL.page(()=>{
   mode:el=>{st.add=el.dataset.m},
   clubNew:()=>{st.newClub=true},clubList:()=>{st.newClub=false},
   pickp:el=>{const c=T.classes[kelas()],p=PLAYERS.find(x=>x.pid===el.dataset.pid);if(c.players.some(x=>x.pid===p.pid)){KSL.toast(p.name+" sudah ada di kelas ini","x");return}
-    c.players.push({id:c.players.length,pid:p.pid,name:p.name,rtg:KSL.ratingNow(p.pid),games:p.games,club:clubName(p.club),pay:T.fee?"belum":"gratis"});st.q="";KSL.save();KSL.toast(p.name+" ("+p.pid+") ditambahkan")},
+    c.players.push({id:c.players.length,pid:p.pid,name:p.name,rtg:KSL.ratingNow(p.pid),games:p.games,club:clubName(p.club),pay:T.fee?"belum":"gratis"});st.q="";st.open=false;KSL.save();KSL.toast(p.name+" ("+p.pid+") ditambahkan")},
   pay:el=>{const p=T.classes[kelas()].players[+el.dataset.i];p.pay=p.pay==="lunas"?"belum":"lunas";KSL.save();KSL.toast(p.name+": "+(p.pay==="lunas"?"ditandai lunas":"ditandai belum bayar"),p.pay==="lunas"?"check":"info")},
   edit:el=>{st.ed=+el.dataset.i},ecancel:()=>{st.ed=null},
   del:el=>{const c=T.classes[kelas()],i=+el.dataset.i,p=c.players[i],started=c.rounds.some(g=>g.some(x=>x.res&&(x.w===i||x.b===i)));
@@ -58,7 +61,9 @@ KSL.page(()=>{
     c.players.push({id:c.players.length,pid,name:p.name,rtg:p.pid?KSL.ratingNow(p.pid):1200,games:0,club:p.club,pay:p.pay||"belum"});KSL.setPending(a);KSL.save();KSL.toast(p.name+" diterima · "+pid)},
   rej:el=>{const a=KSL.pending(),p=a[+el.dataset.i];KSL.confirm("Tolak pendaftaran "+p.name+"?","Pendaftaran dihapus. Pemain perlu mendaftar ulang bila ditolak karena keliru.","Tolak").then(ok=>{if(!ok)return;a.splice(+el.dataset.i,1);KSL.setPending(a);KSL.render();KSL.toast("Pendaftaran "+p.name+" ditolak","info")})}
 });
-document.addEventListener("input",e=>{if(e.target.id!=="pq")return;st.q=e.target.value;const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("pq");f.focus();f.setSelectionRange(pos,pos)});
+document.addEventListener("focusin",e=>{if(e.target.id!=="pq"||st.open)return;st.open=true;KSL.render();const f=document.getElementById("pq");f.focus()});
+document.addEventListener("mousedown",e=>{if(st.open&&!e.target.closest(".combo")){st.open=false;KSL.render()}});
+document.addEventListener("input",e=>{if(e.target.id!=="pq")return;st.q=e.target.value;st.open=true;const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("pq");f.focus();f.setSelectionRange(pos,pos)});
 document.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.target),c=T.classes[kelas()];
   if(e.target.id==="np"){const name=f.get("name").trim();if(!name){KSL.toast("Nama wajib diisi","x");return}
     const club=st.newClub?f.get("club").trim():(f.get("club")==="-"?"Tanpa klub":clubName(f.get("club")));

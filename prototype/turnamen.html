@@ -37,8 +37,7 @@ KSL.page(()=>{
         <div class="legend"><span><i style="background:#d4d4d8"></i>Putih ${st.white}</span><span><i style="background:var(--accent)"></i>Seri ${st.draw}</span><span><i style="background:var(--ink)"></i>Hitam ${st.black}</span>${st.wo?`<span>WO ${st.wo}</span>`:""}<span>Rata-rata rating ${st.avg}</span></div>
         <div class="grid mt" style="gap:6px">${Object.entries(st.clubs).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="hb"><span class="nm" style="font-weight:500">${k}</span><span class="t"><i style="width:${v/c0.players.length*100}%"></i></span><b>${v}</b></div>`).join("")}</div>
       </div>
-      <h3>Informasi</h3>
-      <div class="card"><table>${info.map(([i,k,v])=>`<tr><td class="mute" style="width:1%">${icon(i)}</td><td class="mute">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table></div>
+      <div class="sm mute mt">${T.status==="done"?"Turnamen selesai · hasil final":"Terakhir diperbarui 08.12 WIB oleh "+T.arb[0]}</div>
     </div>
     <div>
       <h3>Link turnamen</h3>
@@ -47,9 +46,10 @@ KSL.page(()=>{
         <input class="mt" readonly value="${location.href.replace(/[^/]*$/,"")}turnamen.html?t=${T.id}" aria-label="Link turnamen" onclick="this.select()">
         <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><a class="btn alt sm" href="${KSL.waHref()}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
       </div>
+      <h3>Informasi</h3>
+      <div class="card"><table>${info.map(([i,k,v])=>`<tr><td class="mute" style="width:1%">${icon(i)}</td><td class="mute">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table></div>
     </div>
-  </div>
-  <div class="sm mute mt">${T.status==="done"?"Turnamen selesai · hasil final":"Terakhir diperbarui 08.12 WIB oleh "+T.arb[0]}</div>`;
+  </div>`;
 },{copy:()=>KSL.copyLink()});
 </script>
 </body>

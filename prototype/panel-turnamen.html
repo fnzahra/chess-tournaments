@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelola turnamen · King Sang Long</title>
+<link rel="stylesheet" href="assets/style.css?v=1794710626">
+</head>
+<body data-page="panel-turnamen" data-area="panel">
+<div id="stage"><div id="app"><main id="view"></main></div></div>
+<script src="assets/app.js?v=1794710626"></script>
+<script>
+const {TOURS,icon,pill,curRound,doneRounds,qp}=KSL;
+const T=TOURS.find(t=>t.id===qp("t"))||TOURS.find(t=>t.classes&&t.org==="ksl")||TOURS[0];
+let edit=false;
+KSL.page(()=>{
+  const classes=T.classes||[];
+  const totalPlayers=classes.reduce((a,c)=>a+c.players.length,0)||(T.reg?T.reg.length:0);
+  const pend=KSL.pending().filter(p=>p.t===T.id).length;
+  const doneR=classes.reduce((a,c)=>a+doneRounds(c),0);
+  const totalR=classes.reduce((a,c)=>a+c.rounds.length,0);
+  const pubUrl=T.classes?"turnamen.html?t="+T.id:"segera.html?t="+T.id;
+  const fullUrl=location.href.replace(/[^/]*$/,"")+pubUrl;
+  return `<a class="back" href="panel.html">${icon("left")}Dashboard</a>
+  <div class="row between mb">
+    <div class="page-head">
+      <h1>Kelola turnamen</h1>
+      ${T.classes?KSL.tourPicker("panel-turnamen.html")||`<span class="sm mute">${T.name}</span>`:`<span class="sm mute">${T.name}</span>`}
+      ${pill(T.status)}
+    </div>
+    <a class="btn alt sm" href="${pubUrl}">${icon("home")}Halaman publik${icon("right")}</a>
+  </div>
+  <div class="grid g4 mb">
+    <div class="card stat"><b>${totalPlayers}</b><span>peserta</span></div>
+    <div class="card stat"><b>${classes.length||1}</b><span>kelas</span></div>
+    <div class="card stat"><b>${totalR?doneR+"/"+totalR:"-"}</b><span>babak selesai</span></div>
+    <div class="card stat"><b>${pend}</b><span>pendaftar baru</span></div>
+  </div>
+  <div class="grid g2">
+    <div>
+      ${classes.length?`<h3>Kelas & progres</h3>
+      <div class="grid g2e mb">${classes.map((c,i)=>{const cr=curRound(c),d=doneRounds(c),n=c.rounds.length,left=c.rounds[cr-1].filter(x=>!x.res).length;return `
+        <div class="card pad">
+          <div class="row between"><b>${c.name}</b><span class="pill ${left?"live":"ok"}">Babak ${cr}/${n}</span></div>
+          <div class="sm mute mt2">${c.players.length} pemain · ${left?left+" meja belum ada hasil":"babak lengkap"}</div>
+          <div class="bar mt"><i style="width:${d/n*100}%"></i></div>
+          <div class="row mt">
+            <a class="btn sm" href="panel-babak.html?t=${T.id}&kelas=${i}">${icon("flag")}Babak & hasil</a>
+            <a class="btn alt sm" href="panel-pemain.html?t=${T.id}&kelas=${i}">${icon("users")}Peserta</a>
+          </div>
+        </div>`}).join("")}</div>`:`
+      <h3>Turnamen dijadwalkan</h3>
+      <div class="card pad mb">
+        <div class="sm mute">Turnamen ini belum dimulai. Pendaftar yang masuk bisa dikonfirmasi sebelum babak 1 dibuat.</div>
+        <div class="row mt"><a class="btn acc sm" href="panel-pemain.html">${icon("users")}Kelola pendaftar</a></div>
+      </div>`}
+      <div class="row between mb"><h3>Informasi turnamen</h3><button class="lnk sm" data-act="toggleEdit">${edit?"Batal":icon("edit")+" Ubah info"}</button></div>
+      <div class="card ${edit?"pad":""}">
+        ${edit?`<form id="ef">
+          <div class="field"><label>Nama turnamen</label><input name="name" value="${T.name.replace(/"/g,"&quot;")}" required></div>
+          <div class="grid g2e">
+            <div class="field"><label>Tanggal</label><input name="date" value="${(T.date||"").replace(/"/g,"&quot;")}" required></div>
+            <div class="field"><label>Jam</label><input name="time" value="${(T.time||"").replace(/"/g,"&quot;")}"></div>
+          </div>
+          <div class="field"><label>Tempat</label><input name="place" value="${(T.place||"").replace(/"/g,"&quot;")}" required></div>
+          <div class="row"><button class="btn acc sm" type="submit">${icon("check")}Simpan perubahan</button><button class="btn alt sm" type="button" data-act="toggleEdit">Batal</button></div>
+        </form>`:`
+        <table>${[["Nama",T.name],["Tanggal",T.date],["Jam",T.time||"-"],["Tempat",T.place],["Sistem",T.sys],["Wasit",(T.arb||["-"]).join(", ")]].map(([k,v])=>`<tr><td class="mute" style="width:1%">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table>`}
+      </div>
+    </div>
+    <div>
+      <h3>Link turnamen</h3>
+      <div class="card pad mb">
+        <div class="sm mute">Bagikan link ini ke grup peserta atau panitia.</div>
+        <input class="mt" readonly value="${fullUrl}" aria-label="Link turnamen" onclick="this.select()">
+        <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><a class="btn alt sm" href="${KSL.waHref()}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
+      </div>
+      <h3>Aksi cepat</h3>
+      <div class="card list">
+        <a href="panel-babak.html?t=${T.id}"><span class="ico">${icon("flag")}</span><div class="grow"><b>Input hasil & pairing</b><div class="sm mute">Kelola meja dan babak berikutnya</div></div>${icon("right")}</a>
+        <a href="panel-pemain.html?t=${T.id}"><span class="ico">${icon("users")}</span><div class="grow"><b>Tambah & kelola peserta</b><div class="sm mute">Terima pendaftar baru atau impor CSV</div></div>${icon("right")}</a>
+        <a href="${pubUrl}"><span class="ico">${icon("trophy")}</span><div class="grow"><b>Preview halaman publik</b><div class="sm mute">Lihat tampilan untuk penonton & pemain</div></div>${icon("right")}</a>
+      </div>
+    </div>
+  </div>`;
+},{
+  toggleEdit:()=>{edit=!edit},
+  copy:()=>{(navigator.clipboard?navigator.clipboard.writeText(location.href.replace(/[^/]*$/,"")+(T.classes?"turnamen.html?t=":"segera.html?t=")+T.id):Promise.reject()).then(()=>KSL.toast("Link disalin"),()=>KSL.toast("Salin manual dari kolom link","x"))}
+});
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="ef")return;e.preventDefault();const f=new FormData(e.target);
+  T.name=f.get("name").trim()||T.name;T.date=f.get("date").trim()||T.date;T.time=f.get("time").trim()||T.time;T.place=f.get("place").trim()||T.place;
+  edit=false;KSL.render();KSL.toast("Informasi turnamen disimpan");
+});
+</script>
+</body>
+</html>

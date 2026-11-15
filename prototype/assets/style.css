@@ -339,7 +339,10 @@ input[readonly][data-act]{cursor:pointer;background:var(--soft)}
 .btn.danger{background:#b42318;border-color:#b42318}.btn.danger:hover{background:#912018}
 .logo .mark{display:grid;width:30px;height:30px;border-radius:8px}
 .pid{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
-.tsel{max-width:340px;font-weight:600;height:36px;border-radius:var(--r-sm)}
+.tsel{width:auto;min-width:220px;max-width:340px;font-weight:600;font-size:13px;height:36px;border-radius:var(--r-sm)}
+.page-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.combo{position:relative}
+.combo .pick{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:var(--card);box-shadow:0 8px 24px #0000001a;margin-top:0}
 .board.rb .nm{max-width:42vw}
 .ovl{position:fixed;inset:0;z-index:70;background:#18181b59;display:flex;align-items:center;justify-content:center;padding:16px}
 .opt span{display:block}
