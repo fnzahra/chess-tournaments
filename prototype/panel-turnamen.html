@@ -32,7 +32,7 @@ KSL.page(()=>{
   <div class="grid g2">
     <div>
       ${classes.length?`<h3>Kelas & progres</h3>
-      <div class="grid g2e mb">${classes.map((c,i)=>{const cr=curRound(c),d=doneRounds(c),n=c.rounds.length,left=c.rounds[cr-1].filter(x=>!x.res).length;return `
+      <div class="grid ${classes.length>1?"g2e":""} mb">${classes.map((c,i)=>{const cr=curRound(c),d=doneRounds(c),n=c.rounds.length,left=c.rounds[cr-1].filter(x=>!x.res).length;return `
         <div class="card pad">
           <div class="row between"><b>${c.name}</b><span class="pill ${left?"live":"ok"}">Babak ${cr}/${n}</span></div>
           <div class="sm mute mt2">${c.players.length} pemain · ${left?left+" meja belum ada hasil":"babak lengkap"}</div>

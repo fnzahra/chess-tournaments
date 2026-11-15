@@ -26,7 +26,7 @@ KSL.page(()=>{
     <div class="row between nowrap"><span class="pill live">Berlangsung</span><span class="sm mute">${orgName(t)}</span></div>
     <h2 class="mt">${t.name}</h2>
     <div class="meta mt2"><span>${icon("cal")}${t.date}</span><span>${icon("pin")}${t.place}</span></div>
-    <div class="grid g2e keep2 mt">${t.classes.map(c=>{const n=c.rounds.length;return `<div class="fc"><div class="row between nowrap"><b>${c.name}</b><span class="sm">Babak ${curRound(c)}/${n}</span></div><div class="bar mt2"><i style="width:${KSL.doneRounds(c)/n*100}%"></i></div></div>`}).join("")}</div>
+    <div class="grid ${t.classes.length>1?"g2e keep2":""} mt">${t.classes.map(c=>{const n=c.rounds.length;return `<div class="fc"><div class="row between nowrap"><b>${c.name}</b><span class="sm">Babak ${curRound(c)}/${n}</span></div><div class="bar mt2"><i style="width:${KSL.doneRounds(c)/n*100}%"></i></div></div>`}).join("")}</div>
     <div class="row between mt"><span class="sm">Pairing, klasemen, peserta</span>${icon("right")}</div>
   </a>`;
   // top club ratings across all tournaments (one row per player ID)

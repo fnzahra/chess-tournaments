@@ -18,9 +18,9 @@ KSL.page(()=>{
   <div class="grid g2">
     <div>
       <h3>Kelas</h3>
-      <div class="grid g2e mb">${T.classes.map((c,i)=>{const s=standings(c),d=doneRounds(c),n=c.rounds.length;return `
+      <div class="grid ${T.classes.length>1?"g2e":""} mb">${T.classes.map((c,i)=>{const s=standings(c),d=doneRounds(c),n=c.rounds.length;return `
         <div class="card">
-          <div class="pad row between"><div><b>${c.name}</b><div class="sm mute">${c.desc} · ${c.players.length} pemain</div></div><span class="pill live">Babak ${curRound(c)}</span></div>
+          <div class="pad row between"><div><b>${c.name}</b><div class="sm mute">${c.players.length} pemain · ${n} babak</div></div><span class="pill live">Babak ${curRound(c)}</span></div>
           <div class="pad bt"><div class="row between sm mute mb"><span>Babak selesai</span><span>${d} / ${n}</span></div><div class="bar"><i style="width:${d/n*100}%"></i></div></div>
           <table class="bt">${s.slice(0,3).map((p,j)=>`<tr><td class="n"><span class="rank r${j+1}">${j+1}</span></td><td>${pLink(p.id,p.name)}</td><td class="r b">${fmt(p.pts)}</td></tr>`).join("")}</table>
           <div class="pad bt row"><a class="btn sm" href="${link("pairing.html",{kelas:i})}">${icon("swap")}Pairing</a><a class="btn alt sm" href="${link("klasemen.html",{kelas:i})}">${icon("trophy")}Klasemen</a></div>

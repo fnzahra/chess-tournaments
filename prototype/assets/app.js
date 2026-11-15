@@ -295,7 +295,7 @@ function tourHead(active){
       <div class="row between nowrap"><h1>${T.name}</h1>${pill(T.status)}</div>
       <div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span><span>${icon("list")}${T.sys}</span><span>${icon("org")}${orgName(T)}</span></div>
       <div class="row mt">
-        <div class="seg">${T.classes.map((c,i)=>`<a class="${i===k?"on":""}" href="${link(file(active),{kelas:i,babak:null})}">${c.name}</a>`).join("")}</div>
+        ${T.classes.length>1?`<div class="seg">${T.classes.map((c,i)=>`<a class="${i===k?"on":""}" href="${link(file(active),{kelas:i,babak:null})}">${c.name}</a>`).join("")}</div>`:`<span class="pill acc">${T.classes[0].name}</span>`}
         <div class="input-ic" style="flex:1;max-width:240px;min-width:150px">${icon("search")}<input id="cari" placeholder="Cari nama saya" value="${Q.get("cari")||""}"></div>
       </div>
     </div>
