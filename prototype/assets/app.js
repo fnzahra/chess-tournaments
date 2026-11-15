@@ -259,7 +259,7 @@ function shell(){
     :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat"],["panel-klub","org","Klub"]]
-    :[["index","home","Turnamen"],["cari","search","Klub & Pemain"],["masuk","lock","Masuk"]];
+    :[["index","home","Turnamen"],["cari","search","Klub & Pemain"],loggedIn()?["panel","dash","Panel Klub"]:["masuk","lock","Masuk"]];
   const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${href([p])}" class="${page===p||(p==="index"&&!isPanel&&["turnamen","pairing","klasemen","peserta","tabel-silang","segera","daftar-peserta"].includes(page))?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
   app.insertAdjacentHTML("afterbegin",rail+head);
   app.insertAdjacentHTML("beforeend",bnav);
