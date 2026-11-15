@@ -10,7 +10,7 @@
 <div id="stage"><div id="app"><main id="view"></main></div></div>
 <script src="assets/app.js?v=1794710626"></script>
 <script>
-const {TOURS,icon,qp,av,CLUBS,PLAYERS,clubName,rupiah}=KSL;
+const {TOURS,icon,qp,av,CLUBS,PLAYERS,clubName}=KSL;
 const T=TOURS.find(t=>t.id===qp("t"))||TOURS.find(t=>t.status==="soon");
 const CL=T.classes||[{name:"Umum"}];
 const back=T.classes?"turnamen.html?t="+T.id:"segera.html?t="+T.id;
@@ -22,13 +22,13 @@ KSL.page(()=>{
     <span class="av lg" style="background:var(--ok-soft);color:var(--ok)">${icon("check","lg")}</span>
     <h1 class="mt">Pendaftaran terkirim</h1>
     <div class="sm mute mt2">${st.done.name} · ${st.done.pid||"ID dibuat setelah diterima panitia"}</div>
-    ${T.fee?`<div class="card pad mt" style="text-align:left"><b class="sm">Status: menunggu pembayaran</b><div class="sm mute mt2">Biaya ${rupiah(T.fee)} · ${st.done.payBy}. Panitia menandai lunas setelah pembayaran diterima, lalu kabar dikirim lewat WhatsApp.</div></div>`:`<div class="sm mt">Panitia akan mengonfirmasi lewat WhatsApp.</div>`}
+    <div class="sm mt">Panitia akan menghubungi nomor WhatsApp <b>${st.done.hp}</b> untuk konfirmasi pendaftaran.</div>
     <a class="btn alt mt" href="${back}">Kembali ke turnamen</a></div>`;
   const ql=st.q.trim().toLowerCase();
   const found=ql.length>1?PLAYERS.filter(p=>(p.name+" "+p.pid).toLowerCase().includes(ql)).slice(0,6):[];
   return `<a class="back" href="${back}">${icon("left")}${T.name}</a>
   <div class="card" style="max-width:560px">
-    <div class="pad"><h1>Daftar jadi peserta</h1><div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span><span>Biaya ${rupiah(T.fee)}</span></div></div>
+    <div class="pad"><h1>Daftar jadi peserta</h1><div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span></div></div>
     ${st.step==="find"?`
     <div class="pad bt">
       <label>Pernah ikut turnamen di aplikasi ini?${KSL.tip("Cari profilmu supaya tidak dibuat profil ganda. Rating dan riwayatmu ikut terbawa.","Profil pemain")}</label>
@@ -41,8 +41,7 @@ KSL.page(()=>{
       <div class="field"><label>Nama lengkap</label><input name="name" required placeholder="Sesuai identitas"></div>
       <div class="field"><label>Klub asal</label>${st.newClub?`<div class="row nowrap"><input name="club" required placeholder="Nama klub baru"><a href="#" class="lnk sm" data-act="clubList">Pilih dari daftar</a></div>`:`<select name="club">${CLUBS.map(c=>`<option value="${c.id}">${c.name}</option>`).join("")}<option value="-">Tanpa klub</option></select><a href="#" class="lnk sm" data-act="clubNew">+ Klub belum ada di daftar</a>`}</div>`}
       ${CL.length>1?`<div class="field"><label>Kelas</label><select name="k">${CL.map((c,i)=>`<option value="${i}">${c.name}</option>`).join("")}</select></div>`:""}
-      <div class="field"><label>Nomor WhatsApp${KSL.tip("Hanya untuk konfirmasi panitia. Tidak tampil di publik.","Nomor WhatsApp")}</label><input name="hp" inputmode="tel" required placeholder="08xx"></div>
-      ${T.fee?`<div class="field"><label>Pembayaran ${rupiah(T.fee)}</label><select name="payBy"><option>Transfer ke rekening panitia</option><option>Bayar di lokasi</option></select></div>`:""}
+      <div class="field"><label>Nomor WhatsApp${KSL.tip("Hanya untuk konfirmasi panitia di luar sistem. Tidak tampil di publik.","Nomor WhatsApp")}</label><input name="hp" inputmode="tel" required placeholder="08xx"></div>
       <label class="row nowrap sm" style="color:var(--ink);font-weight:500;align-items:flex-start"><input type="checkbox" required style="width:auto;height:auto;margin-top:2px"> Saya (atau orang tua/wali bila di bawah 17 tahun) setuju data ini dipakai untuk turnamen ini.</label>
       <button class="btn block mt" type="submit">Kirim pendaftaran</button>
     </form>`}
@@ -58,7 +57,8 @@ document.addEventListener("submit",e=>{
   e.preventDefault();const f=new FormData(e.target);
   const name=st.pick?st.pick.name:(f.get("name")||"").trim();if(!name){KSL.toast("Nama wajib diisi","x");return}
   const club=st.pick?clubName(st.pick.club):st.newClub?f.get("club").trim():(f.get("club")==="-"?"Tanpa klub":clubName(f.get("club")));
-  const p={t:T.id,k:+f.get("k")||0,pid:st.pick?st.pick.pid:null,name,club,pay:T.fee?"belum":"gratis",payBy:f.get("payBy")||"",at:Date.now()};
+  const hp=(f.get("hp")||"").trim();if(!hp){KSL.toast("Nomor WhatsApp wajib diisi","x");return}
+  const p={t:T.id,k:+f.get("k")||0,pid:st.pick?st.pick.pid:null,name,club,hp,at:Date.now()};
   KSL.setPending(KSL.pending().concat(p));st.done=p;KSL.render();KSL.toast("Pendaftaran terkirim");
 });
 </script>

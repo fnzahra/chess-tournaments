@@ -13,7 +13,7 @@
 const {T,icon,standings,curRound,doneRounds,fmt,link,pLink}=KSL;
 KSL.page(()=>{
   const c0=T.classes[KSL.kelas()],st=KSL.stats(c0),pc=v=>st.games?Math.round(v/st.games*100):0;
-  const info=[["cal","Tanggal",T.date],["clock","Waktu",T.time],["pin","Tempat",T.place],["list","Sistem",T.sys],["trophy","Tie-break",T.tb],["user","Wasit",T.arb.join(", ")],["user","Biaya",KSL.rupiah(T.fee)]];
+  const info=[["cal","Tanggal",T.date],["clock","Waktu",T.time],["pin","Tempat",T.place],["list","Sistem",T.sys],["trophy","Tie-break",T.tb],["user","Wasit",T.arb.join(", ")]];
   return KSL.tourHead("turnamen")+`
   <div class="grid g2">
     <div>

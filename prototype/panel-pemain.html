@@ -10,22 +10,19 @@
 <div id="stage"><div id="app"><main id="view"></main></div></div>
 <script src="assets/app.js?v=1794710626"></script>
 <script>
-const {T,icon,kelas,link,av,CLUBS,PLAYERS,clubName,rupiah}=KSL;
+const {T,icon,kelas,link,av,CLUBS,PLAYERS,clubName}=KSL;
 // add: "db" = pick existing player by name/ID, "new" = create profile; q = search text
 const st={add:"db",q:"",newClub:false,ed:null};
-const payPill=p=>p.pay==="lunas"?'<span class="pill ok">Lunas</span>':p.pay==="gratis"?'<span class="pill">Gratis</span>':'<span class="pill warn">Belum bayar</span>';
 KSL.page(()=>{
   const c=T.classes[kelas()],inClass=pid=>c.players.some(p=>p.pid===pid);
   const pend=KSL.pending().map((p,i)=>({...p,i})).filter(p=>p.t===T.id&&p.k===kelas());
   const ql=st.q.trim().toLowerCase(),found=ql.length>1?PLAYERS.filter(p=>(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql)).slice(0,8):[];
-  const unpaid=c.players.filter(p=>p.pay==="belum").length;
   return `
   <div class="row between mb"><div><h1>Peserta</h1>${KSL.tourPicker("panel-pemain.html")||`<div class="sm mute">${T.name}</div>`}</div>
     <label class="btn alt sm" style="margin:0;color:var(--ink);font-size:12px">${icon("upload")}Impor CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label></div>
-  ${pend.length?`<div class="card mb"><div class="pad"><b>Pendaftar baru (${pend.length})</b></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${av(p.name)}<span><b>${p.name}</b><div class="pid">${p.pid||"Profil baru"} · ${p.club}${p.payBy?" · "+p.payBy:""}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""}
+  ${pend.length?`<div class="card mb"><div class="pad"><b>Pendaftar baru (${pend.length})</b></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${av(p.name)}<span><b>${p.name}</b><div class="pid">${p.pid||"Profil baru"} · ${p.club}${p.hp?" · WA "+p.hp:""}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""}
   <div class="card mb">
-    <div class="pad row between">${T.classes.length>1?`<div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div>`:`<b>${c.name} · ${c.players.length} pemain</b>`}
-      ${T.fee?`<span class="sm">${rupiah(T.fee)} · ${unpaid?`<span class="pill warn">${unpaid} belum bayar</span>`:'<span class="pill ok">Semua lunas</span>'}</span>`:""}</div>
+    <div class="pad row between">${T.classes.length>1?`<div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div>`:`<b>${c.name} · ${c.players.length} pemain</b>`}</div>
     <div class="pad bt">
       <div class="seg mb"><button class="${st.add==="db"?"on":""}" data-act="mode" data-m="db">Pilih dari database</button><button class="${st.add==="new"?"on":""}" data-act="mode" data-m="new">Pemain baru</button></div>
       ${st.add==="db"?`
@@ -41,9 +38,9 @@ KSL.page(()=>{
     </div>
   </div>
   <div class="card tscroll"><table>
-    <tr><th>Pemain</th><th class="n">Rating</th>${T.fee?'<th class="n">Bayar</th>':""}<th class="r"></th></tr>
-    ${c.players.map((p,i)=>st.ed===i?`<tr><td colspan="${T.fee?4:3}"><form id="ep" class="grid addrow"><input name="name" value="${p.name}" required aria-label="Nama"><input name="rtg" value="${p.rtg}" inputmode="numeric" aria-label="Rating"><input name="club" value="${p.club}" aria-label="Klub"><div class="row nowrap"><button class="btn sm" type="submit">Simpan</button><button class="btn alt sm" type="button" data-act="ecancel">Batal</button></div></form></td></tr>`:
-      `<tr><td><span class="who">${av(p.name)}<span><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${p.club}</span></span></span></td><td class="n">${p.rtg||"-"}</td>${T.fee?`<td class="n"><button data-act="pay" data-i="${i}" title="Ubah status bayar">${payPill(p)}</button></td>`:""}<td class="r"><div class="row nowrap" style="justify-content:flex-end;gap:4px"><button class="btn alt sm" data-act="edit" data-i="${i}" aria-label="Ubah ${p.name}">${icon("edit")}</button><button class="btn alt sm" data-act="del" data-i="${i}" aria-label="Keluarkan ${p.name}">${icon("x")}</button></div></td></tr>`).join("")}
+    <tr><th>Pemain</th><th class="n">Rating</th><th class="r"></th></tr>
+    ${c.players.map((p,i)=>st.ed===i?`<tr><td colspan="3"><form id="ep" class="grid addrow"><input name="name" value="${p.name}" required aria-label="Nama"><input name="rtg" value="${p.rtg}" inputmode="numeric" aria-label="Rating"><input name="club" value="${p.club}" aria-label="Klub"><div class="row nowrap"><button class="btn sm" type="submit">Simpan</button><button class="btn alt sm" type="button" data-act="ecancel">Batal</button></div></form></td></tr>`:
+      `<tr><td><span class="who">${av(p.name)}<span><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${p.club}</span></span></span></td><td class="n">${p.rtg||"-"}</td><td class="r"><div class="row nowrap" style="justify-content:flex-end;gap:4px"><button class="btn alt sm" data-act="edit" data-i="${i}" aria-label="Ubah ${p.name}">${icon("edit")}</button><button class="btn alt sm" data-act="del" data-i="${i}" aria-label="Keluarkan ${p.name}">${icon("x")}</button></div></td></tr>`).join("")}
   </table></div>`;
 },{
   mode:el=>{st.add=el.dataset.m},

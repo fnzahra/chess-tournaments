@@ -94,6 +94,13 @@ try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");TOURS.forEach(t=>{cons
 function save(t=T){try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");all[t.id]=t.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}));localStorage.setItem(KEY,JSON.stringify(all))}catch(e){}}
 function reset(){try{["ksl-proto-v2",KEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
 
+// ---------- plan (free / premium), simulated in this browser ----------
+const plan=()=>{try{return localStorage.getItem("ksl-plan")||"free"}catch(e){return"free"}};
+const trialLeft=()=>{try{const u=+localStorage.getItem("ksl-trial");return u?Math.max(0,Math.ceil((u-Date.now())/864e5)):null}catch(e){return null}};
+const startTrial=()=>{try{localStorage.setItem("ksl-trial",String(Date.now()+14*864e5))}catch(e){}};
+const setPlan=v=>{try{localStorage.setItem("ksl-plan",v)}catch(e){}};
+const pro=()=>plan()!=="free"||trialLeft()>0;
+
 // ---------- glossary & tie-break presets ----------
 const TERMS={
  "Pertemuan langsung":"Siapa yang menang saat dua pemain dengan poin sama saling bertemu.",
@@ -215,11 +222,12 @@ const GUIDE=[
   ["masuk","Masuk","Email atau nomor HP + kata sandi."],
   ["daftar","Daftar klub","Satu formulir singkat."],
   ["panel","Dashboard","Turnamen berjalan dan yang perlu tindakan."],
-  ["panel-buat","Buat turnamen","Info, kelas & sistem, lalu terbitkan."],
-  ["panel-pemain","Peserta","Pilih dari database atau tambah baru, status bayar."],
+  ["panel-buat","Buat turnamen","Info, kelas & sistem, wasit, lalu terbitkan."],
+  ["panel-pemain","Peserta","Pilih dari database atau tambah baru, konfirmasi WA."],
   ["panel-babak","Babak dan hasil","Isi hasil, WO, lalu pairing babak berikutnya."],
   ["panel-klub","Klub saya","Ubah data klub."],
-  ["panel-penyelenggara","Penyelenggara (admin)","Setujui klub lain yang mendaftar."]]],
+  ["panel-penyelenggara","Penyelenggara (admin)","Setujui klub lain yang mendaftar."],
+  ["paket","Paket Gratis / Premium","Fitur inti gratis. Premium untuk fitur tambahan."]]],
 ];
 const file=id=>(id==="index"?"index":id)+".html";
 let done={};try{done=JSON.parse(localStorage.getItem("ksl-guide")||"{}")}catch(e){}
@@ -228,21 +236,23 @@ function shell(){
   const app=document.getElementById("app");
   const isPanel=area==="panel", ph=document.body.classList.contains("phone");
   document.body.classList.toggle("area-panel",isPanel);
-  const brand=`<a href="index.html" class="logo"><span class="mark">${icon("crown")}</span><span class="wm">Turnamen Catur</span></a>`;
+  const brand=`<a href="index.html" class="logo"><img class="ksl-logo" src="assets/ksl-logo.png" alt="Logo KSL"><span class="wm">King Sang Long</span></a>`;
   const head=`<header><div class="hbar">
     ${brand}
     <span class="sp"></span>
     <div class="toolbar">
       ${isPanel?"":`<a class="tb dsk" href="cari.html">${icon("search")}Klub & pemain</a><span class="div dsk"></span>`}
-      <button class="tb" data-act="guide" aria-label="Panduan">${icon("guide")}<span class="dsk">Panduan</span></button>
+      <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
+      <span class="div"></span>
+      <button class="tb" data-act="guide" aria-label="Panduan">${icon("guide")}<span class="dsk">Panduan</span> <span class="count" id="gCount"></span></button>
       <span class="div"></span>
       ${isPanel?`<button class="tb" data-act="logout">${icon("out")}<span class="dsk">Keluar</span></button>`:`<a class="tb" href="masuk.html">${icon("lock")}Masuk</a>`}
     </div>
   </div></header>`;
-  const railItems=[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat turnamen"],["panel-klub","org","Klub saya"],["panel-penyelenggara","list","Penyelenggara"],0,["index","home","Halaman publik"]];
+  const railItems=[["panel","dash","Dashboard"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat turnamen"],["panel-klub","org","Klub saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman publik"]];
   const href=x=>file(x[0])+(isPanel&&["panel-babak","panel-pemain"].includes(x[0])?"?t="+T.id:"");
   const rail=isPanel
-    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">${clubName("ksl")}</span></div></div></nav>`
+    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">${clubName("ksl")} · ${plan()!=="free"?"Premium":trialLeft()>0?"Trial "+trialLeft()+" hari":"Gratis"}</span></div></div></nav>`
     :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat"],["panel-klub","org","Klub"]]
@@ -309,6 +319,7 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act;
   if(a==="guide")document.getElementById("guide").classList.add("open");
   else if(a==="guide-close")document.getElementById("guide").classList.remove("open");
+  else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelectorAll("header,.rail,.bnav,#guide,#shade,#toast,#cfm,#pop").forEach(x=>x.remove());shell()}
   else if(a==="reset")confirm2("Reset data contoh?","Semua hasil, peserta, dan perubahan yang kamu buat di prototype ini akan kembali ke awal. Tidak bisa dibatalkan.","Reset").then(v=>v&&reset());
   else if(a==="logout"){location.href="masuk.html"}
   else if(a==="tip"){e.preventDefault();openPop(el.dataset.h,el.dataset.t)}
@@ -317,8 +328,9 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e.target.selectionStart;setParam("cari",e.target.value);render();const f=document.getElementById("cari");f.focus();f.setSelectionRange(pos,pos)});
 
+try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

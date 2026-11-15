@@ -21,20 +21,19 @@ KSL.page(()=>{
   const unit=(v,l)=>`<div class="cdu"><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`;
   return `<a class="back" href="index.html">${icon("left")}Semua turnamen</a>
   <div class="card feat mb">
-    <div class="row between nowrap"><span class="pill live">Segera</span><span class="sm" style="color:#bcd3c7">${icon("org")} ${T.org}</span></div>
+    <div class="row between nowrap"><span class="pill live">Segera</span><span class="sm mute">${icon("org")} ${KSL.orgName(T)}</span></div>
     <h2 class="mt">${T.name}</h2>
     <div class="grid g2e mt">
-      <div class="fc"><div class="sm" style="color:#bcd3c7">${icon("cal")} Kapan</div><b style="font-size:17px">${T.date}</b><div class="sm">${T.time} · ${T.sys}</div></div>
-      <a class="fc" href="https://maps.google.com/?q=${encodeURIComponent(T.place)}" target="_blank" rel="noopener"><div class="sm" style="color:#bcd3c7">${icon("pin")} Di mana</div><b style="font-size:17px">${T.place}</b><div class="sm">Buka peta ${icon("right")}</div></a>
+      <div class="fc"><div class="sm mute">${icon("cal")} Kapan</div><b style="font-size:17px">${T.date}</b><div class="sm">${T.time} · ${T.sys}</div></div>
+      <a class="fc" href="https://maps.google.com/?q=${encodeURIComponent(T.place)}" target="_blank" rel="noopener"><div class="sm mute">${icon("pin")} Di mana</div><b style="font-size:17px">${T.place}</b><div class="sm">Buka peta ${icon("right")}</div></a>
     </div>
-    <div class="mt"><div class="sm" style="color:#bcd3c7">Mulai dalam</div>
+    <div class="mt"><div class="sm mute">Mulai dalam</div>
       <div class="cd" id="cd">${cd?unit(cd.d,"hari")+unit(cd.h,"jam")+unit(cd.m,"menit")+unit(cd.s,"detik"):'<b>Sedang berlangsung</b>'}</div></div>
-    <div class="row mt"><a class="btn alt" href="daftar-peserta.html?t=${T.id}">${icon("user")}Daftar jadi peserta</a><span class="sm" style="color:#bcd3c7">${dl?`Pendaftaran tutup ${dl.d} hari ${dl.h} jam lagi`:"Pendaftaran ditutup"}</span></div>
+    <div class="row mt"><a class="btn acc" href="daftar-peserta.html?t=${T.id}">${icon("user")}Daftar jadi peserta</a><span class="sm mute">${dl?`Pendaftaran tutup ${dl.d} hari ${dl.h} jam lagi`:"Pendaftaran ditutup"}</span></div>
   </div>
-  <div class="grid g4 mb">
+  <div class="grid g3 mb">
     <div class="card stat"><b>${reg.length}<span class="sm mute"> / ${T.n}</span></b><span>pendaftar</span></div>
     <div class="card stat"><b>${clubs}</b><span>klub</span></div>
-    <div class="card stat"><b>${KSL.rupiah(T.fee)}</b><span>biaya</span></div>
     <div class="card stat"><b><span class="pill acc">${T.open}</span></b><span>peserta${KSL.tip("Pemain dari klub mana pun bisa mendaftar. Penyelenggara menerima atau menolak, lalu peserta dikabari lewat WhatsApp.","Pendaftaran lintas klub")}</span></div>
   </div>
   <h3>Sudah mendaftar</h3>
