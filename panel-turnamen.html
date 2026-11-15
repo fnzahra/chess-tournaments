@@ -83,15 +83,26 @@ KSL.page(()=>{
       </div>`}
       <div class="row between mb"><h3>Informasi Turnamen</h3><button class="lnk sm" data-act="toggleEdit">${edit?"Batal":icon("edit")+" Ubah info"}</button></div>
       <div class="card ${edit?"pad":""}">
-        ${edit?`<form id="ef">
+        ${edit?(()=>{
+          const startIso=T.iso||(T.start?T.start.slice(0,10):"2026-07-12");
+          const endIso=T.endIso||startIso;
+          const oneDay=!T.endIso||T.endIso===startIso;
+          const tm=(T.time||"").match(/(\d{2})[:.](\d{2})/);
+          const timeVal=tm?`${tm[1]}:${tm[2]}`:"";
+          return`<form id="ef">
           <div class="field"><label>Nama turnamen</label><input name="name" value="${T.name.replace(/"/g,"&quot;")}" required></div>
           <div class="grid g2e">
-            <div class="field"><label>Tanggal</label><input name="date" value="${(T.date||"").replace(/"/g,"&quot;")}" required></div>
-            <div class="field"><label>Jam</label><input name="time" value="${(T.time||"").replace(/"/g,"&quot;")}"></div>
+            <div class="field"><label>Tanggal mulai</label><input type="date" name="iso" value="${startIso}" required></div>
+            <div class="field"><label>Tanggal selesai</label><input type="date" name="endIso" value="${endIso}" min="${startIso}" ${oneDay?"disabled":""}></div>
           </div>
-          <div class="field"><label>Tempat</label><input name="place" value="${(T.place||"").replace(/"/g,"&quot;")}" required></div>
+          <label class="row sm mb" style="gap:8px;cursor:pointer"><input type="checkbox" id="efOneDay" name="oneDay" ${oneDay?"checked":""}><span class="sm">Selesai di hari yang sama</span></label>
+          <div class="grid g2e">
+            <div class="field"><label>Jam mulai (opsional)</label><input type="time" name="time" value="${timeVal}"></div>
+            <div class="field"><label>Tempat</label><input name="place" value="${(T.place||"").replace(/"/g,"&quot;")}" required></div>
+          </div>
           <div class="row"><button class="btn acc sm" type="submit">${icon("check")}Simpan perubahan</button><button class="btn alt sm" type="button" data-act="toggleEdit">Batal</button></div>
-        </form>`:`
+        </form>`;
+        })():`
         <table>${[["Nama",T.name],["Tanggal",T.date],["Jam",T.time||"-"],["Tempat",T.place],["Sistem",T.sys],["Wasit",(T.arb||["-"]).join(", ")]].map(([k,v])=>`<tr><td class="mute" style="width:1%">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table>`}
       </div>
     </div>
@@ -110,9 +121,24 @@ KSL.page(()=>{
   toggleEdit:()=>{edit=!edit}
 });
 document.addEventListener("input",e=>{if(e.target.id!=="tq")return;q=e.target.value;const pos=e.target.selectionStart;KSL.render();const f=document.getElementById("tq");f.focus();f.setSelectionRange(pos,pos)});
+document.addEventListener("change",e=>{
+  const ef=e.target.closest&&e.target.closest("#ef");if(!ef)return;
+  const endEl=ef.querySelector('[name="endIso"]'),isoEl=ef.querySelector('[name="iso"]'),oneEl=ef.querySelector('#efOneDay');
+  if(e.target===oneEl&&endEl){endEl.disabled=oneEl.checked;if(oneEl.checked&&isoEl)endEl.value=isoEl.value;}
+  if(e.target===isoEl&&endEl){endEl.min=isoEl.value;if(oneEl&&oneEl.checked||endEl.value<isoEl.value)endEl.value=isoEl.value;}
+});
 document.addEventListener("submit",e=>{
   if(e.target.id!=="ef"||!T)return;e.preventDefault();const f=new FormData(e.target);
-  T.name=f.get("name").trim()||T.name;T.date=f.get("date").trim()||T.date;T.time=f.get("time").trim()||T.time;T.place=f.get("place").trim()||T.place;
+  T.name=f.get("name").trim()||T.name;
+  T.iso=f.get("iso")||T.iso;
+  const sameDay=!!f.get("oneDay");
+  const rawEnd=f.get("endIso");
+  T.endIso=(!sameDay&&rawEnd&&rawEnd>T.iso)?rawEnd:"";
+  T.date=KSL.fmtDateRange(T.iso,T.endIso);
+  const tv=(f.get("time")||"").trim();
+  T.time=tv?tv.replace(":",".")+" WIB":"";
+  T.place=f.get("place").trim()||T.place;
+  KSL.saveMeta(T);
   edit=false;KSL.render();KSL.toast("Informasi turnamen disimpan");
 });
 </script>

@@ -19,7 +19,7 @@ const tbList=()=>st.tb||(st.tb=TB[st.fmt].slice(0,4));
 const slug=()=>(st.name||"turnamen-baru").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const linkOf=()=>location.href.replace(/[^/]*$/,"")+"turnamen.html?t="+slug();
 const v=(k)=>String(st[k]).replace(/"/g,"&quot;");
-const dateText=()=>(st.start||"-")+(st.oneDay||!st.end?"":" s.d. "+st.end)+(st.time?" · "+st.time+" WIB":"");
+const dateText=()=>KSL.fmtDateRange(st.start,st.oneDay?"":st.end)+(st.time?" · "+st.time.replace(":",".")+" WIB":"");
 
 KSL.page(()=>{
   if(st.published){
