@@ -307,6 +307,18 @@ function tourHead(active){
 const hit=p=>{const q=(Q.get("cari")||"").toLowerCase();return q&&p.name.toLowerCase().includes(q)};
 const pLink=(id,name,withAv)=>{const pl=T.classes[kelas()].players[id],a=`<a class="nm" href="${link("pemain.html",{pid:pl?pl.pid:null,id:null})}">${name}</a>`;return withAv?`<span class="who">${av(name)}${a}</span>`:a};
 
+function openShare(t=T){
+  const u=location.href.replace(/[^/]*$/,"")+(t.classes?"turnamen.html?t=":"segera.html?t=")+t.id;
+  const o=document.createElement("div");o.className="ovl";
+  o.innerHTML=`<div class="popc" role="dialog" aria-modal="true" style="width:min(380px,100%)">
+    <div class="row between"><b>Bagikan ${t.name}</b><button class="btn alt sm" data-x>${icon("x")}</button></div>
+    <div class="sm mute">Siapa pun bisa membuka link ini tanpa login.</div>
+    <input readonly value="${u}" onclick="this.select()" aria-label="Link turnamen">
+    <div class="row"><button class="btn acc" style="flex:1" data-cp>${icon("copy")}Salin link</button><a class="btn alt" style="flex:1" href="https://wa.me/?text=${encodeURIComponent("Pairing & klasemen "+t.name+": "+u)}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
+  </div>`;
+  o.onclick=e=>{if(e.target===o||e.target.closest("[data-x]"))o.remove();else if(e.target.closest("[data-cp]")){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast("Link disalin"),()=>toast("Salin manual dari kolom link","x"));o.remove()}};
+  document.body.appendChild(o);
+}
 function panelTourHead(active,t=T){
   const tabs=[["panel-turnamen","dash","Ringkasan"],["panel-pemain","users","Peserta"],["panel-babak","flag","Babak & hasil"]];
   const pubUrl=t.classes?"turnamen.html?t="+t.id:"segera.html?t="+t.id;
@@ -317,7 +329,7 @@ function panelTourHead(active,t=T){
         ${pill(t.status)}
       </div>
       <div class="row" style="gap:6px">
-        <button class="btn alt sm" data-act="copyLink">${icon("share")}Bagikan</button>
+        <button class="btn alt sm" data-act="share">${icon("share")}Bagikan</button>
         <a class="btn alt sm" href="${pubUrl}">${icon("home")}Halaman publik${icon("right")}</a>
       </div>
     </div>
@@ -341,7 +353,7 @@ document.addEventListener("click",e=>{
   else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelectorAll("header,.rail,.bnav,#guide,#shade,#toast,#cfm,#pop").forEach(x=>x.remove());shell()}
   else if(a==="reset")confirm2("Reset data contoh?","Semua hasil, peserta, dan perubahan yang kamu buat di prototype ini akan kembali ke awal. Tidak bisa dibatalkan.","Reset").then(v=>v&&reset());
   else if(a==="logout"){setAuth("");location.href="masuk.html"}
-  else if(a==="copyLink"){copyLink()}
+  else if(a==="share"){openShare()}
   else if(a==="tip"){e.preventDefault();openPop(el.dataset.h,el.dataset.t)}
   else if(a==="pop-close")closePop();
   else if(acts[a]){e.preventDefault();acts[a](el);render()}

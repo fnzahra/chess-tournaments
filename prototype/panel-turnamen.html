@@ -62,12 +62,6 @@ KSL.page(()=>{
       </div>
     </div>
     <div>
-      <h3>Link Turnamen</h3>
-      <div class="card pad mb">
-        <div class="sm mute">Bagikan link ini ke grup peserta atau panitia.</div>
-        <input class="mt" readonly value="${fullUrl}" aria-label="Link turnamen" onclick="this.select()">
-        <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><a class="btn alt sm" href="${KSL.waHref()}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
-      </div>
       <h3>Aksi Cepat</h3>
       <div class="card list">
         <a href="panel-babak.html?t=${T.id}"><span class="ico">${icon("flag")}</span><div class="grow"><b>Input hasil & pairing</b><div class="sm mute">Kelola meja dan babak berikutnya</div></div>${icon("right")}</a>
