@@ -18,7 +18,7 @@ KSL.page(()=>{
   if(r==null)r=Math.min(+qp("babak",cr)||cr,c.pub);
   const g=c.rounds[r-1],left=g.filter(x=>!x.res).length,last=r===c.rounds.length,wx=wo!=null?g[wo]:null;
   return `
-  <div class="row between mb"><div class="page-head"><h1>Babak dan hasil</h1>${KSL.tourPicker("panel-babak.html")||`<span class="sm mute">${T.name}</span>`}</div><a class="btn alt sm" href="${link("pairing.html",{babak:r})}">Lihat halaman publik${icon("right")}</a></div>
+  ${KSL.panelTourHead("panel-babak")}
   <div class="card">
     <div class="pad row between">
       <div class="row">${T.classes.length>1?`<div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-babak.html",{kelas:i,babak:null})}">${k.name}</a>`).join("")}</div>`:""}

@@ -22,14 +22,7 @@ KSL.page(()=>{
   const pubUrl=T.classes?"turnamen.html?t="+T.id:"segera.html?t="+T.id;
   const fullUrl=location.href.replace(/[^/]*$/,"")+pubUrl;
   return `<a class="back" href="panel.html">${icon("left")}Dashboard</a>
-  <div class="row between mb">
-    <div class="page-head">
-      <h1>Kelola turnamen</h1>
-      ${T.classes?KSL.tourPicker("panel-turnamen.html")||`<span class="sm mute">${T.name}</span>`:`<span class="sm mute">${T.name}</span>`}
-      ${pill(T.status)}
-    </div>
-    <a class="btn alt sm" href="${pubUrl}">${icon("home")}Halaman publik${icon("right")}</a>
-  </div>
+  ${KSL.panelTourHead("panel-turnamen",T)}
   <div class="grid g4 mb">
     <div class="card stat"><b>${totalPlayers}</b><span>peserta</span></div>
     <div class="card stat"><b>${classes.length||1}</b><span>kelas</span></div>

@@ -305,7 +305,23 @@ function tourHead(active){
 const hit=p=>{const q=(Q.get("cari")||"").toLowerCase();return q&&p.name.toLowerCase().includes(q)};
 const pLink=(id,name,withAv)=>{const pl=T.classes[kelas()].players[id],a=`<a class="nm" href="${link("pemain.html",{pid:pl?pl.pid:null,id:null})}">${name}</a>`;return withAv?`<span class="who">${av(name)}${a}</span>`:a};
 
-function panelShell(active,inner){return inner}
+function panelTourHead(active,t=T){
+  const tabs=[["panel-turnamen","dash","Ringkasan"],["panel-pemain","users","Peserta"],["panel-babak","flag","Babak & hasil"]];
+  const pubUrl=t.classes?"turnamen.html?t="+t.id:"segera.html?t="+t.id;
+  return `<div class="card mb">
+    <div class="pad row between" style="gap:8px">
+      <div class="page-head">
+        ${t.classes?(tourPicker(active+".html")||`<b>${t.name}</b>`):`<b>${t.name}</b>`}
+        ${pill(t.status)}
+      </div>
+      <div class="row" style="gap:6px">
+        <button class="btn alt sm" data-act="copyLink">${icon("share")}Bagikan</button>
+        <a class="btn alt sm" href="${pubUrl}">${icon("home")}Halaman publik${icon("right")}</a>
+      </div>
+    </div>
+    <nav class="tabs bt">${tabs.map(([p,i,l])=>`<a class="${p===active?"on":""}" href="${p}.html?t=${t.id}">${icon(i)}<span>${l}</span></a>`).join("")}<a href="klasemen.html?t=${t.id}">${icon("trophy")}<span>Klasemen</span></a></nav>
+  </div>`;
+}
 // organiser pages: which of my running tournaments am I working on (several can run at once)
 function tourPicker(pg){const mine=TOURS.filter(t=>t.classes&&t.org==="ksl"&&t.status!=="done");if(mine.length<2)return "";
   return `<select class="tsel" aria-label="Pilih turnamen" onchange="location.href='${pg}?t='+this.value">${mine.map(t=>`<option value="${t.id}" ${t.id===T.id?"selected":""}>${t.name}</option>`).join("")}</select>`}
@@ -323,6 +339,7 @@ document.addEventListener("click",e=>{
   else if(a==="device"){const on=document.body.classList.toggle("phone");try{localStorage.setItem("ksl-phone",on?"1":"")}catch(_){}document.querySelectorAll("header,.rail,.bnav,#guide,#shade,#toast,#cfm,#pop").forEach(x=>x.remove());shell()}
   else if(a==="reset")confirm2("Reset data contoh?","Semua hasil, peserta, dan perubahan yang kamu buat di prototype ini akan kembali ke awal. Tidak bisa dibatalkan.","Reset").then(v=>v&&reset());
   else if(a==="logout"){location.href="masuk.html"}
+  else if(a==="copyLink"){copyLink()}
   else if(a==="tip"){e.preventDefault();openPop(el.dataset.h,el.dataset.t)}
   else if(a==="pop-close")closePop();
   else if(acts[a]){e.preventDefault();acts[a](el);render()}
@@ -332,6 +349,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();

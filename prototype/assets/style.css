@@ -85,6 +85,7 @@ h3{font-size:12px;color:var(--mute);font-weight:600;margin:2px 2px 6px}
 .grid{display:grid;gap:8px}
 .grid>*{min-width:0}
 .g2{grid-template-columns:2fr 1fr}
+.g-side{grid-template-columns:210px minmax(0,1fr);align-items:start}
 .g2e{grid-template-columns:1fr 1fr}
 .g3{grid-template-columns:repeat(3,1fr)}
 .g4{grid-template-columns:repeat(4,1fr)}
@@ -306,7 +307,7 @@ input[readonly][data-act]{cursor:pointer;background:var(--soft)}
   body.area-panel header .logo{display:flex}
   .hbar{padding:10px 12px}
   .tb{padding:0 9px} .count{display:none} .toolbar .div{margin:0 2px} .hbar{gap:6px} .logo{font-size:14px}
-  .g2,.g2e,.g3{grid-template-columns:1fr}
+  .g2,.g2e,.g3,.g-side{grid-template-columns:1fr}
   .g4{grid-template-columns:1fr 1fr}
   .keep3{grid-template-columns:repeat(3,1fr)!important}
   main{padding:2px 12px 12px}
