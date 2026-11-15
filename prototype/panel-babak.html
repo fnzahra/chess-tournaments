@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Babak dan hasil · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697563">
+<title>Babak dan hasil · Turnamen Catur</title>
+<link rel="stylesheet" href="assets/style.css?v=1794708545">
 </head>
 <body data-page="panel-babak" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697563"></script>
+<script src="assets/app.js?v=1794708545"></script>
 <script>
 const {T,icon,kelas,qp,link,curRound}=KSL;
 let r=null,swap=false,pick=null; // pick = [board, "w"|"b"]
@@ -33,7 +33,7 @@ KSL.page(()=>{
     <div class="pad bt row between">
       <span class="sm mute">${swap?"Ketuk dua nama":""}${KSL.tip(swap?"Ketuk dua nama untuk menukar lawan, atau tombol Warna untuk menukar putih/hitam. Meja yang sudah ada hasilnya tidak bisa diubah.":"Ketuk hasil untuk menyimpan, ketuk lagi untuk membatalkan. Klasemen publik ikut berubah otomatis.",swap?"Ubah pairing":"Isi hasil")}</span>
       <div class="row"><button class="btn alt sm" data-act="pro" data-f="Kirim pairing ke WA">${icon("msg")}Kirim ke WA${KSL.pro()?"":" "+KSL.proPill}</button><button class="btn ${swap?"":"alt"} sm" data-act="swap">${icon(swap?"check":"edit")}${swap?"Selesai mengubah":"Ubah pairing"}</button>
-      <button class="btn sm ${left?"alt":"acc"}" data-act="next" ${left||last||r<c.pub?"disabled":""}>${icon("swap")}${last?"Babak terakhir":"Buat pairing babak "+(r+1)}</button></div>
+      ${left?`<button class="btn alt sm" data-act="sim">${icon("swap")}Isi acak (simulasi)</button>`:`<a class="btn alt sm" href="${link("klasemen.html",{setelah:r})}">${icon("trophy")}Lihat klasemen</a>`}<button class="btn sm ${left?"alt":"acc"}" data-act="next" ${left||last||r<c.pub?"disabled":""}>${icon("swap")}${last?"Babak terakhir":"Buat pairing babak "+(r+1)}</button></div>
     </div>
   </div>`)},{
   round:el=>r=+el.dataset.r,
@@ -46,6 +46,7 @@ KSL.page(()=>{
     if(!pick){pick=[b,sd];return}
     const[a,as]=pick;pick=null;if(a===b&&as===sd)return;
     const t=g[a][as];g[a][as]=g[b][sd];g[b][sd]=t;KSL.save();KSL.toast("Posisi pemain ditukar")},
+  sim:()=>{const g=T.classes[kelas()].rounds[r-1];g.forEach(x=>{if(!x.res)x.res=["1-0","½-½","0-1"][Math.floor(Math.random()*3)]});KSL.save();KSL.toast("Hasil babak "+r+" diisi acak untuk simulasi")},
   next:()=>{const c=T.classes[kelas()];c.pub=r+1;r++;KSL.save();KSL.toast("Pairing babak "+r+" diterbitkan")}
 });
 </script>

@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Buat turnamen · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697563">
+<title>Buat turnamen · Turnamen Catur</title>
+<link rel="stylesheet" href="assets/style.css?v=1794708545">
 </head>
 <body data-page="panel-buat" data-area="panel">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697563"></script>
+<script src="assets/app.js?v=1794708545"></script>
 <script>
 const {icon}=KSL;
 const st={step:0,fmt:"rr",classes:["Kelas A","Kelas B"],tb:null};
+const P=()=>KSL.pro(),lock=f=>P()?"":`data-act="pro" data-f="${f}" readonly`;
 const {TERMS,TB}=KSL;
 const tbList=()=>st.tb||(st.tb=TB[st.fmt].slice(0,4));
 const SYS={rr:["Liga satu putaran","Semua pemain saling bertemu sekali. Cocok untuk 10 pemain atau kurang."],swiss:["Swiss","Pemain dengan poin sama dipertemukan. Cocok untuk peserta banyak."],ko:["Gugur","Kalah langsung tersingkir. Cepat selesai."]};
@@ -25,19 +26,19 @@ KSL.page(()=>{
     <div class="field"><label>Waktu per pemain${KSL.tip("Menit per pemain + tambahan detik setiap langkah. Isi 0 bila tidak ada tambahan.","Waktu berpikir")}</label><div class="row nowrap"><select style="flex:1"><option>Rapid</option><option>Blitz</option><option>Klasik</option></select><input value="15" style="width:64px"><span class="sm mute">menit +</span><input value="0" style="width:56px"><span class="sm mute">detik</span></div></div>
     <div class="grid g2e"><div class="field"><label>Wasit</label><input value="Mukhlish"></div><div class="field"><label>Biaya pendaftaran</label><input value="Rp 5.000"></div></div>`;
   if(st.step===1)f=`
-    <div class="field"><label>Kelas${KSL.tip("Nama kelas bebas, dibuat sendiri oleh penyelenggara. Contoh: Kelas A, Terbuka, Putri, U-12. Tiap kelas punya pairing dan klasemen sendiri.","Kelas")}</label><div class="tbl">${st.classes.map((k,i)=>`<div class="row nowrap"><input value="${k}" data-cls="${i}" aria-label="Nama kelas ${i+1}" placeholder="Nama kelas"><button class="btn alt sm" data-act="rm" data-i="${i}" aria-label="Hapus ${k}" ${st.classes.length<2?"disabled":""}>${icon("x")}</button></div>`).join("")}</div>
-      <div class="chips mt"><button class="chip" data-act="addk">${icon("plus")}Tambah</button>${["Terbuka","Putri","U-12","Pemula","Pelajar"].filter(x=>!st.classes.includes(x)).map(x=>`<button class="chip" data-act="addk" data-n="${x}">${x}</button>`).join("")}</div></div>
+    <div class="field"><label>Kelas${KSL.tip("Default: Kelas A, B, C. Tiap kelas punya pairing dan klasemen sendiri. Ganti nama kelas (mis. Putri, U-12) termasuk Premium.","Kelas")} ${P()?"":KSL.proPill}</label><div class="tbl">${st.classes.map((k,i)=>`<div class="row nowrap"><input value="${k}" data-cls="${i}" aria-label="Nama kelas ${i+1}" placeholder="Nama kelas" ${lock("Ganti nama kelas")}><button class="btn alt sm" data-act="rm" data-i="${i}" aria-label="Hapus ${k}" ${st.classes.length<2?"disabled":""}>${icon("x")}</button></div>`).join("")}</div>
+      <div class="chips mt"><button class="chip" data-act="addk">${icon("plus")}Tambah</button>${P()?["Terbuka","Putri","U-12","Pemula","Pelajar"].filter(x=>!st.classes.includes(x)).map(x=>`<button class="chip" data-act="addk" data-n="${x}">${x}</button>`).join(""):""}</div></div>
     <div class="field"><label>Sistem pertandingan</label><div class="grid g3">${Object.entries(SYS).map(([k,[n,d]])=>`<button class="opt ${st.fmt===k?"on":""}" data-act="fmt" data-k="${k}"><b>${n}${KSL.tip(d,n)}</b></button>`).join("")}</div></div>
     <div class="grid g2e"><div class="field"><label>Jumlah babak${KSL.tip(st.fmt==="rr"?"Otomatis: jumlah pemain dikurangi 1.":st.fmt==="ko"?"Otomatis dari jumlah pemain.":"Disarankan 5 sampai 7.","Jumlah babak")}</label><input value="${st.fmt==="swiss"?5:st.fmt==="ko"?"otomatis":7}" ${st.fmt==="swiss"?"":"disabled"}></div>
     </div>
-    <div class="field"><label>Tie-break${KSL.tip("Penentu peringkat bila poin sama, dipakai berurutan dari 1. Sudah diisi otomatis sesuai sistem.","Tie-break")}</label>
+    <div class="field"><label>Tie-break${KSL.tip("Penentu peringkat bila poin sama, dipakai berurutan dari 1. Diisi otomatis sesuai aturan FIDE. Mengubah urutan termasuk Premium.","Tie-break")} ${P()?"":KSL.proPill}</label>
       ${st.fmt==="ko"?'<div class="sm mute">Tidak dipakai di sistem gugur.</div>':`
-      <div class="tbl">${tbList().map((t,i)=>`<div class="tbrow"><span class="tbn">${i+1}</span><div style="flex:1;min-width:0" class="row nowrap"><select data-tb="${i}">${TB[st.fmt].map(o=>`<option ${o===t?"selected":""}>${o}</option>`).join("")}</select>${KSL.tip(t+": "+TERMS[t])}</div></div>`).join("")}</div>`}
+      <div class="tbl">${tbList().map((t,i)=>`<div class="tbrow" style="position:relative"><span class="tbn">${i+1}</span><div style="flex:1;min-width:0" class="row nowrap">${P()?"":`<button type="button" class="tbl-lock" data-act="pro" data-f="Ubah tie-break" aria-label="Ubah tie-break (Premium)"></button>`}<select data-tb="${i}" ${P()?"":"disabled"}>${TB[st.fmt].map(o=>`<option ${o===t?"selected":""}>${o}</option>`).join("")}</select>${KSL.tip(t+": "+TERMS[t])}</div></div>`).join("")}</div>`}
     </div>
-    <details class="more"><summary>Pengaturan lanjutan</summary>
+    <details class="more"><summary>Pengaturan lanjutan ${P()?"":KSL.proPill}</summary>
       <div class="grid g2e mt">
-        <div><label>Poin bye${KSL.tip(KSL.TERMS["Bye"],"Bye")}</label><select><option>1</option><option>½</option><option>0</option></select></div>
-        <div><label>Batas peserta</label><input placeholder="Tanpa batas"></div>
+        <div><label>Poin bye${KSL.tip(KSL.TERMS["Bye"],"Bye")}</label><select ${P()?"":"disabled"}><option>1</option><option>½</option><option>0</option></select></div>
+        <div><label>Batas peserta</label><input placeholder="Tanpa batas" ${lock("Batas peserta")}></div>
       </div>
       <button class="row nowrap mt" style="width:100%;justify-content:space-between" data-act="pro" data-f="Kategori juara"><span class="sm">${icon("trophy")} Kategori juara (U-12, putri, senior)</span>${KSL.pro()?'<span class="pill ok">Aktif</span>':KSL.proPill}</button>
     </details>`;

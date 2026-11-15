@@ -241,6 +241,25 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
 .btn.ghost:hover{background:#ffffff14}
 .side-col{position:sticky;top:64px;align-self:start}
 
+.tbl-lock{position:absolute;inset:0;z-index:1;cursor:pointer;background:transparent}
+input[readonly][data-act]{cursor:pointer;background:var(--soft)}
+
+/* countdown */
+.cd{display:flex;gap:8px;margin-top:4px}
+.cdu{background:#ffffff1a;border-radius:10px;padding:6px 0;min-width:56px;text-align:center}
+.cdu b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
+.cdu span{font-size:11px;color:#bcd3c7}
+.chip-cd{font-size:11px;font-weight:600;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:2px 8px;white-space:nowrap}
+
+/* home banner with board illustration */
+.banner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;overflow:hidden}
+.banner h1{font-size:28px;font-weight:800}
+.bn-text{flex:1;min-width:0}
+.board-art{position:relative;display:grid;grid-template-columns:repeat(8,1fr);width:180px;height:180px;flex:none;border-radius:12px;overflow:hidden;transform:rotate(-6deg);box-shadow:var(--sh)}
+.board-art i{background:#efe9dc}.board-art i.d{background:var(--brand)}
+.board-art img{position:absolute;inset:0;margin:auto;height:120px;filter:drop-shadow(0 0 6px #fff)}
+@container app (max-width:700px){ .banner h1{font-size:22px} .banner{padding:14px} }
+
 /* stats */
 .stat{padding:9px 12px}
 .stat b{display:block;font-size:18px;line-height:1.2;letter-spacing:-.01em}
@@ -309,3 +328,6 @@ input:focus,select:focus{outline:3px solid #1f4a3a22;border-color:var(--brand)}
 @container app (max-width:360px){ .keep3{grid-template-columns:repeat(3,minmax(0,1fr))!important} .keep3 .stat{padding:8px} .keep3 .stat span{font-size:11px;overflow-wrap:anywhere} .xt td.n,.xt th.n{min-width:20px} .xt th,.xt td{padding:5px 2px} .tb[data-act=device],.toolbar .div{display:none} th,td{padding:6px 4px;font-size:12px} td .av{display:none} .board{gap:4px} }
 @container app (max-width:400px){ .board.rb{grid-template-columns:20px 1fr!important;row-gap:6px} .board.rb>:last-child{grid-column:2;justify-self:start} }
 @container app (max-width:700px){ .keep2{grid-template-columns:1fr 1fr!important} .feat .btn{height:28px;padding:0 10px;font-size:12px} }
+.keep3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.keep3 .stat span{overflow-wrap:anywhere}
+@container app (max-width:360px){ .cdu{min-width:0;flex:1} .cdu b{font-size:18px} .cd{gap:5px} }

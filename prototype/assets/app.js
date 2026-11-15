@@ -55,9 +55,9 @@ const TOURS=[
  {id:"ksl",name:"Turnamen Penggalangan Dana KSL",org:"KSL",place:"Rumah Raihan, Pamekasan",date:"Ahad, 12 Jul 2026",time:"07.00 - 09.00 WIB",status:"live",sys:"Liga satu putaran",fee:"Rp 5.000",tb:"Pertemuan langsung, Jumlah menang, Sonneborn-Berger, Koya",
   classes:[{name:"Kelas A",desc:"Kemampuan tinggi",players:mk(A),rounds:rr(8),pub:5},{name:"Kelas B",desc:"Menengah / pemula",players:mk(B),rounds:rr(8),pub:5}]},
  {id:"pahlawan",name:"Turnamen Catur Hari Pahlawan 2026",org:"KSL",place:"Pamekasan",date:"10 Nov 2026",status:"done",sys:"Swiss 7 babak",n:80},
- {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Balai Desa Galis",date:"29 Nov 2026",time:"08.00 WIB",status:"soon",sys:"Swiss 5 babak",n:32,fee:"Rp 10.000",until:"27 Nov 2026",open:"Semua klub",
+ {id:"galis",name:"Open Galis Cup",org:"Komunitas Catur Galis",place:"Balai Desa Galis",date:"29 Nov 2026",time:"08.00 WIB",start:"2026-11-29T08:00:00+07:00",deadline:"2026-11-27T23:59:00+07:00",status:"soon",sys:"Swiss 5 babak",n:32,fee:"Rp 10.000",until:"27 Nov 2026",open:"Semua klub",
   reg:[["Hasbullah","Komunitas Catur Galis"],["Raihan","KSL"],["Siti Aminah","Ruang Catur"],["Ahmad Fauzan","Komunitas Catur Galis"],["Yoga","KSL"],["Dimas","Sumenep"]]},
- {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",time:"07.30 WIB",status:"soon",sys:"Gugur",n:16,fee:"Gratis",until:"4 Des 2026",open:"Pelajar SD–SMA",
+ {id:"pelajar",name:"Rintisan Pelajar Pamekasan",org:"KSL",place:"SMPN 1 Pamekasan",date:"6 Des 2026",time:"07.30 WIB",start:"2026-12-06T07:30:00+07:00",deadline:"2026-12-04T23:59:00+07:00",status:"soon",sys:"Gugur",n:16,fee:"Gratis",until:"4 Des 2026",open:"Pelajar SD–SMA",
   reg:[["Alvin","KSL"],["Nabila","SMPN 2 Pamekasan"],["Fikri","KSL"]]}
 ];
 const T=TOURS[0];
@@ -66,7 +66,7 @@ T.classes.forEach(c=>play(c,4));
 const KEY="ksl-proto-v2";
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)s.forEach((k,i)=>{const c=T.classes[i];c.pub=k.pub;if(k.players)c.players=k.players;else(k.extra||[]).forEach(p=>c.players.push(p));k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri][bi];if(Array.isArray(r)){x.w=r[0];x.b=r[1];x.res=r[2]}else x.res=r}))})}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(T.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}))))}catch(e){}}
-function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending");localStorage.removeItem("ksl-plan");localStorage.removeItem("ksl-orgs")}catch(e){}location.reload()}
+function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem("ksl-pending");localStorage.removeItem("ksl-plan");localStorage.removeItem("ksl-orgs");localStorage.removeItem("ksl-trial")}catch(e){}location.reload()}
 
 // ---------- glossary & tie-break presets ----------
 const TERMS={
@@ -112,6 +112,36 @@ function stats(c){
     if(x.res==="1-0"){o.white++;if(w+100<=b)o.upsets++}else if(x.res==="0-1"){o.black++;if(b+100<=w)o.upsets++}else o.draw++}));
   return o;
 }
+// Club rating updated after every round, FIDE B.02 style:
+// expected E = 1/(1+10^(-D/400)) with D capped at 400; change = K*(score-E);
+// K 40 for new players (<30 games), 20 below 2400, 10 from 2400; forfeits/byes not rated.
+// shortcut: logistic formula instead of FIDE table 8.1.2, and games-played is estimated from rating; use the table and real history in the product
+const kOf=p=>p.rtg>=2400?10:(p.games??(p.rtg>=1550?30:0))>=30?20:40;
+function ratingTrack(c){
+  const cur=c.players.map(p=>p.rtg),hist=c.players.map(p=>[p.rtg]);
+  c.rounds.forEach(g=>{const d=c.players.map(()=>0),played=g.some(x=>x.res);if(!played)return;
+    g.forEach(x=>{const sc=score(x.res);if(!sc||forfeit(x.res))return;
+      [[x.w,x.b,sc[0]],[x.b,x.w,sc[1]]].forEach(([me,op,v])=>{const D=Math.max(-400,Math.min(400,cur[me]-cur[op]));d[me]+=kOf(c.players[me])*(v-1/(1+Math.pow(10,-D/400)))})});
+    d.forEach((v,i)=>{cur[i]=Math.round(cur[i]+v);hist[i].push(cur[i])})});
+  return {cur,hist};
+}
+// tie-break values can be quarters, so show 2 decimals when not whole
+const num=v=>Number.isInteger(v)?String(v):v.toFixed(2);
+// why tied players are ordered: first tie-break that separates them
+function tieNotes(s){
+  const out=[];
+  for(let i=0;i<s.length-1;i++){const a=s[i],b=s[i+1];if(a.pts!==b.pts)continue;
+    const m=a.opp.find(([o])=>o===b.id);let why;
+    if(m&&m[1]!==0.5)why=["Pertemuan langsung",a.name+" menang saat bertemu"];
+    else if(a.w!==b.w)why=["Jumlah menang",a.w+" vs "+b.w];
+    else if(a.sb!==b.sb)why=["Sonneborn-Berger",num(a.sb)+" vs "+num(b.sb)];
+    else if(a.koya!==b.koya)why=["Koya",num(a.koya)+" vs "+num(b.koya)];
+    else why=["Rating awal",a.rtg+" vs "+b.rtg];
+    out.push({a,b,ra:i+1,rb:i+2,why})}
+  return out;
+}
+// "14 hari 03 jam 12 menit" style countdown
+function until(iso){const ms=new Date(iso)-Date.now();if(ms<=0)return null;const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4),s=Math.floor(ms%6e4/1e3);return {d,h,m,s}}
 const curRound=c=>{const i=c.rounds.findIndex(g=>g.some(x=>!x.res));return i<0?c.rounds.length:i+1};
 const doneRounds=c=>c.rounds.filter(g=>g.every(x=>x.res)).length;
 const fmt=n=>n===0?"0":n<1?"½":(n%1?Math.floor(n)+"½":String(n));
@@ -127,8 +157,10 @@ const setPending=a=>{try{localStorage.setItem(PKEY,JSON.stringify(a))}catch(e){}
 
 // ---------- plan (free / premium), simulated in this browser ----------
 const plan=()=>{try{return localStorage.getItem("ksl-plan")||"free"}catch(e){return"free"}};
+const trialLeft=()=>{try{const u=+localStorage.getItem("ksl-trial");return u?Math.max(0,Math.ceil((u-Date.now())/864e5)):null}catch(e){return null}};
+const startTrial=()=>{try{localStorage.setItem("ksl-trial",String(Date.now()+14*864e5))}catch(e){}};
 const setPlan=v=>{try{localStorage.setItem("ksl-plan",v)}catch(e){}};
-const pro=()=>plan()!=="free";
+const pro=()=>plan()!=="free"||trialLeft()>0;
 const proPill='<span class="pill pro">Premium</span>';
 
 // ---------- url params ----------
@@ -169,7 +201,7 @@ function shell(){
   const app=document.getElementById("app");
   const isPanel=area==="panel", ph=document.body.classList.contains("phone");
   document.body.classList.toggle("area-panel",isPanel);
-  const brand=`<a href="index.html" class="logo"><img class="ksl-logo" src="assets/ksl-logo.png" alt="Logo KSL"><span class="wm">KSL</span></a>`;
+  const brand=`<a href="index.html" class="logo"><img class="ksl-logo" src="assets/ksl-logo.png" alt="Logo KSL"><span class="wm">King Sang Long</span></a>`;
   const head=`<header><div class="hbar">
     ${brand}
     <span class="sp"></span>
@@ -186,7 +218,7 @@ function shell(){
     :[["index","home","Beranda"],["turnamen","info","Ringkasan turnamen"],["pairing","swap","Pairing"],["klasemen","trophy","Klasemen"],["peserta","users","Peserta"],0,["panel","lock","Panel panitia"]];
   const href=x=>["index","masuk","panel"].includes(x[0])||isPanel?file(x[0]):link(file(x[0]));
   const rail=isPanel
-    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL · ${pro()?"Premium":"Gratis"}</span></div></div></nav>`
+    ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">Admin KSL · ${plan()!=="free"?"Premium":trialLeft()>0?"Trial "+trialLeft()+" hari":"Gratis"}</span></div></div></nav>`
     :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Pemain"],["panel-buat","plus","Buat"],["panel-penyelenggara","org","Klub"]]
@@ -257,6 +289,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={stats,forfeit,plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
+window.KSL={num,trialLeft,startTrial,ratingTrack,tieNotes,until,stats,forfeit,plan,setPlan,pro,proPill,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell,hit,pLink,toast,save,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();
