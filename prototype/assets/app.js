@@ -253,14 +253,14 @@ function shell(){
     </div>
   </div></header>`;
   const railItems=[["panel","dash","Dashboard"],["panel-turnamen","trophy","Kelola Turnamen"],["panel-babak","flag","Babak & Hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat Turnamen"],["panel-klub","org","Klub Saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman Publik"]];
-  const href=x=>file(x[0])+(isPanel&&["panel-turnamen","panel-babak","panel-pemain"].includes(x[0])?"?t="+T.id:"");
+  const href=x=>file(x[0])+(isPanel&&["panel-babak","panel-pemain"].includes(x[0])?"?t="+T.id:"");
   const rail=isPanel
     ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">${clubName("ksl")} · ${plan()!=="free"?"Premium":trialLeft()>0?"Trial "+trialLeft()+" hari":"Gratis"}</span></div></div></nav>`
     :"";
   const tabs=isPanel
-    ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat"],["panel-klub","org","Klub"]]
+    ?[["panel","dash","Dashboard"],["panel-turnamen","trophy","Turnamen"],["panel-buat","plus","Buat"],["panel-klub","org","Klub"],["paket","star","Paket"]]
     :[["index","home","Turnamen"],["cari","search","Klub & Pemain"],loggedIn()?["panel","dash","Panel Klub"]:["masuk","lock","Masuk"]];
-  const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${href([p])}" class="${page===p||(p==="index"&&!isPanel&&["turnamen","pairing","klasemen","peserta","tabel-silang","segera","daftar-peserta"].includes(page))?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
+  const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${href([p])}" class="${page===p||(p==="panel-turnamen"&&["panel-babak","panel-pemain"].includes(page))||(p==="index"&&!isPanel&&["turnamen","pairing","klasemen","peserta","tabel-silang","segera","daftar-peserta"].includes(page))?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
   app.insertAdjacentHTML("afterbegin",rail+head);
   app.insertAdjacentHTML("beforeend",bnav);
   document.body.insertAdjacentHTML("beforeend",`<aside id="guide"><div class="gh"><b>Guide</b><div class="bar"><i id="gBar"></i></div><button class="btn alt sm" data-act="guide-close">${icon("x")}Tutup</button></div><ol id="gList"></ol><div class="pad bt sm mute">Centang fitur yang sudah dicoba. <button class="lnk" data-act="reset">Reset data contoh</button></div></aside><div id="shade" data-act="guide-close"></div><div id="toast"></div><div id="cfm"><div class="popc" role="alertdialog" aria-modal="true"><div class="row nowrap" style="gap:8px">${icon("info","lg")}<b></b></div><p></p><div class="row nowrap"><button class="btn alt" style="flex:1" data-c="0">Batal</button><button class="btn" style="flex:1" data-c="1">Ya</button></div></div></div><div id="pop" data-act="pop-close"><div class="popc" data-act="pop-stay" role="dialog" aria-modal="true"><div class="row nowrap" style="gap:8px">${icon("info","lg")}<b></b></div><p></p><button class="btn block" data-act="pop-close">Mengerti</button></div></div>`);
@@ -319,9 +319,14 @@ function openShare(t=T){
   o.onclick=e=>{if(e.target===o||e.target.closest("[data-x]"))o.remove();else if(e.target.closest("[data-cp]")){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast("Link disalin"),()=>toast("Salin manual dari kolom link","x"));o.remove()}};
   document.body.appendChild(o);
 }
-function panelTourHead(active,t=T){
-  const tabs=[["panel-turnamen","dash","Ringkasan"],["panel-pemain","users","Peserta"],["panel-babak","flag","Babak & hasil"]];
-  const pubUrl=t.classes?"turnamen.html?t="+t.id:"segera.html?t="+t.id;
+function panelTourHead(active,t=T,subTab=""){
+  const tabs=[
+    ["panel-turnamen","dash","Ringkasan","panel-turnamen.html?t="+t.id],
+    ["panel-pemain","users","Peserta","panel-pemain.html?t="+t.id],
+    ["panel-babak","flag","Babak & Hasil","panel-babak.html?t="+t.id],
+    ["panel-klasemen","trophy","Klasemen","panel-turnamen.html?t="+t.id+"&tab=klasemen"]
+  ];
+  const cur=subTab==="klasemen"?"panel-klasemen":active;
   return `<div class="card mb">
     <div class="pad row between" style="gap:8px">
       <div class="page-head">
@@ -330,10 +335,9 @@ function panelTourHead(active,t=T){
       </div>
       <div class="row" style="gap:6px">
         <button class="btn alt sm" data-act="share">${icon("share")}Bagikan</button>
-        <a class="btn alt sm" href="${pubUrl}">${icon("home")}Halaman publik${icon("right")}</a>
       </div>
     </div>
-    <nav class="tabs bt">${tabs.map(([p,i,l])=>`<a class="${p===active?"on":""}" href="${p}.html?t=${t.id}">${icon(i)}<span>${l}</span></a>`).join("")}<a href="klasemen.html?t=${t.id}">${icon("trophy")}<span>Klasemen</span></a></nav>
+    <nav class="tabs bt">${tabs.map(([p,i,l,u])=>`<a class="${p===cur?"on":""}" href="${u}">${icon(i)}<span>${l}</span></a>`).join("")}</nav>
   </div>`;
 }
 // organiser pages: which of my running tournaments am I working on (several can run at once)

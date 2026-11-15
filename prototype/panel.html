@@ -33,7 +33,7 @@ KSL.page(()=>{
   <h3>Turnamen saya</h3>
   <div class="card tscroll"><table>
     <tr><th>Turnamen</th><th class="dsk">Tanggal</th><th>Status</th><th></th></tr>
-    ${mine.map(t=>`<tr><td><b>${t.name}</b><div class="sm mute">${t.sys}</div></td><td class="dsk">${t.date}</td><td>${pill(t.status)}</td><td class="r"><a class="btn alt sm" href="${t.status==="done"?"turnamen.html?t="+t.id:"panel-turnamen.html?t="+t.id}">${t.status==="done"?"Lihat":"Kelola"}</a></td></tr>`).join("")}
+    ${mine.map(t=>`<tr><td><b>${t.name}</b><div class="sm mute">${t.sys}</div></td><td class="dsk">${t.date}</td><td>${pill(t.status)}</td><td class="r"><a class="btn alt sm" href="panel-turnamen.html?t=${t.id}">${t.status==="done"?"Lihat":"Kelola"}</a></td></tr>`).join("")}
   </table></div>`});
 </script>
 </body>
