@@ -88,11 +88,28 @@ const Q=new URLSearchParams(location.search);
 const qp=(k,d)=>Q.has(k)?Q.get(k):d;
 const T=TOURS.find(t=>t.classes&&t.id===Q.get("t"))||TOURS.find(t=>t.status==="live");
 // restore edits saved in this browser (per tournament)
-const KEY="ksl-proto-v3";
+const KEY="ksl-proto-v3",MKEY="ksl-meta";
 try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");TOURS.forEach(t=>{const s=all[t.id];if(!s||!t.classes)return;
   s.forEach((k,i)=>{const c=t.classes[i];if(!c)return;c.pub=k.pub;if(k.players)c.players=k.players;k.res.forEach((g,ri)=>g.forEach((r,bi)=>{const x=c.rounds[ri]&&c.rounds[ri][bi];if(!x)return;x.w=r[0];x.b=r[1];x.res=r[2]}))})})}catch(e){}
+try{const meta=JSON.parse(localStorage.getItem(MKEY)||"{}");TOURS.forEach(t=>{const m=meta[t.id];if(!m)return;["name","iso","endIso","date","time","place"].forEach(k=>{if(m[k]!==undefined)t[k]=m[k]})})}catch(e){}
+const MONTHS_ID=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+function fmtDateRange(startIso,endIso){
+  if(!startIso)return"-";
+  const p=s=>s.split("-").map(Number);
+  const [y1,m1,d1]=p(startIso);
+  if(!y1||!m1||!d1)return startIso;
+  const mon1=MONTHS_ID[m1-1]||"";
+  if(!endIso||endIso===startIso)return`${d1} ${mon1} ${y1}`;
+  const [y2,m2,d2]=p(endIso);
+  if(!y2||!m2||!d2)return`${d1} ${mon1} ${y1}`;
+  const mon2=MONTHS_ID[m2-1]||"";
+  if(y1===y2&&m1===m2)return`${d1}–${d2} ${mon1} ${y1}`;
+  if(y1===y2)return`${d1} ${mon1}–${d2} ${mon2} ${y1}`;
+  return`${d1} ${mon1} ${y1}–${d2} ${mon2} ${y2}`;
+}
 function save(t=T){try{const all=JSON.parse(localStorage.getItem(KEY)||"{}");all[t.id]=t.classes.map(c=>({pub:c.pub,players:c.players,res:c.rounds.map(g=>g.map(x=>[x.w,x.b,x.res]))}));localStorage.setItem(KEY,JSON.stringify(all))}catch(e){}}
-function reset(){try{["ksl-proto-v2",KEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub","ksl-auth","ksl-feedback"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
+function saveMeta(t=T){if(!t)return;try{const meta=JSON.parse(localStorage.getItem(MKEY)||"{}");meta[t.id]={name:t.name,iso:t.iso||"",endIso:t.endIso||"",date:t.date,time:t.time||"",place:t.place};localStorage.setItem(MKEY,JSON.stringify(meta))}catch(e){}}
+function reset(){try{["ksl-proto-v2",KEY,MKEY,"ksl-pending","ksl-plan","ksl-orgs","ksl-trial","ksl-myclub","ksl-auth","ksl-feedback"].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
 const TITLES=["","GM","IM","FM","CM","WGM","WIM","WFM","WCM","NM"];
 const titleBadge=t=>t?`<span class="pill acc" style="padding:1px 6px;font-size:10px;margin-right:4px">${t}</span>`:"";
 const FKEY="ksl-feedback";
@@ -392,6 +409,6 @@ document.addEventListener("input",e=>{if(e.target.id!=="cari")return;const pos=e
 try{if(localStorage.getItem("ksl-phone"))document.body.classList.add("phone")}catch(e){}
 shell();
 
-window.KSL={TITLES,titleBadge,feedback,setFeedback,openFeedback,loggedIn,setAuth,panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,score,
+window.KSL={TITLES,titleBadge,feedback,setFeedback,openFeedback,loggedIn,setAuth,panelTourHead,plan,setPlan,trialLeft,startTrial,pro,tourPicker,resLabel,ratingLog,ratingNow,CLUBS,PLAYERS,clubName,byPid,rupiah,orgName,confirm:confirm2,num,ratingTrack,tieNotes,until,stats,forfeit,tip,copyLink,waHref,pending,setPending,TERMS,TB,av,T,TOURS,icon,standings,curRound,doneRounds,fmt,pill,kelas,qp,link,setParam,tourHead,panelShell:(_,i)=>i,hit,pLink,toast,save,saveMeta,fmtDateRange,score,
   page(fn,actions={}){renderFn=fn;Object.assign(acts,actions);render()},render};
 })();
