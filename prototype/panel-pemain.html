@@ -22,15 +22,14 @@ KSL.page(()=>{
     <label class="btn alt sm" style="margin:0;color:var(--ink);font-size:12px">${icon("upload")}Impor CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label></div>
   ${pend.length?`<div class="card mb"><div class="pad"><b>Pendaftar baru (${pend.length})</b></div><div class="list bt">${pend.map(p=>`<div><span class="who grow">${av(p.name)}<span><b>${p.name}</b><div class="pid">${p.pid||"Profil baru"} · ${p.club}${p.hp?" · WA "+p.hp:""}</div></span></span><button class="btn sm" data-act="acc" data-i="${p.i}">${icon("check")}Terima</button><button class="btn alt sm" data-act="rej" data-i="${p.i}">Tolak</button></div>`).join("")}</div></div>`:""}
   <div class="card mb">
-    <div class="pad row between">${T.classes.length>1?`<div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div>`:`<b>${c.name} · ${c.players.length} pemain</b>`}</div>
+    <div class="pad row between" style="gap:6px">${T.classes.length>1?`<div class="seg">${T.classes.map((k,i)=>`<a class="${i===kelas()?"on":""}" href="${link("panel-pemain.html",{kelas:i})}">${k.name} (${k.players.length})</a>`).join("")}</div>`:`<b>${c.name} · ${c.players.length} pemain</b>`}
+      <div class="seg"><button class="${st.add==="db"?"on":""}" data-act="mode" data-m="db">Pilih dari database</button><button class="${st.add==="new"?"on":""}" data-act="mode" data-m="new">Pemain baru</button></div></div>
     <div class="pad bt">
-      <div class="seg mb"><button class="${st.add==="db"?"on":""}" data-act="mode" data-m="db">Pilih dari database</button><button class="${st.add==="new"?"on":""}" data-act="mode" data-m="new">Pemain baru</button></div>
       ${st.add==="db"?`
         <div class="combo">
           <div class="input-ic">${icon("search")}<input id="pq" placeholder="Cari nama, ID (TC-…), atau klub" value="${st.q}" autocomplete="off"></div>
           ${st.open?(found.length?`<div class="pick">${found.map(p=>`<button type="button" data-act="pickp" data-pid="${p.pid}" ${inClass(p.pid)?"disabled":""}>${av(p.name)}<span class="grow"><b>${p.name}</b><span class="pid" style="display:block">${p.pid} · ${clubName(p.club)}</span></span><span class="sm">${KSL.ratingNow(p.pid)}</span>${inClass(p.pid)?'<span class="pill">Sudah ikut</span>':icon("plus")}</button>`).join("")}</div>`:`<div class="pick"><div class="pad sm mute">Tidak ditemukan. <a href="#" class="lnk" data-act="mode" data-m="new">Tambah pemain baru</a></div></div>`):""}
-        </div>
-        <div class="hint">Klik kolom cari untuk melihat daftar pemain, ketik untuk menyaring.</div>`:`
+        </div>`:`
         <form id="np" class="grid g2e">
           <div class="field"><label>Nama lengkap</label><input name="name" required></div>
           <div class="field"><label>Rating awal${KSL.tip("Kosongkan bila belum punya rating. Nanti dihitung otomatis dari hasil partai.","Rating awal")}</label><input name="rtg" inputmode="numeric" placeholder="Belum ada"></div>
