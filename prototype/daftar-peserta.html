@@ -28,7 +28,7 @@ KSL.page(()=>{
   const found=PLAYERS.filter(p=>!ql||(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql));
   return `<a class="back" href="${back}">${icon("left")}${T.name}</a>
   <div class="card" style="max-width:560px">
-    <div class="pad"><h1>Daftar jadi peserta</h1><div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span></div></div>
+    <div class="pad"><h1>Daftar Jadi Peserta</h1><div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span></div></div>
     ${st.step==="find"?`
     <div class="pad bt">
       <label>Pernah ikut turnamen di aplikasi ini?${KSL.tip("Cari profilmu supaya tidak dibuat profil ganda. Rating dan riwayatmu ikut terbawa.","Profil pemain")}</label>

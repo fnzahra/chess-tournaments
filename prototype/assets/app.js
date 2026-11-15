@@ -242,7 +242,7 @@ function shell(){
     ${brand}
     <span class="sp"></span>
     <div class="toolbar">
-      ${isPanel?"":`<a class="tb dsk" href="cari.html">${icon("search")}Klub & pemain</a><span class="div dsk"></span>`}
+      ${isPanel?"":`<a class="tb dsk" href="cari.html">${icon("search")}Klub & Pemain</a><span class="div dsk"></span>`}
       <button class="tb" data-act="device" title="Ganti tampilan laptop / HP">${icon(ph?"laptop":"phone")}<span class="dsk">${ph?"Laptop":"Tampilan HP"}</span></button>
       <span class="div"></span>
       <button class="tb" data-act="guide" aria-label="Panduan">${icon("guide")}<span class="dsk">Panduan</span> <span class="count" id="gCount"></span></button>
@@ -250,14 +250,14 @@ function shell(){
       ${isPanel?`<button class="tb" data-act="logout">${icon("out")}<span class="dsk">Keluar</span></button>`:`<a class="tb" href="masuk.html">${icon("lock")}Masuk</a>`}
     </div>
   </div></header>`;
-  const railItems=[["panel","dash","Dashboard"],["panel-turnamen","trophy","Kelola turnamen"],["panel-babak","flag","Babak dan hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat turnamen"],["panel-klub","org","Klub saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman publik"]];
+  const railItems=[["panel","dash","Dashboard"],["panel-turnamen","trophy","Kelola Turnamen"],["panel-babak","flag","Babak & Hasil"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat Turnamen"],["panel-klub","org","Klub Saya"],["panel-penyelenggara","list","Penyelenggara"],["paket","star","Paket"],0,["index","home","Halaman Publik"]];
   const href=x=>file(x[0])+(isPanel&&["panel-turnamen","panel-babak","panel-pemain"].includes(x[0])?"?t="+T.id:"");
   const rail=isPanel
     ?`<nav class="rail wide">${brand}${railItems.map(x=>x?`<a class="it ${page===x[0]?"on":""}" href="${href(x)}">${icon(x[1],"lg")}${x[2]}</a>`:"<hr>").join("")}<div class="me">${av("Mukhlish")}<div><b>Mukhlish</b><span class="mute">${clubName("ksl")} · ${plan()!=="free"?"Premium":trialLeft()>0?"Trial "+trialLeft()+" hari":"Gratis"}</span></div></div></nav>`
     :"";
   const tabs=isPanel
     ?[["panel","dash","Dashboard"],["panel-babak","flag","Babak"],["panel-pemain","users","Peserta"],["panel-buat","plus","Buat"],["panel-klub","org","Klub"]]
-    :[["index","home","Turnamen"],["cari","search","Klub & pemain"],["masuk","lock","Masuk"]];
+    :[["index","home","Turnamen"],["cari","search","Klub & Pemain"],["masuk","lock","Masuk"]];
   const bnav=`<nav class="bnav">${tabs.map(([p,i,l])=>`<a href="${href([p])}" class="${page===p||(p==="index"&&!isPanel&&["turnamen","pairing","klasemen","peserta","tabel-silang","segera","daftar-peserta"].includes(page))?"on":""}">${icon(i,"lg")}${l}</a>`).join("")}</nav>`;
   app.insertAdjacentHTML("afterbegin",rail+head);
   app.insertAdjacentHTML("beforeend",bnav);

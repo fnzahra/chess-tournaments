@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Klub & pemain · King Sang Long</title>
+<title>Klub & Pemain · King Sang Long</title>
 <link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="cari" data-area="publik">
@@ -17,10 +17,10 @@ KSL.page(()=>{
   const players=PLAYERS.filter(p=>(!klub||p.club===klub)&&(!ql||(p.name+" "+p.pid+" "+clubName(p.club)).toLowerCase().includes(ql)));
   const clubs=CLUBS.filter(c=>!ql||(c.name+" "+c.city).toLowerCase().includes(ql));
   const members=id=>PLAYERS.filter(p=>p.club===id).length,events=id=>TOURS.filter(t=>t.org===id).length;
-  return `<h1 class="mb">Klub & pemain</h1>
+  return `<h1 class="mb">Klub & Pemain</h1>
   <div class="card pad mb">
     <div class="row between" style="gap:10px">
-      <div class="seg">${[["pemain","users","Pemain"],["klub","org","Klub & komunitas"]].map(([k,i,l])=>`<a href="#" class="${tab===k?"on":""}" data-act="tab" data-k="${k}">${icon(i)}<span style="margin-left:5px">${l}</span></a>`).join("")}</div>
+      <div class="seg">${[["pemain","users","Pemain"],["klub","org","Klub & Komunitas"]].map(([k,i,l])=>`<a href="#" class="${tab===k?"on":""}" data-act="tab" data-k="${k}">${icon(i)}<span style="margin-left:5px">${l}</span></a>`).join("")}</div>
       <div class="input-ic" style="flex:1;min-width:200px">${icon("search")}<input id="q" placeholder="${tab==="klub"?"Cari nama klub atau kota":"Cari nama, ID pemain (TC-…), atau klub"}" value="${q}"></div>
     </div>
   </div>

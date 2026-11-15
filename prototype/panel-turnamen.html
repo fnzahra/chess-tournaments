@@ -47,7 +47,7 @@ KSL.page(()=>{
         <div class="sm mute">Turnamen ini belum dimulai. Pendaftar yang masuk bisa dikonfirmasi sebelum babak 1 dibuat.</div>
         <div class="row mt"><a class="btn acc sm" href="panel-pemain.html">${icon("users")}Kelola pendaftar</a></div>
       </div>`}
-      <div class="row between mb"><h3>Informasi turnamen</h3><button class="lnk sm" data-act="toggleEdit">${edit?"Batal":icon("edit")+" Ubah info"}</button></div>
+      <div class="row between mb"><h3>Informasi Turnamen</h3><button class="lnk sm" data-act="toggleEdit">${edit?"Batal":icon("edit")+" Ubah info"}</button></div>
       <div class="card ${edit?"pad":""}">
         ${edit?`<form id="ef">
           <div class="field"><label>Nama turnamen</label><input name="name" value="${T.name.replace(/"/g,"&quot;")}" required></div>
@@ -62,13 +62,13 @@ KSL.page(()=>{
       </div>
     </div>
     <div>
-      <h3>Link turnamen</h3>
+      <h3>Link Turnamen</h3>
       <div class="card pad mb">
         <div class="sm mute">Bagikan link ini ke grup peserta atau panitia.</div>
         <input class="mt" readonly value="${fullUrl}" aria-label="Link turnamen" onclick="this.select()">
         <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><a class="btn alt sm" href="${KSL.waHref()}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
       </div>
-      <h3>Aksi cepat</h3>
+      <h3>Aksi Cepat</h3>
       <div class="card list">
         <a href="panel-babak.html?t=${T.id}"><span class="ico">${icon("flag")}</span><div class="grow"><b>Input hasil & pairing</b><div class="sm mute">Kelola meja dan babak berikutnya</div></div>${icon("right")}</a>
         <a href="panel-pemain.html?t=${T.id}"><span class="ico">${icon("users")}</span><div class="grow"><b>Tambah & kelola peserta</b><div class="sm mute">Terima pendaftar baru atau impor CSV</div></div>${icon("right")}</a>
