@@ -40,17 +40,11 @@ KSL.page(()=>{
       <div class="sm mute mt">${T.status==="done"?"Turnamen selesai · hasil final":"Terakhir diperbarui 08.12 WIB oleh "+T.arb[0]}</div>
     </div>
     <div>
-      <h3>Link turnamen</h3>
-      <div class="card pad mb">
-        <div class="sm mute">Bagikan ke grup peserta. Siapa pun bisa membuka tanpa login.</div>
-        <input class="mt" readonly value="${location.href.replace(/[^/]*$/,"")}turnamen.html?t=${T.id}" aria-label="Link turnamen" onclick="this.select()">
-        <div class="row mt"><button class="btn alt sm" data-act="copy">${icon("copy")}Salin link</button><a class="btn alt sm" href="${KSL.waHref()}" target="_blank" rel="noopener">${icon("msg")}Kirim ke WA</a></div>
-      </div>
       <h3>Informasi</h3>
       <div class="card"><table>${info.map(([i,k,v])=>`<tr><td class="mute" style="width:1%">${icon(i)}</td><td class="mute">${k}</td><td><b>${v}</b></td></tr>`).join("")}</table></div>
     </div>
   </div>`;
-},{copy:()=>KSL.copyLink()});
+});
 </script>
 </body>
 </html>

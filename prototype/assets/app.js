@@ -319,7 +319,7 @@ function tourHead(active){
   return `<a class="back" href="index.html">${icon("left")}Semua turnamen</a>
   <div class="card mb">
     <div class="pad">
-      <div class="row between nowrap"><h1>${T.name}</h1>${pill(T.status)}</div>
+      <div class="row between nowrap"><h1>${T.name}</h1><div class="row nowrap" style="gap:6px">${pill(T.status)}<button class="btn alt sm" data-act="share">${icon("share")}Bagikan</button></div></div>
       <div class="meta mt2"><span>${icon("cal")}${T.date}</span><span>${icon("pin")}${T.place}</span><span>${icon("list")}${T.sys}</span><span>${icon("org")}${orgName(T)}</span></div>
       <div class="row mt">
         ${T.classes.length>1?`<div class="seg">${T.classes.map((c,i)=>`<a class="${i===k?"on":""}" href="${link(file(active),{kelas:i,babak:null})}">${c.name}</a>`).join("")}</div>`:`<span class="pill acc">${T.classes[0].name}</span>`}
