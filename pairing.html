@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pairing · Turnamen Catur KSL</title>
-<link rel="stylesheet" href="assets/style.css?v=1794697563">
+<title>Pairing · King Sang Long</title>
+<link rel="stylesheet" href="assets/style.css?v=1794710626">
 </head>
 <body data-page="pairing" data-area="publik">
 <div id="stage"><div id="app"><main id="view"></main></div></div>
-<script src="assets/app.js?v=1794697563"></script>
+<script src="assets/app.js?v=1794710626"></script>
 <script>
 const {T,icon,standings,curRound,fmt,link,kelas,qp,hit,pLink}=KSL;
 KSL.page(()=>{
@@ -27,7 +27,7 @@ KSL.page(()=>{
     <div class="board ${hit(w)||hit(b)?"hl":""}">
       <span class="no">${i+1}</span>
       <span class="side-w"><i class="sq w"></i><span class="pt">${pt(x.w)}</span>${pLink(w.id,w.name)}</span>
-      <span class="res ${x.res?"":"wait"}">${x.res==="+/-"?"+/−":x.res==="-/+"?"−/+":x.res||"main"}</span>
+      <span class="res ${x.res?"":"wait"}">${x.res?KSL.resLabel(x.res):"main"}</span>
       <span class="side-k">${pLink(b.id,b.name)}<span class="pt">${pt(x.b)}</span><i class="sq k"></i></span>
     </div>`}).join("")}
   </div>`;
